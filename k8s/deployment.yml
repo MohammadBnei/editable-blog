@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: editable-blog
+  annotations:
+    secrets.infisical.com/auto-reload: "true"
 spec:
   replicas: 1
   revisionHistoryLimit: 2
@@ -18,13 +20,6 @@ spec:
           name: editable-blog
           ports:
             - containerPort: 3000
-          env:
-            - name: PORT
-              value: '3000'
-          volumeMounts:
-            - name: data
-              mountPath: /app/data/
-      volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: sqlite3
+          envFrom:
+            - secretRef:
+                name: managed-editable-blog-secret

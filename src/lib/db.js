@@ -3,7 +3,7 @@ import { env } from '$env/dynamic/private';
 import { schema } from './schema';
 
 const pool = new Pool({
-  connectionString: env.DB_URL
+  connectionString: env.DATABASE_URL
 });
 
 export async function query(q, params) {

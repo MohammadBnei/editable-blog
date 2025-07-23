@@ -30,5 +30,4 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Start the server by default, this can be overwritten at runtime
-CMD [ "bun", "run", "build"]
+CMD [ "bun", "./build/index.js"]
