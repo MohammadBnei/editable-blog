@@ -1,14 +1,12 @@
 import slugify from 'slugify';
 import { SHORTCUTS } from './constants';
-import { DB_PATH, ADMIN_PASSWORD } from '$env/static/private';
-import db from "../../data/db.sqlite3" with { "type": "sqlite" };
+import { ADMIN_PASSWORD } from '$env/static/private';
+import { query } from '$lib/db'; // Import the PostgreSQL query function
 import { nanoid } from '$lib/util';
 import { Blob } from 'node:buffer';
-import { readFile } from 'fs/promises';
+// Removed readFile as schema initialization will be external for PostgreSQL
 
-db.exec("PRAGMA journal_mode = WAL;");
-db.run(readFile('./sql/schema.sql', 'utf8'));
-
+// Removed SQLite-specific PRAGMA and schema execution
 
 /**
  * Creates a new article
@@ -16,27 +14,27 @@ db.run(readFile('./sql/schema.sql', 'utf8'));
 export async function createArticle(title, content, teaser, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
 
-    let slug = slugify(title, {
-      lower: true,
-      strict: true
-    });
+  let slug = slugify(title, {
+    lower: true,
+    strict: true
+  });
 
-    // If slug is already used, we add a unique postfix
-    const articleExists = db.query('SELECT * FROM articles WHERE slug = $slug').get({ '$slug': slug });
-    if (articleExists) {
-      slug = slug + '-' + nanoid();
-    }
+  // If slug is already used, we add a unique postfix
+  const articleExistsResult = await query('SELECT * FROM articles WHERE slug = $1', [slug]);
+  if (articleExistsResult.rows.length > 0) {
+    slug = slug + '-' + nanoid();
+  }
 
-    db.run(`
-        INSERT INTO articles (slug, title, content, teaser, published_at)
-        VALUES(:slug, :title, :content, :teaser, DATETIME('now'))
-      `,
-      { ':slug': slug, ':title': title, ':content': content, ':teaser': teaser }
-      );
+  const insertResult = await query(
+    `
+    INSERT INTO articles (slug, title, content, teaser, published_at)
+    VALUES($1, $2, $3, $4, NOW())
+    RETURNING slug, created_at
+    `,
+    [slug, title, content, teaser]
+  );
 
-  const newArticleQuery = "SELECT slug, created_at FROM articles WHERE slug = :slug";
-  const newArticle = db.query(newArticleQuery, { ':slug': slug }).get({ ':slug': slug });
-  return newArticle;
+  return insertResult.rows[0];
 }
 
 /**
@@ -45,17 +43,17 @@ export async function createArticle(title, content, teaser, currentUser) {
 export async function updateArticle(slug, title, content, teaser, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
 
-  const query = `
+  const updateResult = await query(
+    `
     UPDATE articles
-    SET title = :title, content = :content, teaser = :teaser, updated_at = datetime('now')
-    WHERE slug = :slug
-  `;
-  db.run(query, { ':title': title, ':content': content, ':teaser': teaser, ':slug': slug });
+    SET title = $1, content = $2, teaser = $3, updated_at = NOW()
+    WHERE slug = $4
+    RETURNING slug, updated_at
+    `,
+    [title, content, teaser, slug]
+  );
 
-  const updatedArticleQuery = "SELECT slug, updated_at FROM articles WHERE slug = :slug";
-  const updatedArticle = db.query(updatedArticleQuery).get({ ':slug': slug });
-
-  return updatedArticle;
+  return updateResult.rows[0];
 }
 
 /*
@@ -67,14 +65,15 @@ export async function authenticate(password, sessionTimeout) {
     const sessionId = nanoid();
 
     // Now is a good time to remove expired sessions
-    db.run('DELETE FROM sessions WHERE expires < :expires', { ':expires': new Date().toISOString() });
+    await query('DELETE FROM sessions WHERE expires < $1', [new Date().toISOString()]);
 
     // Create a new session
-    const result = db.query('INSERT INTO sessions (session_id, expires) values(:sessionId, :expires) returning session_id', { ':sessionId': sessionId, ':expires': expires }).get(
-      { ':sessionId': sessionId, ':expires': expires }
+    const insertResult = await query(
+      'INSERT INTO sessions (session_id, expires) values($1, $2) RETURNING session_id',
+      [sessionId, expires]
     );
 
-    return { sessionId: result.session_id };
+    return { sessionId: insertResult.rows[0].session_id };
   } else {
     throw 'Authentication failed.';
   }
@@ -84,37 +83,35 @@ export async function authenticate(password, sessionTimeout) {
   Log out of the admin session ...
 */
 export async function destroySession(sessionId) {
-  db.run('DELETE FROM sessions WHERE session_id = :sessionId', { ':sessionId': sessionId });
-  return true;
+  const deleteResult = await query('DELETE FROM sessions WHERE session_id = $1', [sessionId]);
+  return deleteResult.rowCount > 0;
 }
 
 /**
  * List all available articles (newest first)
  */
 export async function getArticles(currentUser) {
-  let articles;
-  let statement;
+  let articlesResult;
 
   if (currentUser) {
     // When logged in, show both drafts and published articles
-    statement = db.query(
+    articlesResult = await query(
       'SELECT *, COALESCE(published_at, updated_at, created_at) AS modified_at FROM articles ORDER BY modified_at DESC'
     );
   } else {
-    statement = db.query(
+    articlesResult = await query(
       'SELECT * FROM articles WHERE published_at IS NOT NULL ORDER BY published_at DESC'
     );
   }
 
-  articles = statement.all();
-  return articles;
+  return articlesResult.rows;
 }
 
 /**
  * Given a slug, determine article to "read next"
  */
 export async function getNextArticle(slug) {
-  const query = `
+  const queryText = `
     WITH previous_published AS (
       SELECT
         title,
@@ -123,7 +120,7 @@ export async function getNextArticle(slug) {
         published_at
       FROM articles
       WHERE
-        published_at < (SELECT published_at FROM articles WHERE slug = :currentSlug)
+        published_at < (SELECT published_at FROM articles WHERE slug = $1)
       ORDER BY published_at DESC
       LIMIT 1
     ),
@@ -134,7 +131,7 @@ export async function getNextArticle(slug) {
         slug,
         published_at
       FROM articles
-      WHERE slug <> :currentSlug
+      WHERE slug <> $1
       ORDER BY published_at DESC
       LIMIT 1
     )
@@ -143,55 +140,54 @@ export async function getNextArticle(slug) {
       SELECT * FROM previous_published
       UNION
       SELECT * FROM latest_article
-    )
+    ) AS combined_articles
     ORDER BY published_at ASC
     LIMIT 1;
   `;
 
-  const result = db.query(query, { ':currentSlug': slug }).get({ ':currentSlug': slug });
-  return result;
+  const result = await query(queryText, [slug]);
+  return result.rows[0];
 }
 
 /**
  * Search within all searchable items (including articles and website sections)
  */
 export async function search(q, currentUser) {
-  let query;
+  let queryText;
   if (currentUser) {
-    query = `
+    queryText = `
       SELECT title AS name, '/blog/' || slug AS url, COALESCE(published_at, updated_at, created_at) AS modified_at
       FROM articles
-      WHERE title LIKE :q COLLATE NOCASE
+      WHERE title ILIKE $1
       ORDER BY modified_at DESC;
     `;
   } else {
-    query = `
+    queryText = `
       SELECT title AS name, '/blog/' || slug AS url, COALESCE(published_at, updated_at, created_at) AS modified_at
       FROM articles
-      WHERE title LIKE :q COLLATE NOCASE AND published_at IS NOT NULL
+      WHERE title ILIKE $1 AND published_at IS NOT NULL
       ORDER BY modified_at DESC;
     `;
   }
 
-  const results = db.query(query, { ':q': `%${q}%` }).all({ ':q': `%${q}%` });
+  const results = await query(queryText, [`%${q}%`]);
 
   // Also include predefined shortcuts in search
   SHORTCUTS.forEach(shortcut => {
     if (shortcut.name.toLowerCase().includes(q.toLowerCase())) {
-      results.push(shortcut);
+      results.rows.push(shortcut);
     }
   });
 
-  return results;
+  return results.rows;
 }
 
 /**
  * Retrieve article based on a given slug
  */
 export async function getArticleBySlug(slug) {
-  const query = "SELECT * FROM articles WHERE slug = :slug";
-  const article = db.query(query, { ':slug': slug }).get({ ':slug': slug });
-  return article;
+  const result = await query("SELECT * FROM articles WHERE slug = $1", [slug]);
+  return result.rows[0];
 }
 
 /**
@@ -200,25 +196,21 @@ export async function getArticleBySlug(slug) {
 export async function deleteArticle(slug, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
 
-  const query = "DELETE FROM articles WHERE slug = :slug";
-  const result = db.run(query, { ':slug': slug });
+  const deleteResult = await query("DELETE FROM articles WHERE slug = $1", [slug]);
 
-  return result.changes > 0;
+  return deleteResult.rowCount > 0;
 }
 
 /**
  * In this minimal setup there is only one user, the website admin.
  * If you want to support multiple users/authors you want to return the current user record here.
  */
-/**
- * In this minimal setup there is only one user, the website admin.
- * If you want to support multiple users/authors you want to return the current user record here.
- */
 export async function getCurrentUser(session_id) {
-  const stmt = db.query(
-    'SELECT session_id, expires FROM sessions WHERE session_id = :sessionId AND expires > :expires'
+  const result = await query(
+    'SELECT session_id, expires FROM sessions WHERE session_id = $1 AND expires > $2',
+    [session_id, new Date().toISOString()]
   );
-  const session = stmt.get({ ':sessionId': session_id, ':expires': new Date().toISOString() });
+  const session = result.rows[0];
 
   if (session) {
     return { name: 'Admin' };
@@ -233,15 +225,20 @@ export async function getCurrentUser(session_id) {
  */
 export async function createOrUpdatePage(page_id, page, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
-  const pageExists = db.query('SELECT page_id FROM pages WHERE page_id = :pageId', { ':pageId': page_id }).get({ ':pageId': page_id });
-  if (pageExists) {
-    return db
-      .query('UPDATE pages SET data = :data, updated_at = :updatedAt WHERE page_id = :pageId RETURNING page_id', { ':pageId': page_id })
-      .get({ ':data': JSON.stringify(page), ':updatedAt': new Date().toISOString(), ':pageId': page_id });
+
+  const pageExistsResult = await query('SELECT page_id FROM pages WHERE page_id = $1', [page_id]);
+  if (pageExistsResult.rows.length > 0) {
+    const updateResult = await query(
+      'UPDATE pages SET data = $1, updated_at = NOW() WHERE page_id = $2 RETURNING page_id',
+      [JSON.stringify(page), page_id]
+    );
+    return updateResult.rows[0];
   } else {
-    return db
-      .query('INSERT INTO pages (page_id, data, updated_at) values(:pageId, :data, :updatedAt) RETURNING page_id', { ':pageId': page_id })
-      .get({ ':pageId': page_id, ':data': JSON.stringify(page), ':updatedAt': new Date().toISOString() });
+    const insertResult = await query(
+      'INSERT INTO pages (page_id, data, updated_at) values($1, $2, NOW()) RETURNING page_id',
+      [page_id, JSON.stringify(page)]
+    );
+    return insertResult.rows[0];
   }
 }
 
@@ -249,7 +246,8 @@ export async function createOrUpdatePage(page_id, page, currentUser) {
  * E.g. getPage("home") gets all dynamic data for the home page
  */
 export async function getPage(page_id) {
-  const page = db.query('SELECT data FROM pages WHERE page_id = :pageId', { ':pageId': page_id }).get({ ':pageId': page_id });
+  const result = await query('SELECT data FROM pages WHERE page_id = $1', [page_id]);
+  const page = result.rows[0];
   if (page?.data) {
     return JSON.parse(page.data);
   } else {
@@ -261,21 +259,21 @@ export async function getPage(page_id) {
  * We can count all kinds of things with this.
  */
 export async function createOrUpdateCounter(counter_id) {
-  return db.transaction(() => {
-    // Remove recipients associated with the friend if there are any entries
-    const counter_exists = db
-      .query('SELECT counter_id FROM counters WHERE counter_id = :counterId', { ':counterId': counter_id })
-      .get({ ':counterId': counter_id });
-    if (counter_exists) {
-      return db
-        .query('UPDATE counters SET count = count + 1 WHERE counter_id = :counterId RETURNING count', { ':counterId': counter_id })
-        .get({ ':counterId': counter_id });
-    } else {
-      return db
-        .query('INSERT INTO counters (counter_id, count) values(:counterId, 1) RETURNING count', { ':counterId': counter_id })
-        .get({ ':counterId': counter_id });
-    }
-  })();
+  // PostgreSQL transactions require a client from the pool
+  // For simple single queries, the `query` function handles it,
+  // but for a sequence of operations that need to be atomic,
+  // you'd typically get a client and use it for the transaction.
+  // For this specific case, we can use ON CONFLICT.
+
+  const upsertResult = await query(
+    `
+    INSERT INTO counters (counter_id, count) VALUES ($1, 1)
+    ON CONFLICT (counter_id) DO UPDATE SET count = counters.count + 1
+    RETURNING count
+    `,
+    [counter_id]
+  );
+  return upsertResult.rows[0];
 }
 
 // asset_id is a string and has the form path
@@ -284,19 +282,18 @@ export async function storeAsset(asset_id, file) {
   const buffer = Buffer.from(arrayBuffer);
 
   const sql = `
-  INSERT into assets (asset_id, mime_type, updated_at, size, data) VALUES (:assetId, :mimeType, :updatedAt, :size, :data)
-  ON CONFLICT (asset_id) DO
-  UPDATE
-     SET mime_type = excluded.mime_type,
-         updated_at = excluded.updated_at,
-         size = excluded.size,
-         data = excluded.data
-  WHERE asset_id = excluded.asset_id
+  INSERT INTO assets (asset_id, mime_type, updated_at, size, data) VALUES ($1, $2, NOW(), $3, $4)
+  ON CONFLICT (asset_id) DO UPDATE
+     SET mime_type = EXCLUDED.mime_type,
+         updated_at = NOW(),
+         size = EXCLUDED.size,
+         data = EXCLUDED.data
+  RETURNING asset_id
   `;
-  db.run(sql, { ':assetId': asset_id, ':mimeType': file.type, ':updatedAt': new Date().toISOString(), ':size': file.size, ':data': buffer });
+  await query(sql, [asset_id, file.type, file.size, buffer]);
 }
 
-export function getAsset(asset_id) {
+export async function getAsset(asset_id) {
   const sql = `
   SELECT
     asset_id,
@@ -305,12 +302,18 @@ export function getAsset(asset_id) {
     size,
     data
   FROM assets
-  WHERE asset_id = :assetId
+  WHERE asset_id = $1
   `;
 
-  const row = db.query(sql, { ':assetId': asset_id }).get({ ':assetId': asset_id });
+  const result = await query(sql, [asset_id]);
+  const row = result.rows[0];
+
+  if (!row) {
+    return null; // Asset not found
+  }
+
   return {
-    filename: row.asset_id.split('/').slice(-1),
+    filename: row.asset_id.split('/').pop(), // Use pop() to get the last element
     mimeType: row.mime_type,
     lastModified: row.updated_at,
     size: row.size,
