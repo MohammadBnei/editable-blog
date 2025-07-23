@@ -1,6 +1,6 @@
-/** 
+/**
  * Adapted from svelte-easy-crop
- * https://github.com/ValentinH/svelte-easy-crop 
+ * https://github.com/ValentinH/svelte-easy-crop
  */
 
 /**

@@ -186,7 +186,7 @@ export async function search(q, currentUser) {
  * Retrieve article based on a given slug
  */
 export async function getArticleBySlug(slug) {
-  const result = await query("SELECT * FROM articles WHERE slug = $1", [slug]);
+  const result = await query('SELECT * FROM articles WHERE slug = $1', [slug]);
   return result.rows[0];
 }
 
@@ -196,7 +196,7 @@ export async function getArticleBySlug(slug) {
 export async function deleteArticle(slug, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
 
-  const deleteResult = await query("DELETE FROM articles WHERE slug = $1", [slug]);
+  const deleteResult = await query('DELETE FROM articles WHERE slug = $1', [slug]);
 
   return deleteResult.rowCount > 0;
 }
@@ -218,7 +218,6 @@ export async function getCurrentUser(session_id) {
     return null;
   }
 }
-
 
 /**
  * Update the page

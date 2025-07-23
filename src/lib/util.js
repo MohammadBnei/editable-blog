@@ -2,11 +2,11 @@ import { customAlphabet } from 'nanoid';
 
 export function is_safari() {
   // Detect Chrome
-  let chrome_agent = navigator.userAgent.indexOf("Chrome") > -1;
+  let chrome_agent = navigator.userAgent.indexOf('Chrome') > -1;
   // Detect Safari
-  let safari_agent = navigator.userAgent.indexOf("Safari") > -1;
+  let safari_agent = navigator.userAgent.indexOf('Safari') > -1;
   // Discard Safari since it also matches Chrome
-  if ((chrome_agent) && (safari_agent)) safari_agent = false;
+  if (chrome_agent && safari_agent) safari_agent = false;
   return safari_agent;
 }
 
@@ -15,7 +15,10 @@ export function classNames(...classes) {
 }
 
 // We don't use "_" and "-" for better readability
-const _nanoid = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 21);
+const _nanoid = customAlphabet(
+  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+  21
+);
 
 export function nanoid() {
   return _nanoid();
@@ -34,7 +37,7 @@ export function formatDate(dateString, withTime) {
         hour: 'numeric',
         minute: 'numeric',
         hour12: true
-      }
+      };
       if (date.getFullYear() !== new Date().getFullYear()) {
         opts.year = 'numeric';
       }

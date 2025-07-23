@@ -15,7 +15,8 @@
     <div>
       <h2 class="text-3xl md:text-5xl font-bold">Hi, I'm Mohammad-Amine.</h2>
       <div class="mt-4 md:text-xl">
-        I'm a developer passionate about building efficient and precise solutions, with a focus on Go, JavaScript, and robust system architecture.
+        I'm a developer passionate about building efficient and precise solutions, with a focus on
+        Go, JavaScript, and robust system architecture.
       </div>
       <div class="pt-8 sm:pt-12">
         <PrimaryButton size="lg" href="/">Learn more</PrimaryButton>

@@ -107,7 +107,8 @@
   on:dblclick={cancelCropping}
 >
   {#if is_safari()}
-    <span class="text-[#EF174C]">ATTENTION:</span> Use Google Chrome, Firefox, oder Microsoft Edge for optimized image quality and size.
+    <span class="text-[#EF174C]">ATTENTION:</span> Use Google Chrome, Firefox, oder Microsoft Edge for
+    optimized image quality and size.
   {:else}
     Confirm with ENTER. Cancel with ESC.
   {/if}
@@ -142,7 +143,8 @@
   {:else}
     <img
       on:mousedown={() => fileInput.click()}
-      class={className + ' cursor-pointer outline-2 hover:outline-dashed outline-[#EF174C] -outline-offset-2'}
+      class={className +
+        ' cursor-pointer outline-2 hover:outline-dashed outline-[#EF174C] -outline-offset-2'}
       {src}
       {alt}
       title={uploadPrompt}

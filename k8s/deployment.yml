@@ -18,9 +18,9 @@ spec:
           name: editable-blog
           ports:
             - containerPort: 3000
-          env:  
+          env:
             - name: PORT
-              value: "3000"
+              value: '3000'
           volumeMounts:
             - name: data
               mountPath: /app/data/

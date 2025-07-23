@@ -1,6 +1,4 @@
--- Removed SQLite-specific PRAGMA
--- pragma journal_mode = WAL;
-
+export const schema = `
 BEGIN TRANSACTION;
 
 CREATE TABLE IF NOT EXISTS sessions (
@@ -39,3 +37,4 @@ CREATE TABLE IF NOT EXISTS articles (
   updated_at TIMESTAMP WITH TIME ZONE -- Changed DATETIME to TIMESTAMP WITH TIME ZONE
 );
 COMMIT;
+`;
