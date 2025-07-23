@@ -22,22 +22,22 @@
   const EMAIL = 'mohammad@bnei.dev'; 
 
   const FAQS_PLACEHOLDER = `
-		<h2>Question 1</h2>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mi lectus, pellentesque nec urna eget, pretium dictum arcu. In rutrum pretium leo, id efficitur nisl ullamcorper sit amet.</p>
-    <h2>Question 2</h2>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mi lectus, pellentesque nec urna eget, pretium dictum arcu. In rutrum pretium leo, id efficitur nisl ullamcorper sit amet.</p>
+		<h2>What kind of projects do you work on?</h2>
+    <p>I focus on building robust and efficient solutions, often leveraging Go for backend services, JavaScript/TypeScript for frontend development, and modern DevOps practices with Kubernetes and Docker.</p>
+    <h2>Do you offer consulting services?</h2>
+    <p>Yes, I'm available for consulting on system architecture, backend development, and cloud-native solutions. Feel free to reach out via email to discuss your needs.</p>
 	`;
 
   const BIO_PLACEHOLDER = `
-		<p>This blog serves as a platform to showcase my projects and share my knowledge in various technical domains.</p>
-    <p>Feel free to explore my articles and projects.</p>
+		<p>As a passionate developer, I thrive on crafting efficient and precise solutions to complex problems. My expertise spans Go, JavaScript/TypeScript, frontend and backend development, with a strong foundation in systems architecture, Kubernetes, Docker, and Linux (Debian).</p>
+    <p>Beyond coding, I find balance and discipline in Thai boxing, and draw inspiration from nature and spiritual exploration. This blog is where I share my journey, projects, and insights.</p>
 	`;
 
   const TESTIMONIALS_PLACEHOLDER = [
     {
-      text: '“This is a placeholder testimonial. You can add real testimonials here.”',
+      text: '“Mohammad-Amine consistently delivers high-quality, well-architected solutions. His deep understanding of systems and efficient problem-solving skills are truly impressive.”',
       image: '/images/person-placeholder.jpg',
-      name: 'Someone · Somewhere'
+      name: 'Colleague · Software Engineer'
     }
   ];
 
@@ -64,36 +64,36 @@
     introStep1 = JSON.parse(
       JSON.stringify(
         data.page?.introStep1 || {
-          label: 'EXPLORE',
-          title: 'Discover my projects',
-          description: 'Dive into the various projects I have worked on and explore their details.'
+          label: 'BUILD',
+          title: 'Crafting Code',
+          description: 'Exploring the process of developing efficient and reliable software solutions.'
         }
       )
     );
     introStep2 = JSON.parse(
       JSON.stringify(
         data.page?.introStep2 || {
-          label: 'LEARN',
-          title: 'Expand your knowledge',
-          description: 'Read articles and tutorials on different technical topics.'
+          label: 'ORCHESTRATE',
+          title: 'Navigating Systems',
+          description: 'Insights into designing and managing complex, scalable infrastructures.'
         }
       )
     );
     introStep3 = JSON.parse(
       JSON.stringify(
         data.page?.introStep3 || {
-          label: 'CONNECT',
-          title: 'Let\'s connect',
-          description: 'Feel free to reach out for collaborations or discussions.'
+          label: 'LEARN',
+          title: 'Sharing Discoveries',
+          description: 'Documenting insights and lessons learned from various technical explorations.'
         }
       )
     );
     introStep4 = JSON.parse(
       JSON.stringify(
         data.page?.introStep4 || {
-          label: 'GROW',
-          title: 'Continuous learning',
-          description: 'This blog is a reflection of my ongoing journey in software development.'
+          label: 'REFLECT',
+          title: 'Beyond the Screen',
+          description: 'A glimpse into the personal pursuits that inspire and inform my approach.'
         }
       )
     );
@@ -180,7 +180,7 @@
 </svelte:head>
 
 <WebsiteHeader bind:showUserMenu on:cancel={initOrReset} on:save={savePage}>
-  <PrimaryButton on:click={toggleEdit}>Edit page</PrimaryButton>
+  <PrimaryButton on:click={toggleEdit}>Edit Page</PrimaryButton>
   <LoginMenu />
 </WebsiteHeader>
 
@@ -204,7 +204,7 @@
     <NotEditable>
       <div class="text-center pt-8 pb-4 bounce text-xl">↓</div>
       <div class="text-center">
-        <PrimaryButton size="lg" type="button" on:click={toggleEdit}>Edit</PrimaryButton>
+        <PrimaryButton size="lg" type="button" on:click={toggleEdit}>Edit Page</PrimaryButton>
       </div>
     </NotEditable>
   </div>
@@ -261,7 +261,7 @@
 
   {#if $isEditing}
     <div class="text-center pb-12 border-b border-gray-100">
-      <SecondaryButton on:click={addTestimonial}>Add testimonial</SecondaryButton>
+      <SecondaryButton on:click={addTestimonial}>Add Testimonial</SecondaryButton>
     </div>
   {/if}
 </div>
