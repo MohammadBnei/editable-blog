@@ -19,7 +19,7 @@
   // --------------------------------------------------------------------------
   // DEFAULT PAGE CONTENT - AJDUST TO YOUR NEEDS
   // --------------------------------------------------------------------------
-  const EMAIL = 'mohammad.banaei@example.com'; // Placeholder email, please update with actual email
+  const EMAIL = 'mohammad@bnei.dev'; // Placeholder email, please update with actual email
 
   // Can contain spaces but must not contain the + sign
   const PHONE_NUMBER = ''; // Removed as requested
@@ -290,7 +290,6 @@
           class="block w-48 h-48 md:w-72 md:h-72 rounded-full"
           maxWidth="384"
           maxHeight="384"
-          quality="0.8"
           bind:src={bioPicture}
           alt="Mohammad-Amine BANAEI"
         />
