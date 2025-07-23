@@ -24,16 +24,15 @@ export async function createArticle(title, content, teaser, currentUser) {
     });
 
     // If slug is already used, we add a unique postfix
-    const articleExists = db.prepare('SELECT * FROM articles WHERE slug = ?').get(slug);
+    const articleExists = db.query('SELECT * FROM articles WHERE slug = ?').get(slug);
     if (articleExists) {
       slug = slug + '-' + nanoid();
     }
 
-    db.prepare(`
+    db.run(`
         INSERT INTO articles (slug, title, content, teaser, published_at)
         VALUES(?, ?, ?, ?, DATETIME('now'))
-      `)
-      .run(
+      `,
         slug,
         title,
         content,
@@ -41,7 +40,7 @@ export async function createArticle(title, content, teaser, currentUser) {
       );
 
   const newArticleQuery = "SELECT slug, created_at FROM articles WHERE slug = ?";
-  const newArticle = db.prepare(newArticleQuery).get(slug);
+  const newArticle = db.query(newArticleQuery).get(slug);
   return newArticle;
 }
 
@@ -56,11 +55,10 @@ export async function updateArticle(slug, title, content, teaser, currentUser) {
     SET title = ?, content = ?, teaser = ?, updated_at = datetime('now')
     WHERE slug = ?
   `;
-  const updateStmt = db.prepare(query);
-  updateStmt.run(title, content, teaser, slug);
+  db.run(query, title, content, teaser, slug);
 
   const updatedArticleQuery = "SELECT slug, updated_at FROM articles WHERE slug = ?";
-  const updatedArticle = db.prepare(updatedArticleQuery).get(slug);
+  const updatedArticle = db.query(updatedArticleQuery).get(slug);
 
   return updatedArticle;
 }
@@ -74,15 +72,15 @@ export async function authenticate(password, sessionTimeout) {
     const sessionId = nanoid();
 
     // Now is a good time to remove expired sessions
-    db.prepare('DELETE FROM sessions WHERE expires < ?').run(new Date().toISOString());
+    db.run('DELETE FROM sessions WHERE expires < ?', new Date().toISOString());
 
     // Create a new session
-    db.prepare('INSERT INTO sessions (session_id, expires) values(?, ?) returning session_id').run(
+    const result = db.query('INSERT INTO sessions (session_id, expires) values(?, ?) returning session_id').get(
       sessionId,
       expires
     );
 
-    return { sessionId };
+    return { sessionId: result.session_id };
   } else {
     throw 'Authentication failed.';
   }
@@ -92,7 +90,7 @@ export async function authenticate(password, sessionTimeout) {
   Log out of the admin session ...
 */
 export async function destroySession(sessionId) {
-  db.prepare('DELETE FROM sessions WHERE session_id = ?').run(sessionId);
+  db.run('DELETE FROM sessions WHERE session_id = ?', sessionId);
   return true;
 }
 
@@ -105,11 +103,11 @@ export async function getArticles(currentUser) {
 
   if (currentUser) {
     // When logged in, show both drafts and published articles
-    statement = db.prepare(
+    statement = db.query(
       'SELECT *, COALESCE(published_at, updated_at, created_at) AS modified_at FROM articles ORDER BY modified_at DESC'
     );
   } else {
-    statement = db.prepare(
+    statement = db.query(
       'SELECT * FROM articles WHERE published_at IS NOT NULL ORDER BY published_at DESC'
     );
   }
@@ -156,7 +154,7 @@ export async function getNextArticle(slug) {
     LIMIT 1;
   `;
 
-  const result = db.prepare(query).get(slug, slug);
+  const result = db.query(query).get(slug, slug);
   return result;
 }
 
@@ -181,7 +179,7 @@ export async function search(q, currentUser) {
     `;
   }
 
-  const results = db.prepare(query).all(`%${q}%`);
+  const results = db.query(query).all(`%${q}%`);
 
   // Also include predefined shortcuts in search
   SHORTCUTS.forEach(shortcut => {
@@ -198,7 +196,7 @@ export async function search(q, currentUser) {
  */
 export async function getArticleBySlug(slug) {
   const query = "SELECT * FROM articles WHERE slug = ?";
-  const article = db.prepare(query).get(slug);
+  const article = db.query(query).get(slug);
   return article;
 }
 
@@ -209,7 +207,7 @@ export async function deleteArticle(slug, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
 
   const query = "DELETE FROM articles WHERE slug = ?";
-  const result = db.prepare(query).run(slug);
+  const result = db.run(query, slug);
 
   return result.changes > 0;
 }
@@ -223,7 +221,7 @@ export async function deleteArticle(slug, currentUser) {
  * If you want to support multiple users/authors you want to return the current user record here.
  */
 export async function getCurrentUser(session_id) {
-  const stmt = db.prepare(
+  const stmt = db.query(
     'SELECT session_id, expires FROM sessions WHERE session_id = ? AND expires > ?'
   );
   const session = stmt.get(session_id, new Date().toISOString());
@@ -241,14 +239,14 @@ export async function getCurrentUser(session_id) {
  */
 export async function createOrUpdatePage(page_id, page, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
-  const pageExists = db.prepare('SELECT page_id FROM pages WHERE page_id = ?').get(page_id);
+  const pageExists = db.query('SELECT page_id FROM pages WHERE page_id = ?').get(page_id);
   if (pageExists) {
     return db
-      .prepare('UPDATE pages SET data = ?, updated_at = ? WHERE page_id = ? RETURNING page_id')
+      .query('UPDATE pages SET data = ?, updated_at = ? WHERE page_id = ? RETURNING page_id')
       .get(JSON.stringify(page), new Date().toISOString(), page_id);
   } else {
     return db
-      .prepare('INSERT INTO pages (page_id, data, updated_at) values(?, ?, ?) RETURNING page_id')
+      .query('INSERT INTO pages (page_id, data, updated_at) values(?, ?, ?) RETURNING page_id')
       .get(page_id, JSON.stringify(page), new Date().toISOString());
   }
 }
@@ -257,7 +255,7 @@ export async function createOrUpdatePage(page_id, page, currentUser) {
  * E.g. getPage("home") gets all dynamic data for the home page
  */
 export async function getPage(page_id) {
-  const page = db.prepare('SELECT data FROM pages WHERE page_id = ?').get(page_id);
+  const page = db.query('SELECT data FROM pages WHERE page_id = ?').get(page_id);
   if (page?.data) {
     return JSON.parse(page.data);
   } else {
@@ -272,15 +270,15 @@ export async function createOrUpdateCounter(counter_id) {
   return db.transaction(() => {
     // Remove recipients associated with the friend if there are any entries
     const counter_exists = db
-      .prepare('SELECT counter_id FROM counters WHERE counter_id = ?')
+      .query('SELECT counter_id FROM counters WHERE counter_id = ?')
       .get(counter_id);
     if (counter_exists) {
       return db
-        .prepare('UPDATE counters SET count = count + 1 WHERE counter_id = ? RETURNING count')
+        .query('UPDATE counters SET count = count + 1 WHERE counter_id = ? RETURNING count')
         .get(counter_id);
     } else {
       return db
-        .prepare('INSERT INTO counters (counter_id, count) values(?, 1) RETURNING count')
+        .query('INSERT INTO counters (counter_id, count) values(?, 1) RETURNING count')
         .get(counter_id);
     }
   })();
@@ -301,8 +299,7 @@ export async function storeAsset(asset_id, file) {
          data = excluded.data
   WHERE asset_id = excluded.asset_id
   `;
-  const stmnt = db.prepare(sql);
-  stmnt.run(asset_id, file.type, new Date().toISOString(), file.size, buffer);
+  db.run(sql, asset_id, file.type, new Date().toISOString(), file.size, buffer);
 }
 
 export function getAsset(asset_id) {
@@ -317,8 +314,7 @@ export function getAsset(asset_id) {
   WHERE asset_id = ?
   `;
 
-  const stmnt = db.prepare(sql);
-  const row = stmnt.get(asset_id);
+  const row = db.query(sql).get(asset_id);
   return {
     filename: row.asset_id.split('/').slice(-1),
     mimeType: row.mime_type,
