@@ -9,13 +9,13 @@
   >
     <img
       class="shrink-0 w-24 h-24 rounded-full"
-      src="https://letsken.imgix.net/users/958dc1d9-de59-40ee-b814-b43885b3053f/27421e71f9e3ef6f828be3018eb69d74.jpg?fit=max&w=576&auto=format"
-      alt="Michael Aufreiter"
+      src="/images/person-placeholder.jpg"
+      alt="Mohammad-Amine BANAEI"
     />
     <div>
-      <h2 class="text-3xl md:text-5xl font-bold">Hi, I'm Michael.</h2>
+      <h2 class="text-3xl md:text-5xl font-bold">Hi, I'm Mohammad-Amine.</h2>
       <div class="mt-4 md:text-xl">
-        I want your website to be <strong>editable</strong>.
+        I'm a developer passionate about building efficient and precise solutions, with a focus on Go, JavaScript, and robust system architecture.
       </div>
       <div class="pt-8 sm:pt-12">
         <PrimaryButton size="lg" href="/">Learn more</PrimaryButton>
