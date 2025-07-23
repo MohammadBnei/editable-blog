@@ -1,15 +1,13 @@
 import slugify from 'slugify';
 import { SHORTCUTS } from './constants';
-import { Database } from "bun:sqlite";
-import { nanoid } from '$lib/util';
 import { DB_PATH, ADMIN_PASSWORD } from '$env/static/private';
+import db from "../../data/db.sqlite3" with { "type": "sqlite" };
+import { nanoid } from '$lib/util';
 import { Blob } from 'node:buffer';
+import { readFile } from 'fs/promises';
 
-const db = new Database(DB_PATH, {
-  // verbose: console.log
-});
-db.pragma('journal_mode = WAL');
-db.pragma('case_sensitive_like = true');
+db.exec("PRAGMA journal_mode = WAL;");
+db.run(readFile('./sql/schema.sql', 'utf8'));
 
 
 /**
@@ -24,7 +22,7 @@ export async function createArticle(title, content, teaser, currentUser) {
     });
 
     // If slug is already used, we add a unique postfix
-    const articleExists = db.query('SELECT * FROM articles WHERE slug = :slug').get({ ':slug': slug });
+    const articleExists = db.query('SELECT * FROM articles WHERE slug = $slug').get({ '$slug': slug });
     if (articleExists) {
       slug = slug + '-' + nanoid();
     }
@@ -37,7 +35,7 @@ export async function createArticle(title, content, teaser, currentUser) {
       );
 
   const newArticleQuery = "SELECT slug, created_at FROM articles WHERE slug = :slug";
-  const newArticle = db.query(newArticleQuery).get({ ':slug': slug });
+  const newArticle = db.query(newArticleQuery, { ':slug': slug }).get({ ':slug': slug });
   return newArticle;
 }
 
@@ -72,7 +70,7 @@ export async function authenticate(password, sessionTimeout) {
     db.run('DELETE FROM sessions WHERE expires < :expires', { ':expires': new Date().toISOString() });
 
     // Create a new session
-    const result = db.query('INSERT INTO sessions (session_id, expires) values(:sessionId, :expires) returning session_id').get(
+    const result = db.query('INSERT INTO sessions (session_id, expires) values(:sessionId, :expires) returning session_id', { ':sessionId': sessionId, ':expires': expires }).get(
       { ':sessionId': sessionId, ':expires': expires }
     );
 
@@ -150,7 +148,7 @@ export async function getNextArticle(slug) {
     LIMIT 1;
   `;
 
-  const result = db.query(query).get({ ':currentSlug': slug });
+  const result = db.query(query, { ':currentSlug': slug }).get({ ':currentSlug': slug });
   return result;
 }
 
@@ -175,7 +173,7 @@ export async function search(q, currentUser) {
     `;
   }
 
-  const results = db.query(query).all({ ':q': `%${q}%` });
+  const results = db.query(query, { ':q': `%${q}%` }).all({ ':q': `%${q}%` });
 
   // Also include predefined shortcuts in search
   SHORTCUTS.forEach(shortcut => {
@@ -192,7 +190,7 @@ export async function search(q, currentUser) {
  */
 export async function getArticleBySlug(slug) {
   const query = "SELECT * FROM articles WHERE slug = :slug";
-  const article = db.query(query).get({ ':slug': slug });
+  const article = db.query(query, { ':slug': slug }).get({ ':slug': slug });
   return article;
 }
 
@@ -235,14 +233,14 @@ export async function getCurrentUser(session_id) {
  */
 export async function createOrUpdatePage(page_id, page, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
-  const pageExists = db.query('SELECT page_id FROM pages WHERE page_id = :pageId').get({ ':pageId': page_id });
+  const pageExists = db.query('SELECT page_id FROM pages WHERE page_id = :pageId', { ':pageId': page_id }).get({ ':pageId': page_id });
   if (pageExists) {
     return db
-      .query('UPDATE pages SET data = :data, updated_at = :updatedAt WHERE page_id = :pageId RETURNING page_id')
+      .query('UPDATE pages SET data = :data, updated_at = :updatedAt WHERE page_id = :pageId RETURNING page_id', { ':pageId': page_id })
       .get({ ':data': JSON.stringify(page), ':updatedAt': new Date().toISOString(), ':pageId': page_id });
   } else {
     return db
-      .query('INSERT INTO pages (page_id, data, updated_at) values(:pageId, :data, :updatedAt) RETURNING page_id')
+      .query('INSERT INTO pages (page_id, data, updated_at) values(:pageId, :data, :updatedAt) RETURNING page_id', { ':pageId': page_id })
       .get({ ':pageId': page_id, ':data': JSON.stringify(page), ':updatedAt': new Date().toISOString() });
   }
 }
@@ -251,7 +249,7 @@ export async function createOrUpdatePage(page_id, page, currentUser) {
  * E.g. getPage("home") gets all dynamic data for the home page
  */
 export async function getPage(page_id) {
-  const page = db.query('SELECT data FROM pages WHERE page_id = :pageId').get({ ':pageId': page_id });
+  const page = db.query('SELECT data FROM pages WHERE page_id = :pageId', { ':pageId': page_id }).get({ ':pageId': page_id });
   if (page?.data) {
     return JSON.parse(page.data);
   } else {
@@ -266,15 +264,15 @@ export async function createOrUpdateCounter(counter_id) {
   return db.transaction(() => {
     // Remove recipients associated with the friend if there are any entries
     const counter_exists = db
-      .query('SELECT counter_id FROM counters WHERE counter_id = :counterId')
+      .query('SELECT counter_id FROM counters WHERE counter_id = :counterId', { ':counterId': counter_id })
       .get({ ':counterId': counter_id });
     if (counter_exists) {
       return db
-        .query('UPDATE counters SET count = count + 1 WHERE counter_id = :counterId RETURNING count')
+        .query('UPDATE counters SET count = count + 1 WHERE counter_id = :counterId RETURNING count', { ':counterId': counter_id })
         .get({ ':counterId': counter_id });
     } else {
       return db
-        .query('INSERT INTO counters (counter_id, count) values(:counterId, 1) RETURNING count')
+        .query('INSERT INTO counters (counter_id, count) values(:counterId, 1) RETURNING count', { ':counterId': counter_id })
         .get({ ':counterId': counter_id });
     }
   })();
@@ -310,7 +308,7 @@ export function getAsset(asset_id) {
   WHERE asset_id = :assetId
   `;
 
-  const row = db.query(sql).get({ ':assetId': asset_id });
+  const row = db.query(sql, { ':assetId': asset_id }).get({ ':assetId': asset_id });
   return {
     filename: row.asset_id.split('/').slice(-1),
     mimeType: row.mime_type,
