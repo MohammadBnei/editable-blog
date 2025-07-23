@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: editable-website
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: editable-website
+  template:
+    metadata:
+      labels:
+        app: editable-website
+    spec:
+      containers:
+        - image: mohammaddocker/editable-website
+          name: editable-website
+          ports:
+            - containerPort: 3000
+          env:  
+            - name: PORT
+              value: "3000"
+          volumeMounts:
+            - name: data
+              mountPath: /app/data/
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: sqlite3

@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: editable-website-service
+spec:
+  selector:
+    app: editable-website # Match labels from the deployments
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+
+---
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: blog-certificate
+spec:
+  commonName: blog.bnei.dev
+  secretName: blog-certificate-secret
+  dnsNames:
+    - "blog.bnei.dev"
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod
+
+---
+
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: editable-website
+spec:
+  entryPoints:
+    - websecure
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`blog.bnei.dev`)
+      services:
+        - kind: Service
+          name: editable-website-service
+          namespace: editable-website
+          port: 80
+  tls:
+    secretName: blog-certificate-secret

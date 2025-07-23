@@ -19,10 +19,7 @@
   // --------------------------------------------------------------------------
   // DEFAULT PAGE CONTENT - AJDUST TO YOUR NEEDS
   // --------------------------------------------------------------------------
-  const EMAIL = 'mohammad@bnei.dev'; // Placeholder email, please update with actual email
-
-  // Can contain spaces but must not contain the + sign
-  const PHONE_NUMBER = ''; // Removed as requested
+  const EMAIL = 'mohammad@bnei.dev'; 
 
   const FAQS_PLACEHOLDER = `
 		<h2>Question 1</h2>
@@ -33,7 +30,6 @@
 
   const BIO_PLACEHOLDER = `
 		<p>This blog serves as a platform to showcase my projects and share my knowledge in various technical domains.</p>
-		<p>You can find my previous blog content at <a href="https://blog.bnei.dev">https://blog.bnei.dev</a>.</p>
     <p>Feel free to explore my articles and projects.</p>
 	`;
 
@@ -59,7 +55,7 @@
 
   function initOrReset() {
     $currentUser = data.currentUser;
-    title = data.page?.title || 'Mohammad-Amine BANAEI - My Projects & Knowledge Blog';
+    title = data.page?.title || 'Mohammad-Amine BANAEI - <br>Projects & Knowledge Blog';
     faqs = data.page?.faqs || FAQS_PLACEHOLDER;
 
     // Make a deep copy
