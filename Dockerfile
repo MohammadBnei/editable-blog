@@ -15,7 +15,6 @@ RUN bun ci --omit dev
 # copy source across (excludes items filtered by .dockerignore)
 COPY . .
 
-RUN mkdir data
 RUN --mount=type=secret,id=DB_PATH \
     --mount=type=secret,id=ADMIN_PASSWORD \
     --mount=type=secret,id=ORIGIN \

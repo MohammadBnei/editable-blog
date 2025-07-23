@@ -6,6 +6,7 @@ namespace: editable-blog
 resources:
 - deployment.yml
 - service.yml
+- pvc.yml
 
 images:
 - name: mohammaddocker/editable-blog
