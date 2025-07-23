@@ -19,10 +19,10 @@
   // --------------------------------------------------------------------------
   // DEFAULT PAGE CONTENT - AJDUST TO YOUR NEEDS
   // --------------------------------------------------------------------------
-  const EMAIL = 'michael@letsken.com';
+  const EMAIL = 'mohammad.banaei@example.com'; // Placeholder email, please update with actual email
 
   // Can contain spaces but must not contain the + sign
-  const PHONE_NUMBER = '43 664 1533015';
+  const PHONE_NUMBER = ''; // Removed as requested
 
   const FAQS_PLACEHOLDER = `
 		<h2>Question 1</h2>
@@ -32,16 +32,16 @@
 	`;
 
   const BIO_PLACEHOLDER = `
-		<p>Modern tools, such as Svelte and Tailwind allow you to easily hand-craft fast and beautiful websites. What’s missing is the ability to <strong>make edits without changing the source code</strong>.</p>
-		<p>With this <a href="https://github.com/michael/editable-website">open-source website template</a>, I want to fill that gap.</p>
-    <p>If you have questions or need any help, contact me.</p>
+		<p>This blog serves as a platform to showcase my projects and share my knowledge in various technical domains.</p>
+		<p>You can find my previous blog content at <a href="https://blog.bnei.dev">https://blog.bnei.dev</a>.</p>
+    <p>Feel free to explore my articles and projects.</p>
 	`;
 
   const TESTIMONIALS_PLACEHOLDER = [
     {
-      text: '“Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mi lectus, pellentesque nec urna eget, pretium dictum arcu. In rutrum pretium leo, id efficitur nisl ullamcorper sit amet.”',
+      text: '“This is a placeholder testimonial. You can add real testimonials here.”',
       image: '/images/person-placeholder.jpg',
-      name: 'Jane Doe · jane-doe.org'
+      name: 'Someone · Somewhere'
     }
   ];
 
@@ -59,7 +59,7 @@
 
   function initOrReset() {
     $currentUser = data.currentUser;
-    title = data.page?.title || 'Untitled Website';
+    title = data.page?.title || 'Mohammad-Amine BANAEI - My Projects & Knowledge Blog';
     faqs = data.page?.faqs || FAQS_PLACEHOLDER;
 
     // Make a deep copy
@@ -68,41 +68,41 @@
     introStep1 = JSON.parse(
       JSON.stringify(
         data.page?.introStep1 || {
-          label: 'THE PROBLEM',
-          title: 'The problem statement',
-          description: 'Describe the problem you are solving in a short sentence.'
+          label: 'EXPLORE',
+          title: 'Discover my projects',
+          description: 'Dive into the various projects I have worked on and explore their details.'
         }
       )
     );
     introStep2 = JSON.parse(
       JSON.stringify(
         data.page?.introStep2 || {
-          label: 'THE DREAM',
-          title: 'This is how it should be.',
-          description: 'Describe why it should be like that.'
+          label: 'LEARN',
+          title: 'Expand your knowledge',
+          description: 'Read articles and tutorials on different technical topics.'
         }
       )
     );
     introStep3 = JSON.parse(
       JSON.stringify(
         data.page?.introStep3 || {
-          label: 'THE REALITY',
-          title: 'A statement why it is not that easy.',
-          description: 'Describe the reality a bit more.'
+          label: 'CONNECT',
+          title: 'Let\'s connect',
+          description: 'Feel free to reach out for collaborations or discussions.'
         }
       )
     );
     introStep4 = JSON.parse(
       JSON.stringify(
         data.page?.introStep4 || {
-          label: 'THE PROMISE',
-          title: 'Still the solution is worth it.',
-          description: 'And why this is, should be described here.'
+          label: 'GROW',
+          title: 'Continuous learning',
+          description: 'This blog is a reflection of my ongoing journey in software development.'
         }
       )
     );
     bioPicture = data.page?.bioPicture || '/images/person-placeholder.jpg';
-    bioTitle = data.page?.bioTitle || "Hi, I'm Michael — I want your website to be editable.";
+    bioTitle = data.page?.bioTitle || "Hi, I'm Mohammad-Amine BANAEI — Welcome to my blog!";
     bio = data.page?.bio || BIO_PLACEHOLDER;
     $isEditing = false;
   }
@@ -177,8 +177,8 @@
 </script>
 
 <svelte:head>
-  <title>Make your website editable</title>
-  <meta name="description" content="Make changes to your website while browsing it." />
+  <title>Mohammad-Amine BANAEI - My Projects & Knowledge Blog</title>
+  <meta name="description" content="Mohammad-Amine BANAEI's personal blog showcasing projects and technical knowledge." />
   <link rel="alternate" hreflang="en" href="https://editable.website" />
   <link rel="canonical" href="https://editable.website" />
 </svelte:head>
@@ -240,7 +240,7 @@
         type="button"
         on:click={() =>
           document.getElementById('contact').scrollIntoView({ behavior: 'smooth', block: 'start' })}
-        >Create an editable website</PrimaryButton
+        >Explore my work</PrimaryButton
       >
     </div>
   </div>
@@ -292,7 +292,7 @@
           maxHeight="384"
           quality="0.8"
           bind:src={bioPicture}
-          alt="Michael Aufreiter"
+          alt="Mohammad-Amine BANAEI"
         />
       </div>
 
@@ -309,9 +309,7 @@
     <NotEditable>
       <div class="flex flex-col sm:flex-row sm:space-x-6 md:space-x-8 space-y-4 sm:space-y-0">
         <PrimaryButton size="lg" href={`mailto:${EMAIL}`}>Email</PrimaryButton>
-        <SecondaryButton size="lg" href={`https://wa.me/${PHONE_NUMBER.replace(/\s+/g, '')}`}>
-          WhatsApp (+{PHONE_NUMBER})
-        </SecondaryButton>
+        <!-- Removed WhatsApp button as phone number is no longer present -->
       </div>
     </NotEditable>
   </div>
