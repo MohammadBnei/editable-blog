@@ -214,7 +214,8 @@
   <div class="max-w-(--breakpoint-md) mx-auto px-6">
     <div class="relative">
       <div class="w-1 bg-gray-900 absolute inset-0 -top-8 bottom-12 mx-auto z-0">
-        <div class="w-4 h-4 rounded-full bg-gray-900 absolute -top-1 -left-[6px]" />
+        <div class="w-4 h-4 rounded-full bg-gray-900 absolute -top-1 -left-[6px]" >
+        </div>
       </div>
       <div class="z-10">
         <IntroStep bind:intro={introStep1} />
@@ -227,7 +228,8 @@
       <div class="w-1 bg-gray-900 absolute inset-0 -top-16 bottom-12 mx-auto z-0">
         <div
           class="absolute -bottom-2 -left-[7px] h-0 w-0 border-x-[9px] border-x-transparent border-t-10 border-gray-900"
-        />
+        >
+        </div>
       </div>
     </div>
     <div class="text-center mb-32">
