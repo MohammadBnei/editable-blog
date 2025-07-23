@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: editable-website
+  name: editable-blog
 spec:
   replicas: 1
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: editable-website
+      app: editable-blog
   template:
     metadata:
       labels:
-        app: editable-website
+        app: editable-blog
     spec:
       containers:
-        - image: mohammaddocker/editable-website
-          name: editable-website
+        - image: mohammaddocker/editable-blog
+          name: editable-blog
           ports:
             - containerPort: 3000
           env:  

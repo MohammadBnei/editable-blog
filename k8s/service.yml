@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: editable-website-service
+  name: editable-blog-service
 spec:
   selector:
-    app: editable-website # Match labels from the deployments
+    app: editable-blog # Match labels from the deployments
   ports:
     - protocol: TCP
       port: 80
@@ -30,7 +30,7 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: editable-website
+  name: editable-blog
 spec:
   entryPoints:
     - websecure
@@ -40,8 +40,8 @@ spec:
       match: Host(`blog.bnei.dev`)
       services:
         - kind: Service
-          name: editable-website-service
-          namespace: editable-website
+          name: editable-blog-service
+          namespace: editable-blog
           port: 80
   tls:
     secretName: blog-certificate-secret

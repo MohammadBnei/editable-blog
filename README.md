@@ -1,4 +1,4 @@
-# editable-website
+# editable-blog
 
 A SvelteKit template for coding **completely custom websites**, while allowing non-technical people to **make edits** to the content by simply logging in with a secure admin password.
 
@@ -28,8 +28,8 @@ This is a full-fledged web app you want to adjust to your own needs. So please *
 First clone the repository.
 
 ```bash
-$ git clone https://github.com/michael/editable-website.git
-cd editable-website
+$ git clone https://github.com/michael/editable-blog.git
+cd editable-blog
 ```
 
 Install the dependencies.
@@ -106,7 +106,7 @@ You can literally do everything that SvelteKit allows you to do. Below is the so
 
 To see the full picture, open [src/routes/imprint/+page.svelte](src/routes/imprint/%2Bpage.svelte) and [src/routes/imprint/+page.server.js](src/routes/imprint/%2Bpage.server.js).
 
-Please use this as a starting point for new pages you want to add to your website. `editable-website` is not a widget-library on purpose. Instead you are encouraged to inspect and adjust all source code, including the [schema](./src/lib/prosemirrorSchemas.js) for the editors. I want you to be in control of everything. No behind-the-scene magic.
+Please use this as a starting point for new pages you want to add to your website. `editable-blog` is not a widget-library on purpose. Instead you are encouraged to inspect and adjust all source code, including the [schema](./src/lib/prosemirrorSchemas.js) for the editors. I want you to be in control of everything. No behind-the-scene magic.
 
 ## Making changes to the content
 
@@ -185,4 +185,4 @@ If you have questions or need help (with development or deployment), please emai
 
 Community provided examples of additional features you can add to your editable website:
 
-- [ChatGPT completion tool](https://github.com/nilskj/editable-website)
+- [ChatGPT completion tool](https://github.com/nilskj/editable-blog)

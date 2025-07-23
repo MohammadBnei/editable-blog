@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "editable-website",
+      "name": "editable-blog",
       "dependencies": {
         "@fontsource/jost": "^5.2.6",
         "@release-it/conventional-changelog": "^10.0.1",
