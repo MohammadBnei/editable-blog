@@ -8,7 +8,7 @@
 <div>
   <div
     class={classNames(
-      'max-w-screen-md mx-auto px-6 md:text-xl',
+      'max-w-(--breakpoint-md) mx-auto px-6 md:text-xl',
       firstEntry ? 'pt-2 pb-8 sm:pb-12' : 'py-6 sm:py-10'
     )}
   >

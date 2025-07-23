@@ -44,7 +44,7 @@
 
 <div class="sticky top-0 z-10 sm:py-4 sm:px-4">
   <div
-    class="max-w-screen-lg mx-auto px-2 backdrop-blur-sm bg-white bg-opacity-95 border-b border-t sm:border sm:rounded-full border-gray-100 shadow"
+    class="max-w-(--breakpoint-lg) mx-auto px-2 backdrop-blur-xs bg-white bg-opacity-95 border-b border-t sm:border sm:rounded-full border-gray-100 shadow-sm"
   >
     <div>
       <div class="flex items-center overflow-x-auto py-3 px-1">

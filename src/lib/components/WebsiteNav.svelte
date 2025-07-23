@@ -35,7 +35,7 @@
 
 <div
   class={classNames(
-    'backdrop-blur-sm bg-white bg-opacity-95 transition-colors duration-500 z-10 text-sm',
+    'backdrop-blur-xs bg-white bg-opacity-95 transition-colors duration-500 z-10 text-sm',
     !$isEditing ? 'sticky top-0' : ''
   )}
 >

@@ -93,7 +93,7 @@
     autocomplete="off"
     id="search"
     name="search"
-    class="block w-full border-none bg-transparent px-0 py-2 placeholder-gray-300 focus:border-black focus:text-gray-900 focus:placeholder-gray-400 focus:outline-none focus:ring-0"
+    class="block w-full border-none bg-transparent px-0 py-2 placeholder-gray-300 focus:border-black focus:text-gray-900 focus:placeholder-gray-400 focus:outline-hidden focus:ring-0"
     placeholder="Search website ..."
     type="text"
   />

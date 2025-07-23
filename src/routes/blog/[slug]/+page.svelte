@@ -96,7 +96,7 @@
 {#if data.articles.length > 0}
   <NotEditable>
     <div class="border-t-2 border-gray-100">
-      <div class="max-w-screen-md mx-auto px-6 pt-8 sm:pt-12">
+      <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-8 sm:pt-12">
         <div class="font-bold text-sm">READ NEXT</div>
       </div>
       {#each data.articles as article, i}
