@@ -1,5 +1,23 @@
 # Changelog
 
+# [0.2.0](https://github.com/MohammadBnei/editable-blog/compare/0.1.0...0.2.0) (2025-07-24)
+
+
+### Bug Fixes
+
+* **api.js:** update import statements to use 'env' object for private variables ([ffe39dc](https://github.com/MohammadBnei/editable-blog/commit/ffe39dc3375c5323b87e915fb1567ff1025f70a8))
+* Ensure asset cleanup in updateArticle is non-blocking ([70682c0](https://github.com/MohammadBnei/editable-blog/commit/70682c04f173173fefa659d2f3f64c12d8f5c6eb))
+* Use dynamic private environment variables ([3ab89ec](https://github.com/MohammadBnei/editable-blog/commit/3ab89ecfb70eea44d24760f2e138c9bd662a1815))
+
+
+### Features
+
+* Add basic auth to webhook calls ([892521b](https://github.com/MohammadBnei/editable-blog/commit/892521bf0475eb113c20b5c3f6a3c361c6a95f10))
+* Add N8N_USERNAME and N8N_PASSWORD to environment variables ([b8df9d0](https://github.com/MohammadBnei/editable-blog/commit/b8df9d07ffffe4f161cf35489b849692b7a368f2))
+* Delete associated assets when deleting an article ([d266326](https://github.com/MohammadBnei/editable-blog/commit/d266326e17ca062fcf21ace1982ff0887acbc40c))
+* Implement asset cleanup on article update and refactor deleteArticle ([7374b15](https://github.com/MohammadBnei/editable-blog/commit/7374b158cbf7fa80c520101afc0b6723e34004b1))
+* Trigger webhook on article creation ([cb9c1c2](https://github.com/MohammadBnei/editable-blog/commit/cb9c1c218e9adc4100ce3faddf086f2d565155f7))
+
 # [0.1.0](https://github.com/MohammadBnei/editable-blog/compare/0.0.4...0.1.0) (2025-07-23)
 
 
