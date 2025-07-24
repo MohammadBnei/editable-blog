@@ -191,6 +191,14 @@ export async function getArticleBySlug(slug) {
 }
 
 /**
+ * Remove an asset by its ID.
+ */
+export async function deleteAsset(asset_id) {
+  const deleteResult = await query('DELETE FROM assets WHERE asset_id = $1', [asset_id]);
+  return deleteResult.rowCount > 0;
+}
+
+/**
  * Remove the entire article
  */
 export async function deleteArticle(slug, currentUser) {
@@ -199,7 +207,18 @@ export async function deleteArticle(slug, currentUser) {
   const article = await getArticleBySlug(slug);
   if (!article) throw new Error('Article not found');
 
-  
+  // Extract asset IDs from the article content and delete them
+  const imgRegex = /<img src="\/assets\/(images\/[^"]+)"/g;
+  let match;
+  const assetIdsToDelete = [];
+
+  while ((match = imgRegex.exec(article.content)) !== null) {
+    assetIdsToDelete.push(match[1]);
+  }
+
+  for (const assetId of assetIdsToDelete) {
+    await deleteAsset(assetId);
+  }
 
   const deleteResult = await query('DELETE FROM articles WHERE slug = $1', [slug]);
 
