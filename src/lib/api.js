@@ -1,6 +1,6 @@
 import slugify from 'slugify';
 import { SHORTCUTS } from './constants';
-import { ADMIN_PASSWORD, N8N_WEBHOOK_URL, N8N_USERNAME, N8N_PASSWORD } from '$env/dynamic/private';
+import { env } from '$env/dynamic/private';
 import { query } from '$lib/db'; // Import the PostgreSQL query function
 import { nanoid } from '$lib/util';
 import { Blob } from 'node:buffer';
@@ -36,22 +36,18 @@ export async function createArticle(title, content, teaser, currentUser) {
 
   const newArticle = insertResult.rows[0];
 
-  console.log({N8N_WEBHOOK_URL})
-
   // Trigger webhook if URL is provided
-  if (N8N_WEBHOOK_URL) {
+  if (env.N8N_WEBHOOK_URL) {
     try {
-      const webhookUrl = `${N8N_WEBHOOK_URL}?slug=${newArticle.slug}`;
+      const webhookUrl = `${env.N8N_WEBHOOK_URL}?slug=${newArticle.slug}`;
       const fetchOptions = {};
 
-      if (N8N_USERNAME && N8N_PASSWORD) {
-        const auth = Buffer.from(`${N8N_USERNAME}:${N8N_PASSWORD}`).toString('base64');
-        fetchOptions.headers = {
-          'Authorization': `Basic ${auth}`
-        };
-      }
+      const auth = Buffer.from(`${env.N8N_USERNAME}:${env.N8N_PASSWORD}`).toString('base64');
+      fetchOptions.headers = {
+        'Authorization': `Basic ${auth}`
+      };
       
-      fetch(webhookUrl, fetchOptions);
+      await fetch(webhookUrl, fetchOptions);
     } catch (error) {
       console.error('Error triggering webhook:', error);
     }
@@ -113,7 +109,7 @@ export async function updateArticle(slug, title, content, teaser, currentUser) {
 */
 export async function authenticate(password, sessionTimeout) {
   const expires = __getDateTimeMinutesAfter(sessionTimeout);
-  if (password === ADMIN_PASSWORD) {
+  if (password === env.ADMIN_PASSWORD) {
     const sessionId = nanoid();
 
     // Now is a good time to remove expired sessions

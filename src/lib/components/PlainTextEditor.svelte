@@ -77,7 +77,7 @@
 
 <div id="prosemirror-editor" bind:this={prosemirrorNode} />
 
-<style>
+<style >
   :global(#prosemirror-editor .ProseMirror) {
     outline: none;
     white-space: pre-wrap;
