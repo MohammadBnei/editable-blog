@@ -1,6 +1,6 @@
 import slugify from 'slugify';
 import { SHORTCUTS } from './constants';
-import { ADMIN_PASSWORD } from '$env/static/private';
+import { ADMIN_PASSWORD } from '$env/dynamic/private';
 import { query } from '$lib/db'; // Import the PostgreSQL query function
 import { nanoid } from '$lib/util';
 import { Blob } from 'node:buffer';
@@ -195,6 +195,11 @@ export async function getArticleBySlug(slug) {
  */
 export async function deleteArticle(slug, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
+
+  const article = await getArticleBySlug(slug);
+  if (!article) throw new Error('Article not found');
+
+  
 
   const deleteResult = await query('DELETE FROM articles WHERE slug = $1', [slug]);
 
