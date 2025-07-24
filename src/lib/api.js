@@ -43,20 +43,10 @@ export async function createArticle(title, content, teaser, currentUser) {
 export async function updateArticle(slug, title, content, teaser, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
 
-  const oldArticle = await getArticleBySlug(slug);
+  getArticleBySlug(slug).then(oldArticle => {
+    // Asset cleanup logic
+    if (!oldArticle) return;
 
-  const updateResult = await query(
-    `
-    UPDATE articles
-    SET title = $1, content = $2, teaser = $3, updated_at = NOW()
-    WHERE slug = $4
-    RETURNING slug, updated_at
-    `,
-    [title, content, teaser, slug]
-  );
-
-  // Asset cleanup logic
-  if (oldArticle) {
     const imgRegex = /<img src="\/assets\/(images\/[^"]+)"/g;
     const oldAssetIds = new Set();
     const newAssetIds = new Set();
@@ -77,11 +67,20 @@ export async function updateArticle(slug, title, content, teaser, currentUser) {
     // Identify assets to delete (present in old, not in new)
     const assetsToDelete = [...oldAssetIds].filter(assetId => !newAssetIds.has(assetId));
 
-    // Delete assets in a separate promise
-    Promise.all(assetsToDelete.map(assetId => deleteAsset(assetId))).catch(error => {
-      console.error('Error deleting old assets:', error);
-    });
-  }
+    for (const assetId of assetsToDelete) {
+      deleteAsset(assetId);
+    }
+  });
+
+  const updateResult = await query(
+    `
+    UPDATE articles
+    SET title = $1, content = $2, teaser = $3, updated_at = NOW()
+    WHERE slug = $4
+    RETURNING slug, updated_at
+    `,
+    [title, content, teaser, slug]
+  );
 
   return updateResult.rows[0];
 }
