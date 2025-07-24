@@ -42,7 +42,16 @@ export async function createArticle(title, content, teaser, currentUser) {
   if (N8N_WEBHOOK_URL) {
     try {
       const webhookUrl = `${N8N_WEBHOOK_URL}?slug=${newArticle.slug}`;
-      fetch(webhookUrl);
+      const fetchOptions = {};
+
+      if (N8N_USERNAME && N8N_PASSWORD) {
+        const auth = Buffer.from(`${N8N_USERNAME}:${N8N_PASSWORD}`).toString('base64');
+        fetchOptions.headers = {
+          'Authorization': `Basic ${auth}`
+        };
+      }
+      
+      fetch(webhookUrl, fetchOptions);
     } catch (error) {
       console.error('Error triggering webhook:', error);
     }
