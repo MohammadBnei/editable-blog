@@ -43,6 +43,8 @@ export async function createArticle(title, content, teaser, currentUser) {
 export async function updateArticle(slug, title, content, teaser, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
 
+  const oldArticle = await getArticleBySlug(slug);
+
   const updateResult = await query(
     `
     UPDATE articles
@@ -52,6 +54,34 @@ export async function updateArticle(slug, title, content, teaser, currentUser) {
     `,
     [title, content, teaser, slug]
   );
+
+  // Asset cleanup logic
+  if (oldArticle) {
+    const imgRegex = /<img src="\/assets\/(images\/[^"]+)"/g;
+    const oldAssetIds = new Set();
+    const newAssetIds = new Set();
+    let match;
+
+    // Extract asset IDs from old content
+    while ((match = imgRegex.exec(oldArticle.content)) !== null) {
+      oldAssetIds.add(match[1]);
+    }
+    // Reset regex lastIndex for new content scan
+    imgRegex.lastIndex = 0;
+
+    // Extract asset IDs from new content
+    while ((match = imgRegex.exec(content)) !== null) {
+      newAssetIds.add(match[1]);
+    }
+
+    // Identify assets to delete (present in old, not in new)
+    const assetsToDelete = [...oldAssetIds].filter(assetId => !newAssetIds.has(assetId));
+
+    // Delete assets in a separate promise
+    Promise.all(assetsToDelete.map(assetId => deleteAsset(assetId))).catch(error => {
+      console.error('Error deleting old assets:', error);
+    });
+  }
 
   return updateResult.rows[0];
 }
@@ -196,22 +226,22 @@ export async function getArticleBySlug(slug) {
 export async function deleteArticle(slug, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
 
-  getArticleBySlug(slug).then(async function (article) {
-    if (!article) return;
+  const article = await getArticleBySlug(slug);
+  if (!article) throw new Error('Article not found');
     
-    // Extract asset IDs from the article content and delete them
-    const imgRegex = /<img src="\/assets\/(images\/[^"]+)"/g;
-    let match;
-    const assetIdsToDelete = [];
-    
-    while ((match = imgRegex.exec(article.content)) !== null) {
-      assetIdsToDelete.push(match[1]);
-    }
-    
-    for (const assetId of assetIdsToDelete) {
-      await deleteAsset(assetId);
-    }
-  })
+  // Extract asset IDs from the article content and delete them
+  const imgRegex = /<img src="\/assets\/(images\/[^"]+)"/g;
+  let match;
+  const assetIdsToDelete = [];
+  
+  while ((match = imgRegex.exec(article.content)) !== null) {
+    assetIdsToDelete.push(match[1]);
+  }
+  
+  // Delete assets in a separate promise
+  Promise.all(assetIdsToDelete.map(assetId => deleteAsset(assetId))).catch(error => {
+    console.error('Error deleting assets during article deletion:', error);
+  });
 
   const deleteResult = await query('DELETE FROM articles WHERE slug = $1', [slug]);
 
