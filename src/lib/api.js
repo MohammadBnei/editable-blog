@@ -1,6 +1,6 @@
 import slugify from 'slugify';
 import { SHORTCUTS } from './constants';
-import { ADMIN_PASSWORD, N8N_WEBHOOK_URL } from '$env/dynamic/private';
+import { ADMIN_PASSWORD, N8N_WEBHOOK_URL, N8N_USERNAME, N8N_PASSWORD } from '$env/dynamic/private';
 import { query } from '$lib/db'; // Import the PostgreSQL query function
 import { nanoid } from '$lib/util';
 import { Blob } from 'node:buffer';
@@ -36,12 +36,13 @@ export async function createArticle(title, content, teaser, currentUser) {
 
   const newArticle = insertResult.rows[0];
 
+  console.log({N8N_WEBHOOK_URL})
+
   // Trigger webhook if URL is provided
   if (N8N_WEBHOOK_URL) {
     try {
       const webhookUrl = `${N8N_WEBHOOK_URL}?slug=${newArticle.slug}`;
-      await fetch(webhookUrl);
-      console.log(`Webhook triggered for new article: ${newArticle.slug}`);
+      fetch(webhookUrl);
     } catch (error) {
       console.error('Error triggering webhook:', error);
     }
