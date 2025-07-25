@@ -37,17 +37,30 @@ export async function createArticle(title, content, teaser, currentUser, lang = 
   const newArticle = insertResult.rows[0];
 
   // Trigger webhook if URL is provided
-  if (env.N8N_WEBHOOK_URL) {
+  if (env.N8N_WEBHOOK_URL && newArticle.slug) {
     try {
-      const webhookUrl = `${env.N8N_WEBHOOK_URL}?slug=${newArticle.slug}`;
-      const fetchOptions = {};
+      // Trigger webhook for language detection
+      const langWebhookUrl = `${env.N8N_WEBHOOK_URL}?getLang=true&slug=${newArticle.slug}`;
+      const langFetchOptions = {};
 
       const auth = Buffer.from(`${env.N8N_USERNAME}:${env.N8N_PASSWORD}`).toString('base64');
-      fetchOptions.headers = {
+      langFetchOptions.headers = {
         'Authorization': `Basic ${auth}`
       };
       
-      await fetch(webhookUrl, fetchOptions);
+      const langResponse = await fetch(langWebhookUrl, langFetchOptions);
+      if (langResponse.ok) {
+        const { lang: detectedLang } = await langResponse.json();
+        if (detectedLang) {
+          await query('UPDATE articles SET lang = $1 WHERE slug = $2', [detectedLang, newArticle.slug]);
+        }
+      } else {
+        console.error('Failed to get language from webhook:', langResponse.status, langResponse.statusText);
+      }
+
+      // Original webhook trigger (if needed for other purposes)
+      const webhookUrl = `${env.N8N_WEBHOOK_URL}?slug=${newArticle.slug}`;
+      await fetch(webhookUrl, langFetchOptions); // Re-using langFetchOptions as it contains auth
     } catch (error) {
       console.error('Error triggering webhook:', error);
     }
@@ -91,14 +104,37 @@ export async function updateArticle(slug, title, content, teaser, currentUser) {
     }
   });
 
+  let detectedLang = 'en'; // Default language
+  // Trigger webhook for language detection on update
+  if (env.N8N_WEBHOOK_URL && slug) {
+    try {
+      const langWebhookUrl = `${env.N8N_WEBHOOK_URL}?getLang=true&slug=${slug}`;
+      const langFetchOptions = {};
+
+      const auth = Buffer.from(`${env.N8N_USERNAME}:${env.N8N_PASSWORD}`).toString('base64');
+      langFetchOptions.headers = {
+        'Authorization': `Basic ${auth}`
+      };
+      
+      const langResponse = await fetch(langWebhookUrl, langFetchOptions);
+      if (langResponse.ok) {
+        const { lang: fetchedLang } = await langResponse.json();
+        if (fetchedLang) {
+          detectedLang = fetchedLang;
+        }
+      } else {
+        console.error('Failed to get language from webhook on update:', langResponse.status, langResponse.statusText);
+      }
+    } catch (error) {
+      console.error('Error triggering language webhook on update:', error);
+    }
+  }
+
   const updateResult = await query(
     `
-    UPDATE articles
-    SET title = $1, content = $2, teaser = $3, updated_at = NOW()
-    WHERE slug = $4
-    RETURNING slug, updated_at
+    UPDATE articles SET title = $1, content = $2, teaser = $3, updated_at = NOW(), lang = $4 WHERE slug = $5 RETURNING slug, updated_at
     `,
-    [title, content, teaser, slug]
+    [title, content, teaser, detectedLang, slug]
   );
 
   return updateResult.rows[0];
@@ -144,14 +180,14 @@ export async function getArticles(currentUser) {
   if (currentUser) {
     // When logged in, show both drafts and published articles
     articlesResult = await query(
-      'SELECT *, COALESCE(published_at, updated_at, created_at) AS modified_at FROM articles ORDER BY modified_at DESC'
+      'SELECT *, COALESCE(published_at, updated_at, created_at) AS modified_at FROM articles ORDER BY modified_at DESC, lang ASC'
     );
   } else {
     articlesResult = await query(
-      'SELECT * FROM articles WHERE published_at IS NOT NULL ORDER BY published_at DESC'
+      'SELECT * FROM articles WHERE published_at IS NOT NULL ORDER BY published_at DESC, lang ASC'
     );
   }
-
+  
   return articlesResult.rows;
 }
 
