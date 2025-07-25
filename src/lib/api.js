@@ -11,7 +11,7 @@ import { Blob } from 'node:buffer';
 /**
  * Creates a new article
  */
-export async function createArticle(title, content, teaser, currentUser) {
+export async function createArticle(title, content, teaser, currentUser, lang = 'en') {
   if (!currentUser) throw new Error('Not authorized');
 
   let slug = slugify(title, {
