@@ -104,37 +104,11 @@ export async function updateArticle(slug, title, content, teaser, currentUser) {
     }
   });
 
-  let detectedLang = 'en'; // Default language
-  // Trigger webhook for language detection on update
-  if (env.N8N_WEBHOOK_URL && slug) {
-    try {
-      const langWebhookUrl = `${env.N8N_WEBHOOK_URL}?getLang=true&slug=${slug}`;
-      const langFetchOptions = {};
-
-      const auth = Buffer.from(`${env.N8N_USERNAME}:${env.N8N_PASSWORD}`).toString('base64');
-      langFetchOptions.headers = {
-        'Authorization': `Basic ${auth}`
-      };
-      
-      const langResponse = await fetch(langWebhookUrl, langFetchOptions);
-      if (langResponse.ok) {
-        const { lang: fetchedLang } = await langResponse.json();
-        if (fetchedLang) {
-          detectedLang = fetchedLang;
-        }
-      } else {
-        console.error('Failed to get language from webhook on update:', langResponse.status, langResponse.statusText);
-      }
-    } catch (error) {
-      console.error('Error triggering language webhook on update:', error);
-    }
-  }
-
   const updateResult = await query(
     `
-    UPDATE articles SET title = $1, content = $2, teaser = $3, updated_at = NOW(), lang = $4 WHERE slug = $5 RETURNING slug, updated_at
+    UPDATE articles SET title = $1, content = $2, teaser = $3, updated_at = NOW() WHERE slug = $4 RETURNING slug, updated_at
     `,
-    [title, content, teaser, detectedLang, slug]
+    [title, content, teaser, slug]
   );
 
   return updateResult.rows[0];
