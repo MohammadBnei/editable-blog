@@ -1,6 +1,7 @@
 import { Pool } from 'pg';
 import { env } from '$env/dynamic/private';
 import { schema } from './schema';
+import { applyMigrations } from './migrations';
 
 const pool = new Pool({
   connectionString: env.DATABASE_URL
@@ -21,8 +22,11 @@ export async function query(q, params) {
  */
 export async function migrate() {
   try {
-    await query(schema);
-    console.log('Database schema applied successfully.');
+    // Apply the base schema first (e.g., for initial setup)
+    await query(schema); // This will create tables if they don't exist
+    console.log('Base database schema ensured.');
+    // Then apply incremental migrations
+    await applyMigrations();
   } catch (error) {
     console.error('Error applying database schema:', error);
     throw error;

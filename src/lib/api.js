@@ -19,19 +19,19 @@ export async function createArticle(title, content, teaser, currentUser, lang = 
     strict: true
   });
 
-  // If slug is already used, we add a unique postfix
-  const articleExistsResult = await query('SELECT * FROM articles WHERE slug = $1', [slug]);
+  // If (slug, lang) is already used, we add a unique postfix to the slug
+  const articleExistsResult = await query('SELECT * FROM articles WHERE slug = $1 AND lang = $2', [slug, lang]);
   if (articleExistsResult.rows.length > 0) {
     slug = slug + '-' + nanoid();
   }
 
   const insertResult = await query(
     `
-    INSERT INTO articles (slug, title, content, teaser, published_at)
-    VALUES($1, $2, $3, $4, NOW())
-    RETURNING slug, created_at
+    INSERT INTO articles (slug, title, content, teaser, published_at, lang)
+    VALUES($1, $2, $3, $4, NOW(), $5)
+    RETURNING slug, created_at, lang
     `,
-    [slug, title, content, teaser]
+    [slug, title, content, teaser, lang]
   );
 
   const newArticle = insertResult.rows[0];
@@ -51,7 +51,7 @@ export async function createArticle(title, content, teaser, currentUser, lang = 
       const langResponse = await fetch(langWebhookUrl, langFetchOptions);
       if (langResponse.ok) {
         const { lang: detectedLang } = await langResponse.json();
-        if (detectedLang) {
+        if (detectedLang && detectedLang !== newArticle.lang) { // Only update if different from initial 'en'
           await query('UPDATE articles SET lang = $1 WHERE slug = $2', [detectedLang, newArticle.slug]);
         }
       } else {
@@ -72,10 +72,10 @@ export async function createArticle(title, content, teaser, currentUser, lang = 
 /**
  * We automatically extract a teaser text from the document's content.
  */
-export async function updateArticle(slug, title, content, teaser, currentUser) {
+export async function updateArticle(slug, lang, title, content, teaser, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
 
-  getArticleBySlug(slug).then(oldArticle => {
+  getArticleBySlug(slug, lang).then(oldArticle => {
     // Asset cleanup logic
     if (!oldArticle) return;
 
@@ -106,9 +106,9 @@ export async function updateArticle(slug, title, content, teaser, currentUser) {
 
   const updateResult = await query(
     `
-    UPDATE articles SET title = $1, content = $2, teaser = $3, updated_at = NOW() WHERE slug = $4 RETURNING slug, updated_at
+    UPDATE articles SET title = $1, content = $2, teaser = $3, updated_at = NOW() WHERE slug = $4 AND lang = $5 RETURNING slug, updated_at
     `,
-    [title, content, teaser, slug]
+    [title, content, teaser, slug, lang] // Added lang to WHERE clause
   );
 
   return updateResult.rows[0];
@@ -152,11 +152,12 @@ export async function getArticles(currentUser) {
   let articlesResult;
 
   if (currentUser) {
-    // When logged in, show both drafts and published articles
+    // When logged in, show both drafts and published articles, ordered by modified_at and then lang
     articlesResult = await query(
       'SELECT *, COALESCE(published_at, updated_at, created_at) AS modified_at FROM articles ORDER BY modified_at DESC, lang ASC'
     );
   } else {
+    // When not logged in, show only published articles, ordered by published_at and then lang
     articlesResult = await query(
       'SELECT * FROM articles WHERE published_at IS NOT NULL ORDER BY published_at DESC, lang ASC'
     );
@@ -168,7 +169,7 @@ export async function getArticles(currentUser) {
 /**
  * Given a slug, determine article to "read next"
  */
-export async function getNextArticle(slug) {
+export async function getNextArticle(slug, lang) {
   const queryText = `
     WITH previous_published AS (
       SELECT
@@ -177,8 +178,8 @@ export async function getNextArticle(slug) {
         slug,
         published_at
       FROM articles
-      WHERE
-        published_at < (SELECT published_at FROM articles WHERE slug = $1)
+      WHERE lang = $2 AND
+        published_at < (SELECT published_at FROM articles WHERE slug = $1 AND lang = $2)
       ORDER BY published_at DESC
       LIMIT 1
     ),
@@ -189,7 +190,7 @@ export async function getNextArticle(slug) {
         slug,
         published_at
       FROM articles
-      WHERE slug <> $1
+      WHERE slug <> $1 AND lang = $2
       ORDER BY published_at DESC
       LIMIT 1
     )
@@ -202,8 +203,8 @@ export async function getNextArticle(slug) {
     ORDER BY published_at ASC
     LIMIT 1;
   `;
-
-  const result = await query(queryText, [slug]);
+  // Pass both slug and lang to the query
+  const result = await query(queryText, [slug, lang]);
   return result.rows[0];
 }
 
@@ -243,18 +244,18 @@ export async function search(q, currentUser) {
 /**
  * Retrieve article based on a given slug
  */
-export async function getArticleBySlug(slug) {
-  const result = await query('SELECT * FROM articles WHERE slug = $1', [slug]);
+export async function getArticleBySlug(slug, lang) {
+  const result = await query('SELECT * FROM articles WHERE slug = $1 AND lang = $2', [slug, lang]);
   return result.rows[0];
 }
 
 /**
  * Remove the entire article
  */
-export async function deleteArticle(slug, currentUser) {
+export async function deleteArticle(slug, lang, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
 
-  const article = await getArticleBySlug(slug);
+  const article = await getArticleBySlug(slug, lang);
   if (!article) throw new Error('Article not found');
     
   // Extract asset IDs from the article content and delete them
@@ -271,7 +272,7 @@ export async function deleteArticle(slug, currentUser) {
     console.error('Error deleting assets during article deletion:', error);
   });
 
-  const deleteResult = await query('DELETE FROM articles WHERE slug = $1', [slug]);
+  const deleteResult = await query('DELETE FROM articles WHERE slug = $1 AND lang = $2', [slug, lang]);
 
   return deleteResult.rowCount > 0;
 }
