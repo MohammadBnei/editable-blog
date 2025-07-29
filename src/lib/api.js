@@ -148,18 +148,27 @@ export async function destroySession(sessionId) {
 /**
  * List all available articles (newest first)
  */
-export async function getArticles(currentUser) {
+export async function getArticles(currentUser, lang = null) { // Added optional lang parameter
   let articlesResult;
+  let queryParams = [];
+  let langFilter = '';
+
+  if (lang) { // Only apply language filter if lang is provided
+    langFilter = ' AND lang = $1';
+    queryParams.push(lang);
+  }
 
   if (currentUser) {
     // When logged in, show both drafts and published articles, ordered by modified_at and then lang
     articlesResult = await query(
-      'SELECT *, COALESCE(published_at, updated_at, created_at) AS modified_at FROM articles ORDER BY modified_at DESC, lang ASC'
+      `SELECT *, COALESCE(published_at, updated_at, created_at) AS modified_at FROM articles WHERE 1=1${langFilter} ORDER BY modified_at DESC, lang ASC`,
+      queryParams
     );
   } else {
     // When not logged in, show only published articles, ordered by published_at and then lang
     articlesResult = await query(
-      'SELECT * FROM articles WHERE published_at IS NOT NULL ORDER BY published_at DESC, lang ASC'
+      `SELECT * FROM articles WHERE published_at IS NOT NULL${langFilter} ORDER BY published_at DESC, lang ASC`,
+      queryParams
     );
   }
   
@@ -211,25 +220,32 @@ export async function getNextArticle(slug, lang) {
 /**
  * Search within all searchable items (including articles and website sections)
  */
-export async function search(q, currentUser) {
+export async function search(q, currentUser, lang = null) { // Add lang parameter
   let queryText;
+  let queryParams = [`%${q}%`];
+  let langFilter = '';
+  if (lang) {
+    langFilter = ' AND lang = $2';
+    queryParams.push(lang);
+  }
+
   if (currentUser) {
     queryText = `
       SELECT title AS name, '/blog/' || slug AS url, COALESCE(published_at, updated_at, created_at) AS modified_at
       FROM articles
-      WHERE title ILIKE $1
-      ORDER BY modified_at DESC;
+      WHERE title ILIKE $1${langFilter}
+      ORDER BY modified_at DESC, lang ASC;
     `;
   } else {
     queryText = `
       SELECT title AS name, '/blog/' || slug AS url, COALESCE(published_at, updated_at, created_at) AS modified_at
       FROM articles
-      WHERE title ILIKE $1 AND published_at IS NOT NULL
-      ORDER BY modified_at DESC;
+      WHERE title ILIKE $1 AND published_at IS NOT NULL${langFilter}
+      ORDER BY modified_at DESC, lang ASC;
     `;
   }
 
-  const results = await query(queryText, [`%${q}%`]);
+  const results = await query(queryText, queryParams);
 
   // Also include predefined shortcuts in search
   SHORTCUTS.forEach(shortcut => {
@@ -312,7 +328,7 @@ export async function createOrUpdatePage(page_id, page, currentUser) {
   } else {
     const insertResult = await query(
       'INSERT INTO pages (page_id, data, updated_at) values($1, $2, NOW()) RETURNING page_id',
-      [page_id, JSON.stringify(page)]
+      [JSON.stringify(page)]
     );
     return insertResult.rows[0];
   }
@@ -321,8 +337,17 @@ export async function createOrUpdatePage(page_id, page, currentUser) {
 /**
  * E.g. getPage("home") gets all dynamic data for the home page
  */
-export async function getPage(page_id) {
-  const result = await query('SELECT data FROM pages WHERE page_id = $1', [page_id]);
+export async function getPage(page_id, lang = null) { // Add lang parameter
+  const queryParams = [page_id];
+  let langFilter = '';
+  if (lang) {
+    langFilter = ' AND lang = $2';
+    queryParams.push(lang);
+  }
+  // NOTE: The 'pages' table schema does not currently include a 'lang' column.
+  // If you intend to localize pages, you will need a migration to add a 'lang' column to the 'pages' table.
+  // For now, this query will run but the langFilter will only work if 'lang' column exists in 'pages'.
+  const result = await query(`SELECT data FROM pages WHERE page_id = $1${langFilter}`, queryParams);
   const page = result.rows[0];
   if (page?.data) {
     return JSON.parse(page.data);

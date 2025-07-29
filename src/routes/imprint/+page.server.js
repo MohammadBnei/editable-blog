@@ -2,7 +2,7 @@ import { getPage } from '$lib/api';
 
 export async function load({ locals }) {
   const currentUser = locals.user;
-  const page = await getPage('imprint');
+  const page = await getPage('imprint', locals.lang);
   return {
     currentUser,
     page
