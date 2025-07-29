@@ -244,7 +244,7 @@ export async function search(q, currentUser) {
 /**
  * Retrieve article based on a given slug
  */
-export async function getArticleBySlug(slug, lang) {
+export async function getArticleBySlug(slug, lang = 'en') {
   const result = await query('SELECT * FROM articles WHERE slug = $1 AND lang = $2', [slug, lang]);
   return result.rows[0];
 }
@@ -254,6 +254,7 @@ export async function getArticleBySlug(slug, lang) {
  */
 export async function deleteArticle(slug, lang, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
+  if (!lang) throw new Error('Missing lang');
 
   const article = await getArticleBySlug(slug, lang);
   if (!article) throw new Error('Article not found');
