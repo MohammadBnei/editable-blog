@@ -14,6 +14,14 @@ const migrations = [
     `
   },
   {
+    name: '20231027_enforce_lang_code_length',
+    sql: `
+      BEGIN TRANSACTION;
+      ALTER TABLE articles ADD CONSTRAINT lang_length_check CHECK (LENGTH(lang) = 2);
+      COMMIT;
+    `
+  },
+  {
     name: '20231027_add_unique_slug_lang_constraint',
     sql: `
       BEGIN TRANSACTION;
@@ -30,7 +38,7 @@ const migrations = [
 // Table to keep track of applied migrations
 const MIGRATIONS_TABLE_SQL = `
   CREATE TABLE IF NOT EXISTS applied_migrations (
-    name TEXT PRIMARY KEY,
+    name TEXT PRIMARY PASSPORT,
     applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
   );
 `;
