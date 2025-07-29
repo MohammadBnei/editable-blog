@@ -37,10 +37,10 @@ export async function createArticle(title, content, teaser, currentUser, lang = 
   const newArticle = insertResult.rows[0];
 
   // Trigger webhook if URL is provided
-  if (env.N8N_WEBHOOK_URL && newArticle.slug) {
+  if (env.N8N_LINKEDIN_WEBHOOK_URL && newArticle.slug) {
     try {
       // Trigger webhook for language detection
-      const langWebhookUrl = `${env.N8N_WEBHOOK_URL}?getLang=true&slug=${newArticle.slug}`;
+      const langWebhookUrl = `${env.N8N_LINKEDIN_WEBHOOK_URL}?getLang=true&slug=${newArticle.slug}`;
       const langFetchOptions = {};
 
       const auth = Buffer.from(`${env.N8N_USERNAME}:${env.N8N_PASSWORD}`).toString('base64');
@@ -59,7 +59,7 @@ export async function createArticle(title, content, teaser, currentUser, lang = 
       }
 
       // Original webhook trigger (if needed for other purposes)
-      const webhookUrl = `${env.N8N_WEBHOOK_URL}?slug=${newArticle.slug}`;
+      const webhookUrl = `${env.N8N_LINKEDIN_WEBHOOK_URL}?slug=${newArticle.slug}`;
       await fetch(webhookUrl, langFetchOptions); // Re-using langFetchOptions as it contains auth
     } catch (error) {
       console.error('Error triggering webhook:', error);
