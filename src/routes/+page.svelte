@@ -14,7 +14,7 @@
   import { currentUser, isEditing } from '$lib/stores.js';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
 
-  export let data;
+  let data = $props();
 
   // --------------------------------------------------------------------------
   // DEFAULT PAGE CONTENT - AJDUST TO YOUR NEEDS
@@ -55,6 +55,7 @@
 
   function initOrReset() {
     $currentUser = data.currentUser;
+    console.log({page: data.page})
     title = data.page?.title || 'Mohammad-Amine BANAEI - <br>Projects & Knowledge Blog';
     faqs = data.page?.faqs || FAQS_PLACEHOLDER;
 
@@ -181,7 +182,7 @@
   <link rel="canonical" href="https://blog.bnei.dev" />
 </svelte:head>
 
-<WebsiteHeader bind:showUserMenu on:cancel={initOrReset} on:save={savePage}>
+<WebsiteHeader bind:showUserMenu cancel={initOrReset} save={savePage}>
   <PrimaryButton on:click={toggleEdit}>Edit Page</PrimaryButton>
   <LoginMenu />
 </WebsiteHeader>
