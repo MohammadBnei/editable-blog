@@ -315,20 +315,20 @@ export async function getCurrentUser(session_id) {
 /**
  * Update the page
  */
-export async function createOrUpdatePage(page_id, page, currentUser) {
+export async function createOrUpdatePage(page_id, page, currentUser, lang = 'en') {
   if (!currentUser) throw new Error('Not authorized');
 
-  const pageExistsResult = await query('SELECT page_id FROM pages WHERE page_id = $1', [page_id]);
+  const pageExistsResult = await query('SELECT page_id FROM pages WHERE page_id = $1 AND lang = $2', [page_id, lang]);
   if (pageExistsResult.rows.length > 0) {
     const updateResult = await query(
-      'UPDATE pages SET data = $1, updated_at = NOW() WHERE page_id = $2 RETURNING page_id',
-      [JSON.stringify(page), page_id]
+      'UPDATE pages SET data = $1, updated_at = NOW() WHERE page_id = $2 AND lang = $3 RETURNING page_id',
+      [JSON.stringify(page), page_id, lang]
     );
     return updateResult.rows[0];
   } else {
     const insertResult = await query(
-      'INSERT INTO pages (page_id, data, updated_at) values($1, $2, NOW()) RETURNING page_id',
-      [JSON.stringify(page)]
+      'INSERT INTO pages (page_id, data, updated_at, lang) values($1, $2, NOW(), $3) RETURNING page_id',
+      [page_id, JSON.stringify(page), lang]
     );
     return insertResult.rows[0];
   }
@@ -337,17 +337,9 @@ export async function createOrUpdatePage(page_id, page, currentUser) {
 /**
  * E.g. getPage("home") gets all dynamic data for the home page
  */
-export async function getPage(page_id, lang = null) { // Add lang parameter
-  const queryParams = [page_id];
-  let langFilter = '';
-  if (lang) {
-    langFilter = ' AND lang = $2';
-    queryParams.push(lang);
-  }
-  // NOTE: The 'pages' table schema does not currently include a 'lang' column.
-  // If you intend to localize pages, you will need a migration to add a 'lang' column to the 'pages' table.
-  // For now, this query will run but the langFilter will only work if 'lang' column exists in 'pages'.
-  const result = await query(`SELECT data FROM pages WHERE page_id = $1${langFilter}`, queryParams);
+export async function getPage(page_id, lang = 'en') { // Add lang parameter with default
+  const queryParams = [page_id, lang];
+  const result = await query(`SELECT data FROM pages WHERE page_id = $1 AND lang = $2`, queryParams);
   const page = result.rows[0];
   if (page?.data) {
     return JSON.parse(page.data);
