@@ -6,7 +6,6 @@
   import { isEditing, currentUser, currentLang } from '$lib/stores'; // Import currentLang store
   import { goto } from '$app/navigation';
 
-  // TODO: Replace with a globally managed context menu implementation (only one active)
   let { showUserMenu, showSearch } = $props();
 
   function onKeyDown(e) {
@@ -46,7 +45,7 @@
 </script>
 
 {#if showSearch}
-  <Modal position="top" on:close={() => (showSearch = false)}>
+  <Modal position="top" onClose={() => (showSearch = false)}>
     <Search bind:showSearch />
   </Modal>
 {/if}
@@ -119,4 +118,4 @@
   </div>
 </div>
 
-<svelte:window on:keydown={onKeyDown} />
+<svelte:window onkeydown={onKeyDown} />
