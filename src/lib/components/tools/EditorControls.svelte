@@ -20,15 +20,7 @@
     editorState = value?.state;
   });
 
-  const dispatch = createEventDispatcher();
-
-  function handleCancel() {
-    dispatch('cancel', {});
-  }
-
-  function handleSave() {
-    dispatch('save', {});
-  }
+  const { save, cancel } = $props();
 
   onDestroy(unsubscribe);
 
@@ -153,9 +145,9 @@
         {/if}
 
         <div class="flex-1 h-8" />
-        <SecondaryButton type="button" on:click={handleCancel}>Cancel</SecondaryButton>
+        <SecondaryButton type="button" on:click={cancel}>Cancel</SecondaryButton>
         <div class="shrink-0 w-2 sm:w-4" />
-        <PrimaryButton type="button" on:click={handleSave}>Save</PrimaryButton>
+        <PrimaryButton type="button" on:click={save}>Save</PrimaryButton>
       </div>
     </div>
   </div>
