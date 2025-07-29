@@ -5,8 +5,8 @@
 
   let { editorView, editorState } = $props();
 
-  $: schema = editorState.schema;
-  $: disabled = !createLink(editorState, null, editorView);
+  const schema = $derived(editorState.schema);
+  const disabled = $derived(!createLink(editorState, null, editorView));
 
   function handleClick() {
     let url = prompt('Enter link URL', 'https://example.com');
