@@ -6,6 +6,14 @@ const migrations = [
   // Initial schema is applied by src/lib/db.js's migrate function
   // Add subsequent migrations here
   {
+    name: '20231027_add_lang_column_to_articles',
+    sql: `
+      BEGIN TRANSACTION;
+      ALTER TABLE articles ADD COLUMN IF NOT EXISTS lang TEXT DEFAULT 'en' NOT NULL;
+      COMMIT;
+    `
+  },
+  {
     name: '20231027_add_unique_slug_lang_constraint',
     sql: `
       BEGIN TRANSACTION;
