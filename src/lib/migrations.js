@@ -18,6 +18,7 @@ const migrations = [
     sql: `
       BEGIN TRANSACTION;
       ALTER TABLE articles ADD CONSTRAINT lang_length_check CHECK (LENGTH(lang) = 2);
+      UPDATE articles SET lang = 'en' WHERE lang IS NULL; -- Ensure existing rows have 'en' if lang was null
       COMMIT;
     `
   },
