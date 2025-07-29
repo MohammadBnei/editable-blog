@@ -5,11 +5,12 @@
 
   let { editorView, editorState } = $props();
 
-  $: schema = editorState.schema;
-  $: disabled =
+  const schema = $derived(editorState.schema);
+  const disabled = $derived(
     !setBlockType(schema.nodes.heading)(editorState) &&
-    !setBlockType(schema.nodes.paragraph)(editorState);
-  $: active = blockTypeActive(schema.nodes.heading, { level: 1 })(editorState);
+    !setBlockType(schema.nodes.paragraph)(editorState)
+  );
+  const active = $derived(blockTypeActive(schema.nodes.heading, { level: 1 })(editorState));
 
   function handleClick() {
     if (active) {

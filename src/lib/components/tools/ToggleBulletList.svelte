@@ -4,8 +4,8 @@
 
   let { editorView, editorState } = $props();
 
-  $: schema = editorState.schema;
-  $: disabled = !wrapInList(schema.nodes.bullet_list)(editorView.state);
+  const schema = $derived(editorState.schema);
+  const disabled = $derived(!wrapInList(schema.nodes.bullet_list)(editorView.state));
 
   function handleClick() {
     wrapInList(schema.nodes.bullet_list)(editorState, editorView.dispatch);

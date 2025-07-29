@@ -5,12 +5,12 @@
 
   let { editorView, editorState, type } = $props();
 
-  $: schema = editorState.schema;
-  $: markType = schema.marks[type];
+  const schema = $derived(editorState.schema);
+  const markType = $derived(schema.marks[type]);
 
-  $: command = toggleMark(markType);
-  $: disabled = !markType || !command(editorState, null);
-  $: active = markActive(markType)(editorState);
+  const command = $derived(toggleMark(markType));
+  const disabled = $derived(!markType || !command(editorState, null));
+  const active = $derived(markActive(markType)(editorState));
 
   function handleClick() {
     command(editorState, editorView.dispatch, editorView);

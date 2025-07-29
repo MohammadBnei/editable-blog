@@ -9,8 +9,8 @@
   let fileInput; // for uploading an image
   let progress = undefined; // file upload progress
 
-  $: schema = editorState.schema;
-  $: disabled = !insertImage(editorState, null, editorView);
+  const schema = $derived(editorState.schema);
+  const disabled = $derived(!insertImage(editorState, null, editorView));
 
   async function uploadImage() {
     const file = fileInput.files[0];

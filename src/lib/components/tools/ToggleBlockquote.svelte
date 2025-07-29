@@ -4,8 +4,8 @@
 
   let { editorView, editorState } = $props();
 
-  $: schema = editorState.schema;
-  $: disabled = !wrapIn(schema.nodes.blockquote)(editorView.state);
+  const schema = $derived(editorState.schema);
+  const disabled = $derived(!wrapIn(schema.nodes.blockquote)(editorView.state));
 
   function handleClick() {
     wrapIn(schema.nodes.blockquote)(editorState, editorView.dispatch);
