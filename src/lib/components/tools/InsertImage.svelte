@@ -4,8 +4,7 @@
   import { insertImage } from '$lib/editor/prosemirrorCommands';
   import { currentUser } from '$lib/stores';
 
-  export let editorView;
-  export let editorState;
+  let { editorView, editorState } = $props();
 
   let fileInput; // for uploading an image
   let progress = undefined; // file upload progress
@@ -69,10 +68,10 @@
   name="imagefile"
   multiple
   bind:this={fileInput}
-  on:change={uploadImage}
+  onchange={uploadImage}
 />
 <button
-  on:click={() => fileInput.click()}
+  onclick={() => fileInput.click()}
   {disabled}
   class={classNames('hover:bg-gray-100 sm:mx-1 rounded-full p-2 disabled:opacity-30')}
 >

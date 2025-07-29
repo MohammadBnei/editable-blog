@@ -7,7 +7,6 @@
   import ToggleOrderedList from './ToggleOrderedList.svelte';
   import PrimaryButton from '../PrimaryButton.svelte';
   import SecondaryButton from '../SecondaryButton.svelte';
-  import { createEventDispatcher } from 'svelte';
   import ToggleHeading from './ToggleHeading.svelte';
   import InsertImage from './InsertImage.svelte';
   import CreateLink from './CreateLink.svelte';
@@ -20,14 +19,14 @@
     editorState = value?.state;
   });
 
-  const { save, cancel } = $props();
+  let { save, cancel } = $props();
 
   onDestroy(unsubscribe);
 
   function onKeyDown(e) {
     // Trigger save
     if (e.key === 's' && e.metaKey) {
-      dispatch('save', {});
+      save?.();
       e.preventDefault();
       e.stopPropagation();
     }
@@ -145,12 +144,12 @@
         {/if}
 
         <div class="flex-1 h-8" />
-        <SecondaryButton type="button" on:click={cancel}>Cancel</SecondaryButton>
+        <SecondaryButton type="button" onclick={cancel}>Cancel</SecondaryButton>
         <div class="shrink-0 w-2 sm:w-4" />
-        <PrimaryButton type="button" on:click={save}>Save</PrimaryButton>
+        <PrimaryButton type="button" onclick={save}>Save</PrimaryButton>
       </div>
     </div>
   </div>
 </div>
 
-<svelte:window on:keydown={onKeyDown} />
+<svelte:window onkeydown={onKeyDown} />

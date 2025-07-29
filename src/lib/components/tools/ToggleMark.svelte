@@ -3,9 +3,7 @@
   import { markActive } from '$lib/editor/prosemirrorUtil';
   import { classNames } from '$lib/util';
 
-  export let editorView;
-  export let editorState;
-  export let type;
+  let { editorView, editorState, type } = $props();
 
   $: schema = editorState.schema;
   $: markType = schema.marks[type];
@@ -21,7 +19,7 @@
 </script>
 
 <button
-  on:click={handleClick}
+  onclick={handleClick}
   {disabled}
   class={classNames(
     active ? 'bg-gray-900 text-white' : 'hover:bg-gray-100',

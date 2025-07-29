@@ -3,8 +3,7 @@
   import { setBlockType } from 'prosemirror-commands';
   import { blockTypeActive } from '$lib/editor/prosemirrorUtil';
 
-  export let editorView;
-  export let editorState;
+  let { editorView, editorState } = $props();
 
   $: schema = editorState.schema;
   $: disabled =
@@ -23,7 +22,7 @@
 </script>
 
 <button
-  on:click={handleClick}
+  onclick={handleClick}
   {disabled}
   class={classNames(
     active ? 'bg-gray-900 text-white' : 'hover:bg-gray-100',

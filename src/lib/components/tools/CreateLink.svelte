@@ -3,8 +3,7 @@
   import { toggleMark } from 'prosemirror-commands';
   import { createLink } from '$lib/editor/prosemirrorCommands';
 
-  export let editorView;
-  export let editorState;
+  let { editorView, editorState } = $props();
 
   $: schema = editorState.schema;
   $: disabled = !createLink(editorState, null, editorView);
@@ -19,7 +18,7 @@
 </script>
 
 <button
-  on:click={handleClick}
+  onclick={handleClick}
   {disabled}
   class={classNames('disabled:opacity-30 rounded-full p-2 sm:mx-1 hover:bg-gray-100')}
 >
