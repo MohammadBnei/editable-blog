@@ -1,5 +1,40 @@
 # Changelog
 
+# [0.3.0](https://github.com/MohammadBnei/editable-blog/compare/0.2.0...0.3.0) (2025-07-29)
+
+
+### Bug Fixes
+
+* Add default language and validation for article operations ([615acc2](https://github.com/MohammadBnei/editable-blog/commit/615acc247cdd85b2682b33b881b9fd28ce07e1e3))
+* Bind testimonial in each block using array index ([ee5a43d](https://github.com/MohammadBnei/editable-blog/commit/ee5a43d3013b3839aa39033597959aa5bbc4fd5f))
+* Ensure existing articles have 'en' as default language ([e446ba4](https://github.com/MohammadBnei/editable-blog/commit/e446ba452d89067b3d5c65673d4077f9d08971cc))
+* Remove lang column from articles table in schema ([4312ac5](https://github.com/MohammadBnei/editable-blog/commit/4312ac5a6b88f2f73f111ff7d568288f2a2ee4ed))
+* Remove language detection from updateArticle function ([883dc43](https://github.com/MohammadBnei/editable-blog/commit/883dc43ace5fbc80ef338e0d496e9d2bb02ec3cd))
+* Replace reactive declarations with $derived in CreateLink.svelte ([12e7874](https://github.com/MohammadBnei/editable-blog/commit/12e78746eed491bc134d7e4acd3729195784b729))
+* Update article schema for unique slug and lang composite key ([d9a7f8e](https://github.com/MohammadBnei/editable-blog/commit/d9a7f8e4c1c5989988e7ae5a8a0457bcc12f7e69))
+
+
+### Features
+
+* Add dynamic language route for redirects ([aad2eff](https://github.com/MohammadBnei/editable-blog/commit/aad2effe5735a3e0ea0ede1820ac6358d94c1da9))
+* Add lang column to articles migration ([1bb72f5](https://github.com/MohammadBnei/editable-blog/commit/1bb72f5c69581139d27dac9e70489ab92f2d42c1))
+* Add lang column, update existing rows, and add constraints to pages table ([8d46e80](https://github.com/MohammadBnei/editable-blog/commit/8d46e802b8b6660c2d7a66e7d2cca406937c4d4e))
+* Add language detection and storage for articles ([71449f4](https://github.com/MohammadBnei/editable-blog/commit/71449f4b946faf73bb42a0570e5f4f5635dac4af))
+* Add language parameter to createArticle function ([cbc0d77](https://github.com/MohammadBnei/editable-blog/commit/cbc0d7780c55b12f19fd643a7bca55586359fdb7))
+* Add language switcher to WebsiteNav ([af3d733](https://github.com/MohammadBnei/editable-blog/commit/af3d733c8a99c6469a47528e3827a6e1da89ab08))
+* Add localization to pages and API endpoints ([98047ee](https://github.com/MohammadBnei/editable-blog/commit/98047eea5c71b3b5c52adb49453ee8af00c8c690))
+* Add migration to enforce 2-character length for article lang codes ([f8a33e7](https://github.com/MohammadBnei/editable-blog/commit/f8a33e744bdf76efbc075349402566e89fb653ba))
+* Add N8N_TRANSLATION_WEBHOOK_URL and lang parameter to webhooks ([1541935](https://github.com/MohammadBnei/editable-blog/commit/15419359db919486249b739535174888c73e6153))
+* Add pgweb and n8n services to compose.yml ([09f15b7](https://github.com/MohammadBnei/editable-blog/commit/09f15b7fe3cb633af2d9c86f8fff39e5908805c1))
+* Implement database migrations and update article API for lang support ([0cd85a4](https://github.com/MohammadBnei/editable-blog/commit/0cd85a4a4b1af168028fe0a9e8b093a5eb687054))
+* Implement language selection via query parameters ([cc844e5](https://github.com/MohammadBnei/editable-blog/commit/cc844e536cd422f5bc67f0015a334c261d5b0042))
+* Implement language switching functionality ([08f4f93](https://github.com/MohammadBnei/editable-blog/commit/08f4f93219bc2bc7dea23fed624e9e988646b575))
+* Implement language toggle in WebsiteNav ([db41679](https://github.com/MohammadBnei/editable-blog/commit/db416797fb1c0cc4000449b940cb25386953f5e6))
+* Pass lang parameter to updateArticle function ([0876439](https://github.com/MohammadBnei/editable-blog/commit/08764393354ebf8f756b69d835e4406257c25421))
+* Pass language from locals to getArticles function ([4c3a869](https://github.com/MohammadBnei/editable-blog/commit/4c3a869ecea011ef414b7cf44e492116dec55db8))
+* Pass language to API functions for localized content ([cad3bd9](https://github.com/MohammadBnei/editable-blog/commit/cad3bd915fbc41b645afcc5a54c6432122e3f772))
+* Redefine pages primary key to 'id' and add unique index on (page_id, lang) ([3264fc2](https://github.com/MohammadBnei/editable-blog/commit/3264fc2077c5db03a3faa7630cb023f19f0b06a5))
+
 # [0.2.0](https://github.com/MohammadBnei/editable-blog/compare/0.1.0...0.2.0) (2025-07-24)
 
 
