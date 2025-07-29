@@ -3,7 +3,7 @@
   import Modal from './Modal.svelte';
   import NotEditable from './NotEditable.svelte';
   import Search from './Search.svelte';
-  import { isEditing, currentUser, currentLang } from '$lib/stores.js';
+  import { isEditing, currentUser, currentLang } from '$lib/stores'; // Import currentLang store
   import { goto } from '$app/navigation';
 
   // TODO: Replace with a globally managed context menu implementation (only one active)
@@ -36,7 +36,10 @@
     });
 
     if (response.ok) {
-      // Reload the page to apply language changes
+      // Update the Svelte store immediately
+      $currentLang = lang;
+      // Reload the page to apply language changes (server-side data)
+      // This will re-run load functions and re-initialize the store from the cookie
       goto(window.location.pathname, { invalidateAll: true });
     }
   }
@@ -107,10 +110,8 @@
           </button>
         {/if}
         <div class="lang-switch">
-          <button onclick={() => setLanguage('en')} class:active={$currentLang === 'en'}>EN</button
-          >
-          <button onclick={() => setLanguage('fr')} class:active={$currentLang === 'fr'}>FR</button
-          >
+          <button on:click={() => setLanguage('en')} class:active={$currentLang === 'en'}>EN</button>
+          <button on:click={() => setLanguage('fr')} class:active={$currentLang === 'fr'}>FR</button>
         </div>
         <div class="flex-1" />
       </div>
