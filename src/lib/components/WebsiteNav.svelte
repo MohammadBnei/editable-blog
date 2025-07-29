@@ -42,6 +42,8 @@
       goto(window.location.pathname, { invalidateAll: true });
     }
   }
+
+  let toggleLangValue = $derived($currentLang === 'en' ? 'fr' : 'en');
 </script>
 
 {#if showSearch}
@@ -63,7 +65,7 @@
         <button
           title="Search"
           class={classNames('mr-6 hover:text-black')}
-          onclick={() => (showSearch = true)}
+          on:click={() => (showSearch = true)}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -88,7 +90,7 @@
         <div class="flex-1" />
         {#if $currentUser}
           <button
-            onclick={() => (showUserMenu = !showUserMenu)}
+            on:click={() => (showUserMenu = !showUserMenu)}
             class="ml-0 hover:text-black"
             title={$currentUser.name}
           >
@@ -108,11 +110,12 @@
             </svg>
           </button>
         {/if}
-        <div class="lang-switch">
-          <button onclick={() => setLanguage('en')} class:active={$currentLang === 'en'}>EN</button>
-          <button onclick={() => setLanguage('fr')} class:active={$currentLang === 'fr'}>FR</button>
+        <div class="flex-1">
+          <button
+            on:click={() => setLanguage(toggleLangValue)}
+            class={`ml-4 uppercase hover:underline cursor-pointer`}>{$currentLang}</button
+          >
         </div>
-        <div class="flex-1" />
       </div>
     </NotEditable>
   </div>
