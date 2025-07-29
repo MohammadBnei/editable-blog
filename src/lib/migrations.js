@@ -45,6 +45,24 @@ const migrations = [
       ALTER TABLE pages ADD CONSTRAINT unique_page_id_lang UNIQUE (page_id, lang);
       COMMIT;
     `
+  },
+  {
+    name: '20231101_redefine_pages_primary_key_and_add_unique_index',
+    sql: `
+      BEGIN TRANSACTION;
+
+      -- Drop the existing primary key constraint on page_id
+      -- The constraint name might vary, 'pages_pkey' is common for single-column PKs
+      ALTER TABLE pages DROP CONSTRAINT IF EXISTS pages_pkey;
+
+      -- Add a new 'id' column as the primary key
+      ALTER TABLE pages ADD COLUMN id SERIAL PRIMARY KEY;
+
+      -- Add a unique index on (page_id, lang) to ensure uniqueness for content
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_page_id_lang ON pages (page_id, lang);
+
+      COMMIT;
+    `
   }
   // Add more migrations here as objects { name: '...', sql: '...' }
 ];
