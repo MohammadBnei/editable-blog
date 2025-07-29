@@ -48,25 +48,13 @@ export async function createArticle(title, content, teaser, currentUser, lang = 
 
       // Trigger webhook for language detection (if N8N_LINKEDIN_WEBHOOK_URL is set)
       if (env.N8N_LINKEDIN_WEBHOOK_URL) {
-        const langWebhookUrl = `${env.N8N_LINKEDIN_WEBHOOK_URL}?getLang=true&slug=${newArticle.slug}&lang=${newArticle.lang}`;
-        const langResponse = await fetch(langWebhookUrl, fetchOptions);
-        if (langResponse.ok) {
-          const { lang: detectedLang } = await langResponse.json();
-          if (detectedLang && detectedLang !== newArticle.lang) { // Only update if different from initial 'en'
-            await query('UPDATE articles SET lang = $1 WHERE slug = $2', [detectedLang, newArticle.slug]);
-          }
-        } else {
-          console.error('Failed to get language from webhook:', langResponse.status, langResponse.statusText);
-        }
-
-        // Original webhook trigger (if needed for other purposes)
-        const linkedinWebhookUrl = `${env.N8N_LINKEDIN_WEBHOOK_URL}?slug=${newArticle.slug}&lang=${newArticle.lang}`;
+        const linkedinWebhookUrl = `${env.N8N_LINKEDIN_WEBHOOK_URL}?slug=${slug}&lang=${lang}`;
         await fetch(linkedinWebhookUrl, fetchOptions);
       }
 
       // Trigger translation webhook (if N8N_TRANSLATION_WEBHOOK_URL is set)
       if (env.N8N_TRANSLATION_WEBHOOK_URL) {
-        const translationWebhookUrl = `${env.N8N_TRANSLATION_WEBHOOK_URL}?slug=${newArticle.slug}&lang=${newArticle.lang}`;
+        const translationWebhookUrl = `${env.N8N_TRANSLATION_WEBHOOK_URL}?slug=${slug}&lang=${lang}`;
         await fetch(translationWebhookUrl, fetchOptions);
       }
 
@@ -133,22 +121,6 @@ export async function updateArticle(slug, lang, title, content, teaser, currentU
       await fetch(translationWebhookUrl, fetchOptions);
     } catch (error) {
       console.error('Error triggering translation webhook on update:', error);
-    }
-  }
-
-  // Trigger LinkedIn webhook upon update (if N8N_LINKEDIN_WEBHOOK_URL is set)
-  if (env.N8N_LINKEDIN_WEBHOOK_URL) {
-    try {
-      const auth = Buffer.from(`${env.N8N_USERNAME}:${env.N8N_PASSWORD}`).toString('base64');
-      const fetchOptions = {
-        headers: {
-          'Authorization': `Basic ${auth}`
-        }
-      };
-      const linkedinWebhookUrl = `${env.N8N_LINKEDIN_WEBHOOK_URL}?slug=${slug}&lang=${lang}`;
-      await fetch(linkedinWebhookUrl, fetchOptions);
-    } catch (error) {
-      console.error('Error triggering LinkedIn webhook on update:', error);
     }
   }
 

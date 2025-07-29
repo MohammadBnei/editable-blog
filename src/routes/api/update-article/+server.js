@@ -3,7 +3,7 @@ import { updateArticle } from '$lib/api';
 
 export async function POST({ request, locals }) {
   const currentUser = locals.user;
-  const { slug, lang, title, content, teaser } = await request.json();
-  await updateArticle(slug, lang, title, content, teaser, currentUser);
+  const { slug, title, content, teaser } = await request.json();
+  await updateArticle(slug, locals.lang, title, content, teaser, currentUser);
   return json({ slug, status: 'ok' });
 }

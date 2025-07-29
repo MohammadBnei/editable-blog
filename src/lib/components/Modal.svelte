@@ -1,13 +1,11 @@
 <script>
-  import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { browser } from '$app/environment';
   import { classNames } from '$lib/util';
 
-  // Only relevant for mobile
-  export let position = 'bottom';
+  const { close, position = 'bottom' } = $props();
 
-  const dispatch = createEventDispatcher();
-  let surface;
+  let surface = $state();
   onMount(async () => {
     window.document.children[0].style = 'overflow: hidden;';
   });
@@ -17,14 +15,14 @@
     }
   });
   function onMouseUp(e) {
-    if (e.target === surface) dispatch('close');
+    if (e.target === surface) close?.();
   }
 </script>
 
 <div class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
   <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
 
-  <div class="fixed inset-0 z-50 overflow-y-auto" on:mouseup={onMouseUp}>
+  <div class="fixed inset-0 z-50 overflow-y-auto" onmouseup={onMouseUp}>
     <div
       bind:this={surface}
       class={classNames(

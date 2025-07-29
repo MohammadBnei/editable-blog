@@ -77,12 +77,12 @@
   <meta name="description" content={teaser} />
 </svelte:head>
 
-<EditorToolbar on:cancel={initOrReset} on:save={saveArticle} />
+<EditorToolbar cancel={initOrReset} save={saveArticle} />
 <WebsiteNav bind:showUserMenu />
 {#if showUserMenu}
   <Modal on:close={() => (showUserMenu = false)}>
     <form class="w-full block" method="POST">
-      <div class="w-full flex flex-col space-y-4 p-4 sm:p-6">
+      <div class="w-full flex flex-col space-y-4 p-4 sm:p-6 gap-0.5">
         <PrimaryButton on:click={toggleEdit}>Edit post</PrimaryButton>
         <PrimaryButton type="button" on:click={deleteArticle}>Delete post</PrimaryButton>
         <LoginMenu />

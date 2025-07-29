@@ -1,12 +1,16 @@
 <script>
   import { isEditing } from '$lib/stores.js';
 
-  let props = $props();
+  let {cancel: handleCancel, save} = $props();
 
+  function cancel() {
+    $isEditing = false;
+    handleCancel?.();
+  }
 </script>
 
 {#if $isEditing}
   {#await import('$lib/components/tools/EditorControls.svelte') then EditorToolbar}
-    <EditorToolbar.default  {...props} />
+    <EditorToolbar.default  {cancel} {save} />
   {/await}
 {/if}

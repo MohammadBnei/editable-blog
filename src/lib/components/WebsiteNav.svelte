@@ -6,7 +6,7 @@
   import { isEditing, currentUser, currentLang } from '$lib/stores'; // Import currentLang store
   import { invalidateAll } from '$app/navigation';
 
-  let { showUserMenu, showSearch } = $props();
+  let { showUserMenu = $bindable(), showSearch } = $props();
 
   function onKeyDown(e) {
     // Close modals
@@ -45,7 +45,7 @@
 </script>
 
 {#if showSearch}
-  <Modal position="top" onClose={() => (showSearch = false)}>
+  <Modal position="top" close={() => (showSearch = false)}>
     <Search bind:showSearch />
   </Modal>
 {/if}
@@ -62,8 +62,8 @@
         <div class="flex-1" />
         <button
           title="Search"
-          class={classNames('mr-6 hover:text-black')}
-          on:click={() => (showSearch = true)}
+          class='mr-6 hover:text-black cursor-pointer'
+          onclick={() => (showSearch = true)}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -88,8 +88,8 @@
         <div class="flex-1" />
         {#if $currentUser}
           <button
-            on:click={() => (showUserMenu = !showUserMenu)}
-            class="ml-0 hover:text-black"
+            onclick={() => (showUserMenu = !showUserMenu)}
+            class="ml-0 hover:text-black cursor-pointer"
             title={$currentUser.name}
           >
             <svg
@@ -110,7 +110,7 @@
         {/if}
         <div class="flex-1">
           <button
-            on:click={() => setLanguage(toggleLangValue)}
+            onclick={() => setLanguage(toggleLangValue)}
             class={`ml-4 uppercase hover:underline cursor-pointer`}>{$currentLang}</button
           >
         </div>
