@@ -32,6 +32,19 @@ const migrations = [
       ALTER TABLE articles ADD CONSTRAINT unique_slug_lang UNIQUE (slug, lang);
       COMMIT;
     `
+  },
+  {
+    name: '20231028_add_lang_to_pages_table',
+    sql: `
+      BEGIN TRANSACTION;
+      ALTER TABLE pages ADD COLUMN IF NOT EXISTS lang TEXT DEFAULT 'en' NOT NULL;
+      -- Set default 'en' for existing rows where lang might be null (if column was added manually before this migration)
+      UPDATE pages SET lang = 'en' WHERE lang IS NULL;
+      -- Enforce 2-character length for lang column in pages table
+      ALTER TABLE pages ADD CONSTRAINT pages_lang_length_check CHECK (LENGTH(lang) = 2);
+      ALTER TABLE pages ADD CONSTRAINT unique_page_id_lang UNIQUE (page_id, lang);
+      COMMIT;
+    `
   }
   // Add more migrations here as objects { name: '...', sql: '...' }
 ];
