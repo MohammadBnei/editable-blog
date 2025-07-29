@@ -11,8 +11,8 @@
   import InsertImage from './InsertImage.svelte';
   import CreateLink from './CreateLink.svelte';
 
-  let editorView = null;
-  let editorState = null;
+  let editorView = $state(null);
+  let editorState = $state(null);
 
   const unsubscribe = activeEditorView.subscribe(value => {
     editorView = value;
