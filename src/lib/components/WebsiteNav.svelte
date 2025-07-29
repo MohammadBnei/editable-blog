@@ -110,8 +110,8 @@
           </button>
         {/if}
         <div class="lang-switch">
-          <button on:click={() => setLanguage('en')} class:active={$currentLang === 'en'}>EN</button>
-          <button on:click={() => setLanguage('fr')} class:active={$currentLang === 'fr'}>FR</button>
+          <button onclick={() => setLanguage('en')} class:active={$currentLang === 'en'}>EN</button>
+          <button onclick={() => setLanguage('fr')} class:active={$currentLang === 'fr'}>FR</button>
         </div>
         <div class="flex-1" />
       </div>
