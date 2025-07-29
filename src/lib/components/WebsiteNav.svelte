@@ -3,11 +3,11 @@
   import Modal from './Modal.svelte';
   import NotEditable from './NotEditable.svelte';
   import Search from './Search.svelte';
-  import { isEditing, currentUser } from '$lib/stores.js';
+  import { isEditing, currentUser, currentLang } from '$lib/stores.js';
+  import { goto } from '$app/navigation';
 
   // TODO: Replace with a globally managed context menu implementation (only one active)
-  export let showUserMenu = undefined;
-  export let showSearch = undefined;
+  let { showUserMenu, showSearch } = $props();
 
   function onKeyDown(e) {
     // Close modals
@@ -23,6 +23,21 @@
     if (e.key === 'e' && e.metaKey) {
       $isEditing = true;
       console.log('Editing enabled');
+    }
+  }
+
+  async function setLanguage(lang) {
+    const response = await fetch('/api/set-lang', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ lang })
+    });
+
+    if (response.ok) {
+      // Reload the page to apply language changes
+      goto(window.location.pathname, { invalidateAll: true });
     }
   }
 </script>
@@ -46,7 +61,7 @@
         <button
           title="Search"
           class={classNames('mr-6 hover:text-black')}
-          on:click={() => (showSearch = true)}
+          onclick={() => (showSearch = true)}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +86,7 @@
         <div class="flex-1" />
         {#if $currentUser}
           <button
-            on:click={() => (showUserMenu = !showUserMenu)}
+            onclick={() => (showUserMenu = !showUserMenu)}
             class="ml-0 hover:text-black"
             title={$currentUser.name}
           >
@@ -91,6 +106,12 @@
             </svg>
           </button>
         {/if}
+        <div class="lang-switch">
+          <button onclick={() => setLanguage('en')} class:active={$currentLang === 'en'}>EN</button
+          >
+          <button onclick={() => setLanguage('fr')} class:active={$currentLang === 'fr'}>FR</button
+          >
+        </div>
         <div class="flex-1" />
       </div>
     </NotEditable>
