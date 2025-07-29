@@ -251,7 +251,7 @@
   </div>
   {#each testimonials as testimonial, i}
     <Testimonial
-      bind:testimonial
+      bind:testimonial={testimonials[i]}
       firstEntry={i === 0}
       lastEntry={i === testimonials.length - 1}
       on:delete={() => deleteTestimonial(i)}
