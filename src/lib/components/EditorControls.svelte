@@ -11,7 +11,7 @@
   import InsertImage from './tools/InsertImage.svelte';
   import CreateLink from './tools/CreateLink.svelte';
 
-  let { currentUser = undefined, onCancel, onSave } = $props();
+  let { currentUser, cancel, save } = $props();
 
   let editorView = null;
   let editorState = null;
@@ -22,11 +22,11 @@
   });
 
   function handleCancel() {
-    onCancel?.();
+    cancel?.();
   }
 
   function handleSave() {
-    onSave?.();
+    save?.();
   }
 
   onDestroy(unsubscribe);
@@ -34,7 +34,7 @@
   function onKeyDown(e) {
     // Trigger save
     if (e.key === 's' && e.metaKey) {
-      onSave?.();
+      save?.();
       e.preventDefault();
       e.stopPropagation();
     }
@@ -152,9 +152,9 @@
         {/if}
 
         <div class="flex-1 h-8" />
-        <SecondaryButton type="button" onclick={handleCancel}>Cancel</SecondaryButton>
+        <SecondaryButton type="button" on:click={handleCancel}>Cancel</SecondaryButton>
         <div class="shrink-0 w-2 sm:w-4" />
-        <PrimaryButton type="button" onclick={handleSave}>Save</PrimaryButton>
+        <PrimaryButton type="button" on:click={handleSave}>Save</PrimaryButton>
       </div>
     </div>
   </div>

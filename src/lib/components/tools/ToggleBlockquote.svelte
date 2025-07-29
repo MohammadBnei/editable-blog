@@ -14,7 +14,7 @@
 </script>
 
 <button
-  onclick={handleClick}
+  on:click={handleClick}
   {disabled}
   class={classNames('disabled:opacity-30 rounded-full sm:mx-1 p-2 hover:bg-gray-100')}
 >

@@ -1,8 +1,12 @@
 <script>
   import { isEditing } from '$lib/stores.js';
-  import EditorControls from '$lib/components/tools/EditorControls.svelte';
+
+  let props = $props();
+
 </script>
 
 {#if $isEditing}
-  <EditorControls />
+  {#await import('$lib/components/tools/EditorControls.svelte') then EditorToolbar}
+    <EditorToolbar.default  {...props} />
+  {/await}
 {/if}

@@ -23,7 +23,7 @@
 </script>
 
 <button
-  onclick={handleClick}
+  on:click={handleClick}
   {disabled}
   class={classNames(
     active ? 'bg-gray-900 text-white' : 'hover:bg-gray-100',

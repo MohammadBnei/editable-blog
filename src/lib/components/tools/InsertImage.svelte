@@ -7,7 +7,7 @@
   let { editorView, editorState } = $props();
 
   let fileInput; // for uploading an image
-  let progress = undefined; // file upload progress
+  let progress = $state(); // file upload progress
 
   const schema = $derived(editorState.schema);
   const disabled = $derived(!insertImage(editorState, null, editorView));

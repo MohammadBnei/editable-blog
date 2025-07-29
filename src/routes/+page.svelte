@@ -14,7 +14,7 @@
   import { currentUser, isEditing } from '$lib/stores.js';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
 
-  let data = $props();
+  let { data } = $props();
 
   // --------------------------------------------------------------------------
   // DEFAULT PAGE CONTENT - AJDUST TO YOUR NEEDS
@@ -41,7 +41,8 @@
     }
   ];
 
-  let title,
+  let {
+    title,
     testimonials,
     faqs,
     introStep1,
@@ -51,11 +52,11 @@
     bioTitle,
     bioPicture,
     bio,
-    showUserMenu;
+    showUserMenu
+  } = $state({});
 
   function initOrReset() {
     $currentUser = data.currentUser;
-    console.log({page: data.page})
     title = data.page?.title || 'Mohammad-Amine BANAEI - <br>Projects & Knowledge Blog';
     faqs = data.page?.faqs || FAQS_PLACEHOLDER;
 
@@ -173,6 +174,10 @@
   }
 
   initOrReset();
+  
+  $effect(() => {
+    initOrReset();
+  })
 </script>
 
 <svelte:head>
@@ -249,11 +254,11 @@
   <div class="max-w-(--breakpoint-md) mx-auto px-6">
     <div class="font-bold text-sm sm:text-base py-12 sm:pt-24 pb-8">WHAT PEOPLE SAY</div>
   </div>
-  {#each testimonials as testimonial, i}
+  {#each testimonials as _, i}
     <Testimonial
       bind:testimonial={testimonials[i]}
       firstEntry={i === 0}
-      lastEntry={i === testimonials.length - 1}
+      lastEntry={i === testimonials?.length - 1}
       on:delete={() => deleteTestimonial(i)}
       on:up={() => moveTestimonial(i, 'up')}
       on:down={() => moveTestimonial(i, 'down')}
@@ -267,7 +272,7 @@
   {/if}
 </div>
 
-{#if data.articles.length > 0}
+{#if data.articles?.length > 0}
   <NotEditable>
     <div class="bg-white border-t-2 border-gray-100 pb-10 sm:pb-16">
       <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24">

@@ -3,10 +3,10 @@
   import Modal from '$lib/components/Modal.svelte';
   import EditorToolbar from '$lib/components/tools/EditorToolbar.svelte';
 
-  let { showUserMenu = false, onCancel, onSave } = $props();
+  let { showUserMenu = false, cancel, save } = $props();
 </script>
 
-<EditorToolbar {onCancel} {onSave} />
+<EditorToolbar {cancel} {save} />
 <WebsiteNav bind:showUserMenu />
 {#if showUserMenu}
   <Modal onClose={() => (showUserMenu = false)}>
