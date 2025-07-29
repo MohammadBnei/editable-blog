@@ -38,7 +38,7 @@ const migrations = [
 // Table to keep track of applied migrations
 const MIGRATIONS_TABLE_SQL = `
   CREATE TABLE IF NOT EXISTS applied_migrations (
-    name TEXT PRIMARY PASSPORT,
+    name TEXT PRIMARY KEY,
     applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
   );
 `;

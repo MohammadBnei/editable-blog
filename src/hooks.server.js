@@ -13,6 +13,8 @@ export async function handle({ event, resolve }) {
     migrated = true;
   }
   event.locals.user = await getCurrentUser(event.cookies.get('sessionid'));
+  event.locals.lang = event.cookies.get('lang') || 'en';
+  
   const response = await resolve(event);
   return response;
 }
