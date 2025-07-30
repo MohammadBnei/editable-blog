@@ -5,7 +5,7 @@
   import uploadAsset from '$lib/uploadAsset';
   import Cropper from '$lib/components/Cropper.svelte';
 
-  let { src, alt, uploadPrompt = undefined, maxWidth, maxHeight, quality, class: className = '' } = $props();
+  let { src, alt, uploadPrompt = undefined, maxWidth, maxHeight, quality, class: className = '', previewSrc } = $props();
 
   function onKeyDown(e) {
     // Trigger save
@@ -34,6 +34,7 @@
     fileInput.value = null;
     scale = 1;
     cropDetail = undefined; // Reset cropDetail on cancel
+    previewSrc = undefined; // Reset previewSrc on cancel
   }
 
   async function uploadImage() {
@@ -92,6 +93,7 @@
 
     // Preview image for cropping
     newSrc = URL.createObjectURL(file);
+    previewSrc = newSrc; // Set previewSrc for Image.svelte to display
     is_cropping = true;
   }
 </script>
