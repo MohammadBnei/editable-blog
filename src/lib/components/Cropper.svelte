@@ -8,8 +8,8 @@
   let {
     cropcomplete,
     image,
-    crop = $state({ x: 0, y: 0 }),
-    zoom = $state(1),
+    crop = { x: 0, y: 0 },
+    zoom = 1,
     aspect = 4 / 3,
     minZoom = 1,
     maxZoom = 3,
