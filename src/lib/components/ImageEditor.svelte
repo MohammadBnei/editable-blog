@@ -30,7 +30,7 @@
 
   // Cropper stuff
   let newSrc;
-  let cropDetail;
+  let cropDetail = $state(undefined); // Make cropDetail reactive
   let is_cropping = false;
   let scale = 1;
   let crop = { x: 0, y: 0 };
@@ -41,9 +41,16 @@
     newSrc = undefined;
     fileInput.value = null;
     scale = 1;
+    cropDetail = undefined; // Reset cropDetail on cancel
   }
 
   async function uploadImage() {
+    if (!cropDetail) { // Add a check for cropDetail
+      console.error("cropDetail is undefined. Cropping might not have completed.");
+      alert("Please crop the image first.");
+      return;
+    }
+
     const file = fileInput.files[0];
     const content_type = is_safari() ? 'image/jpeg' : 'image/webp';
 
