@@ -17,16 +17,16 @@
   }
 
   let fileInput; // for uploading an image
-  let progress = undefined; // file upload progress
-  let overlayEl;
+  let progress = $state(undefined); // file upload progress
+  let overlayEl = $state(undefined);
 
   // Cropper stuff
-  let newSrc;
+  let newSrc = $state(undefined);
   let cropDetail = $state(undefined); // Make cropDetail reactive
-  let is_cropping = false;
-  let scale = 1;
-  let crop = { x: 0, y: 0 };
-  let zoom = 1;
+  let is_cropping = $state(false);
+  let scale = $state(1);
+  let crop = $state({ x: 0, y: 0 });
+  let zoom = $state(1);
 
   function cancelCropping() {
     is_cropping = false;
