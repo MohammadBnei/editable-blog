@@ -5,15 +5,7 @@
   import uploadAsset from '$lib/uploadAsset';
   import Cropper from '$lib/components/Cropper.svelte';
 
-  export let src;
-  export let alt;
-  export let uploadPrompt = undefined;
-  export let maxWidth;
-  export let maxHeight;
-  export let quality;
-  let className = '';
-
-  export { className as class };
+  let { src, alt, uploadPrompt = undefined, maxWidth, maxHeight, quality, class: className = '' } = $props();
 
   function onKeyDown(e) {
     // Trigger save
