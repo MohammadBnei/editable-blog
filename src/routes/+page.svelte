@@ -182,7 +182,7 @@
 
 <svelte:head>
   <title>{title}</title>
-  <meta name="description" content={bio} />
+  <meta name="description" content={bio.replace(/<[^>]*>/g, '')} />
   <link rel="alternate" hreflang="en" href="https://blog.bnei.dev" />
   <link rel="canonical" href="https://blog.bnei.dev" />
 </svelte:head>
@@ -195,16 +195,12 @@
 <div>
   <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24">
     <NotEditable>
-      <svg
-        class="pb-8 w-14 sm:w-24 mx-auto"
+      <img
+        class="pb-8 w-40 sm:w-56 mx-auto"
         viewBox="0 0 200 200"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d="M164 110L64 163.768V200L164 147.059V110Z" fill="#111827" />
-        <path d="M136 66L36 119.768V156L136 103.059V66Z" fill="#111827" />
-        <path d="M164 0L64 53.7684V90L164 37.0588V0Z" fill="#111827" />
-      </svg>
+        src="/images/cloud-system.svg"
+        alt="Cloud System"
+      />
     </NotEditable>
     <h1 class="text-4xl md:text-7xl font-bold text-center">
       <PlainText bind:content={title} />

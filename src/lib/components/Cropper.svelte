@@ -3,7 +3,7 @@
   // https://github.com/ValentinH/svelte-easy-crop/blob/main/src/lib/Cropper.svelte
   import { onDestroy, onMount } from 'svelte';
 
-  import * => helpers from '$lib/cropperUtil';
+  import * as helpers from '$lib/cropperUtil';
 
   let {
     cropcomplete,
@@ -64,6 +64,7 @@
   };
 
   const onImgLoad = () => {
+    console.log('emitted')
     computeSizes();
     emitCropData();
   };

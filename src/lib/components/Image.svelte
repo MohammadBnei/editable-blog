@@ -1,8 +1,10 @@
 <script>
   import { isEditing } from '$lib/stores.js';
 
-  let { src, alt, uploadPrompt = undefined, maxWidth, maxHeight, quality, class: className = '' } = $props();
-  let previewSrc = $state(undefined); // Make previewSrc a state variable
+  let { src = $bindable(), alt, uploadPrompt, maxWidth, maxHeight, quality, class: className = '' } = $props();
+  let previewSrc = $state(); // Make previewSrc a state variable
+
+
 </script>
 
 {#if $isEditing}
@@ -12,7 +14,7 @@
     <ImageEditor.default
       class={className}
       bind:src
-      bind:previewSrc={previewSrc}
+      bind:previewSrc
       {alt}
       {uploadPrompt}
       {maxWidth}

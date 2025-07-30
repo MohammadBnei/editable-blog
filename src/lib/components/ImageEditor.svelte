@@ -5,7 +5,7 @@
   import uploadAsset from '$lib/uploadAsset';
   import Cropper from '$lib/components/Cropper.svelte';
 
-  let { src, alt, uploadPrompt = undefined, maxWidth, maxHeight, quality, class: className = '', previewSrc } = $props();
+  let { src = $bindable(), alt, uploadPrompt = undefined, maxWidth, maxHeight, quality, class: className = '', previewSrc = $bindable() } = $props();
 
   function onKeyDown(e) {
     // Trigger save
@@ -96,6 +96,10 @@
     previewSrc = newSrc; // Set previewSrc for Image.svelte to display
     is_cropping = true;
   }
+
+    $effect(() => {
+    console.log({ src, previewSrc });
+  });
 </script>
 
 <div
@@ -138,7 +142,7 @@
       image={newSrc}
       bind:crop
       bind:zoom
-      cropcomplete={e => (cropDetail = e.detail)}
+      cropcomplete={e => (cropDetail = e)}
       aspect={maxWidth / maxHeight}
     />
   {:else}
