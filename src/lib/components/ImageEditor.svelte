@@ -137,7 +137,7 @@
       image={newSrc}
       bind:crop
       bind:zoom
-      on:cropcomplete={e => (cropDetail = e.detail)}
+      cropcomplete={e => (cropDetail = e.detail)}
       aspect={maxWidth / maxHeight}
     />
   {:else}
