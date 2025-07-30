@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.1](https://github.com/MohammadBnei/editable-blog/compare/0.3.0...0.3.1) (2025-07-30)
+
+
+### Bug Fixes
+
+* Correct event binding for Cropper component ([e4d95d9](https://github.com/MohammadBnei/editable-blog/commit/e4d95d97ae0b5b21bd55be9291ff35c20251dc5e))
+* Ensure cropDetail is reactive and checked before use ([4bd926e](https://github.com/MohammadBnei/editable-blog/commit/4bd926e1160de7d77d6e1eb914a20c0ab961d141))
+* Remove $state from prop destructuring in Cropper.svelte ([92e5b09](https://github.com/MohammadBnei/editable-blog/commit/92e5b09563f56aa46695f91d2d337157713e8330))
+
 # [0.3.0](https://github.com/MohammadBnei/editable-blog/compare/0.2.0...0.3.0) (2025-07-29)
 
 
