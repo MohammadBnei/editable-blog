@@ -53,7 +53,10 @@
 
   async function saveArticle() {
     if (!$currentUser) return alert('Sorry, you are not authorized.');
-    const teaser = extractTeaser(document.getElementById('article_content'));
+    // For markdown content, we need to create a temporary div to extract the teaser
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = await carta.render(content);
+    const teaser = extractTeaser(tempDiv);
     try {
       const result = await fetchJSON('POST', '/api/update-article', {
         slug: data.slug,
