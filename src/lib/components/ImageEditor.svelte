@@ -97,9 +97,6 @@
     is_cropping = true;
   }
 
-    $effect(() => {
-    console.log({ src, previewSrc });
-  });
 </script>
 
 <div
