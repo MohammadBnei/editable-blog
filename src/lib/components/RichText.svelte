@@ -1,10 +1,22 @@
 <script lang="ts">
   import { isEditing } from '$lib/stores';
   import { Markdown, MarkdownEditor, Carta } from 'carta-md';
+  import { code } from '@cartamd/plugin-code';
+  import { attachment } from '@cartamd/plugin-attachment';
   import 'carta-md/default.css';
+  import '@cartamd/plugin-code/default.css';
+  import '@cartamd/plugin-attachment/default.css';
 
   const carta = new Carta({
-    sanitizer: false
+    sanitizer: false,
+    extensions: [
+      code(),
+      attachment({
+        upload(file) {
+          
+        }
+      })
+    ]
   });
 
   let { content = $bindable<string>() } = $props();
