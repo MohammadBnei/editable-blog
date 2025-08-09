@@ -31,7 +31,7 @@ export function formatDate(dateString, withTime) {
       // on same day, only show the time
       return date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
     } else {
-      const opts = {
+      const opts: Record<string, any> = {
         month: 'short',
         day: 'numeric',
         hour: 'numeric',
@@ -67,6 +67,11 @@ export function debounce(node, params) {
 }
 
 export function extractTeaser(content: string) {
+  // Regex pattern to match markdown images
+    const imagePattern = /!\[(.*?)\]\((.*?)\)/g;
+
+  content = content.replace(imagePattern, '');
+
   if (content.length > 512) {
     return content.slice(0, 512).concat('…');
   } else {
@@ -80,7 +85,7 @@ export function resizeImage(file, maxWidth, maxHeight, quality, content_type) {
   return new Promise((resolve, reject) => {
     reader.onload = event => {
       const image = new Image();
-      image.src = event.target.result;
+      image.src = event.target?.result as string;
       image.onload = () => {
         let width = image.width;
         let height = image.height;
@@ -98,7 +103,7 @@ export function resizeImage(file, maxWidth, maxHeight, quality, content_type) {
         canvas.width = newWidth;
         canvas.height = newHeight;
         const context = canvas.getContext('2d');
-        context.drawImage(image, 0, 0, newWidth, newHeight);
+        context?.drawImage(image, 0, 0, newWidth, newHeight);
         canvas.toBlob(
           blob => {
             resolve(blob);
@@ -124,10 +129,10 @@ export async function getDimensions(file) {
   return new Promise((resolve, reject) => {
     const img = new window.Image();
     img.onload = function () {
-      resolve({ width: this.width, height: this.height });
+      resolve({ width: (this as HTMLImageElement).width, height: (this as HTMLImageElement).height });
     };
-    img.onerror = function () {
-      reject(img.error);
+    img.onerror = function (err) {
+      reject(err);
     };
     img.src = URL.createObjectURL(file);
   });
