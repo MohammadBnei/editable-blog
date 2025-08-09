@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.4.0](https://github.com/MohammadBnei/editable-blog/compare/0.3.1...0.4.0) (2025-08-09)
+
+
+### Features
+
+* **carta:** hope it works. Markdown renderer ([397aef2](https://github.com/MohammadBnei/editable-blog/commit/397aef2478f27aa6581647891ff7c7c5064486b3))
+
 ## [0.3.1](https://github.com/MohammadBnei/editable-blog/compare/0.3.0...0.3.1) (2025-07-30)
 
 
