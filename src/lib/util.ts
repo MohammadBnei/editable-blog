@@ -66,12 +66,11 @@ export function debounce(node, params) {
   };
 }
 
-export function extractTeaser(body) {
-  const teaser = [...body.querySelectorAll('p')].map(n => n.textContent).join(' ');
-  if (teaser.length > 512) {
-    return teaser.slice(0, 512).concat('…');
+export function extractTeaser(content: string) {
+  if (content.length > 512) {
+    return content.slice(0, 512).concat('…');
   } else {
-    return teaser;
+    return content;
   }
 }
 

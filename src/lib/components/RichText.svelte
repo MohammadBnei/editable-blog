@@ -1,15 +1,19 @@
-<script>
-  import { isEditing } from '$lib/stores.js';
-  import { Markdown, MarkdownEditor } from 'carta-md';
-  import { carta } from '$lib/carta.js';
+<script lang="ts">
+  import { isEditing } from '$lib/stores';
+  import { Markdown, MarkdownEditor, Carta } from 'carta-md';
   import 'carta-md/default.css';
 
-  export let content;
-  export let multiLine = false;
+  const carta = new Carta({
+    sanitizer: false
+  });
+
+  let { content = $bindable<string>() } = $props();
 </script>
 
 {#if $isEditing}
-  <MarkdownEditor {carta} bind:value={content} />
+  <div class="not-prose">
+    <MarkdownEditor {carta} bind:value={content} />
+  </div>
 {:else}
   {#key content}
     <Markdown {carta} value={content} />
@@ -18,9 +22,10 @@
 
 <style>
   :global(.carta-font-code) {
-    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-family: '...', monospace;
     font-size: 1.1rem;
     line-height: 1.1rem;
     letter-spacing: normal;
+    padding: 1rem;
   }
 </style>

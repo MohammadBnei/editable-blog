@@ -1,17 +1,19 @@
-<script>
-  import { MarkdownEditor } from 'carta-md';
-  import { carta } from '$lib/carta.js';
+<script lang="ts">
+  import { Carta, MarkdownEditor } from 'carta-md';
   import 'carta-md/default.css';
 
-  export let content = '';
-  export let multiLine = false;
+  const carta = new Carta({
+    sanitizer: false
+  });
+
+  let { content = $bindable<string>() } = $props();
 </script>
 
 <MarkdownEditor {carta} bind:value={content} />
 
 <style>
   :global(.carta-font-code) {
-    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-family: '...', monospace;
     font-size: 1.1rem;
     line-height: 1.1rem;
     letter-spacing: normal;
