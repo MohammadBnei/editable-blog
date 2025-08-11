@@ -106,7 +106,8 @@
       ? 'z-40 bg-black text-white font-bold fixed inset-0 bg-opacity-80 text-center p-6'
       : 'hidden'
   )}
-  on:dblclick={cancelCropping}
+  ondblclick={cancelCropping}
+  role="presentation"
 >
   {#if is_safari()}
     <span class="text-[#EF174C]">ATTENTION:</span> Use Google Chrome, Firefox, oder Microsoft Edge for
@@ -118,21 +119,22 @@
 
 {#if is_cropping}
   <div class="flex space-x-4 z-60 fixed bottom-0 right-0 left-0 p-6">
-    <div class="flex-1" />
-    <button class="bg-[#EF174C] text-white rounded-full px-4 py-2" on:click={uploadImage}
+    <div class="flex-1"></div>
+    <button class="bg-[#EF174C] text-white rounded-full px-4 py-2" onclick={uploadImage}
       >Confirm</button
     >
-    <button class="bg-white text-black rounded-full px-4 py-2" on:click={cancelCropping}
+    <button class="bg-white text-black rounded-full px-4 py-2" onclick={cancelCropping}
       >Cancel</button
     >
-    <div class="flex-1" />
+    <div class="flex-1"></div>
   </div>
 {/if}
 
 <div
   style={`aspect-ratio: ${maxWidth}/${maxHeight}; scale: ${scale}`}
   class={classNames(is_cropping ? `z-50` : '', 'relative')}
-  on:dblclick={uploadImage}
+  ondblclick={uploadImage}
+  role="presentation"
 >
   {#if is_cropping}
     <Cropper
@@ -144,12 +146,15 @@
     />
   {:else}
     <img
-      on:mousedown={() => fileInput.click()}
+      onmousedown={() => fileInput.click()}
       class={className +
         ' cursor-pointer outline-2 hover:outline-dashed outline-[#EF174C] -outline-offset-2'}
       {src}
       {alt}
       title={uploadPrompt}
+      role="button"
+      tabindex="0"
+      onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); }}
     />
   {/if}
 </div>
@@ -160,7 +165,7 @@
   accept="image/*"
   name="imagefile"
   bind:this={fileInput}
-  on:change={startCropping}
+  onchange={startCropping}
 />
 
-<svelte:window on:keydown={onKeyDown} />
+<svelte:window onkeydown={onKeyDown} />

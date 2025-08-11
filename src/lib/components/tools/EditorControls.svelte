@@ -11,8 +11,8 @@
   import InsertImage from './InsertImage.svelte';
   import CreateLink from './CreateLink.svelte';
 
-  let editorView;
-  let editorState;
+  let editorView = $state();
+  let editorState = $state();
 
   const unsubscribe = activeEditorView.subscribe(value => {
     editorView = value;
@@ -77,7 +77,7 @@
                 /></svg
               >
             </CreateLink>
-            <div class="hidden sm:block w-px bg-gray-300 mx-3" />
+            <div class="hidden sm:block w-px bg-gray-300 mx-3"></div>
             <ToggleHeading {editorState} {editorView}>
               <svg
                 class="h-3 w-3 sm:h-4 sm:w-4"
@@ -102,7 +102,7 @@
                 /></svg
               >
             </ToggleBlockquote>
-            <div class="hidden sm:block w-px bg-gray-300 mx-3" />
+            <div class="hidden sm:block w-px bg-gray-300 mx-3"></div>
             <ToggleBulletList {editorState} {editorView}>
               <svg
                 class="h-3 w-3 sm:h-4 sm:w-4"
@@ -127,7 +127,7 @@
                 /></svg
               >
             </ToggleOrderedList>
-            <div class="hidden sm:block w-px bg-gray-300 mx-3" />
+            <div class="hidden sm:block w-px bg-gray-300 mx-3"></div>
             <InsertImage {editorState} {editorView}>
               <svg
                 class="h-3 w-3 sm:h-4 sm:w-4"
@@ -143,10 +143,10 @@
           </div>
         {/if}
 
-        <div class="flex-1 h-8" />
-        <SecondaryButton type="button" on:click={cancel}>Cancel</SecondaryButton>
-        <div class="shrink-0 w-2 sm:w-4" />
-        <PrimaryButton type="button" on:click={save}>Save</PrimaryButton>
+        <div class="flex-1 h-8"></div>
+        <SecondaryButton type="button" onclick={cancel}>Cancel</SecondaryButton>
+        <div class="shrink-0 w-2 sm:w-4"></div>
+        <PrimaryButton type="button" onclick={save}>Save</PrimaryButton>
       </div>
     </div>
   </div>

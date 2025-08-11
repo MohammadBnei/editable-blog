@@ -5,7 +5,7 @@
 
 <div class={classNames($isEditing ? 'opacity-25 cursor-not-allowed relative' : '')}>
   {#if $isEditing}
-    <div class="absolute inset-0 z-50" />
+    <div class="absolute inset-0 z-50"></div>
   {/if}
-  <slot />
+  {@render children()}
 </div>

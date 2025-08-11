@@ -260,6 +260,8 @@
   ontouchstart={onTouchStart}
   onwheel={onWheel}
   data-testid="cr-container"
+  role="img"
+  aria-label="Image cropper"
 >
   <img
     bind:this={imgEl}
@@ -277,7 +279,7 @@
       class:cr-grid={showGrid}
       style="width: {cropperSize.width}px; height: {cropperSize.height}px;"
       data-testid="cropper"
-    />
+    ></div>
   {/if}
 </div>
 

@@ -17,7 +17,9 @@
   export let multiLine = false;
 
   let editorChange = false;
-  let prosemirrorNode, editorView, editorState;
+  let prosemirrorNode;
+  let editorView;
+  let editorState;
 
   $: schema = multiLine ? multiLinePlainTextSchema : singleLinePlainTextSchema;
 
@@ -75,9 +77,9 @@
   });
 </script>
 
-<div id="prosemirror-editor" bind:this={prosemirrorNode} />
+<div id="prosemirror-editor" bind:this={prosemirrorNode}></div>
 
-<style >
+<style>
   :global(#prosemirror-editor .ProseMirror) {
     outline: none;
     white-space: pre-wrap;

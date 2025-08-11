@@ -10,8 +10,6 @@
 <WebsiteNav bind:showUserMenu />
 {#if showUserMenu}
   <Modal close={() => (showUserMenu = false)}>
-    <div class="w-full flex flex-col space-y-4 p-4 sm:p-6">
-      <slot />
-    </div>
+    {@render children()}
   </Modal>
 {/if}

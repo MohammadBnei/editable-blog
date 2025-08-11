@@ -59,11 +59,12 @@
   <div class="max-w-xs mx-auto py-4">
     <NotEditable>
       <div class="flex items-center relative">
-        <div class="flex-1" />
+        <div class="flex-1"></div>
         <button
           title="Search"
           class='mr-6 hover:text-black cursor-pointer'
           onclick={() => (showSearch = true)}
+          aria-label="Search"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -85,12 +86,13 @@
         <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href="/#contact">
           Contact
         </a>
-        <div class="flex-1" />
+        <div class="flex-1"></div>
         {#if $currentUser}
           <button
             onclick={() => (showUserMenu = !showUserMenu)}
             class="ml-0 hover:text-black cursor-pointer"
             title={$currentUser.name}
+            aria-label="User Menu"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -111,8 +113,9 @@
         <div class="flex-1">
           <button
             onclick={() => setLanguage(toggleLangValue)}
-            class={`ml-4 uppercase hover:underline cursor-pointer`}>{$currentLang}</button
-          >
+            class={`ml-4 uppercase hover:underline cursor-pointer`}
+            aria-label="Toggle Language"
+          >{$currentLang}</button>
         </div>
       </div>
     </NotEditable>

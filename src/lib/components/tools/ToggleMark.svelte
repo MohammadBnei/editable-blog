@@ -19,12 +19,12 @@
 </script>
 
 <button
-  on:click={handleClick}
+  onclick={handleClick}
   {disabled}
   class={classNames(
     active ? 'bg-gray-900 text-white' : 'hover:bg-gray-100',
     'sm:mx-1 rounded-full p-2 disabled:opacity-30'
   )}
 >
-  <slot />
+  {@render children()}
 </button>

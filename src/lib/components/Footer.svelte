@@ -22,7 +22,7 @@
       <a href="/#contact">Contact</a>
       <a href="/imprint">Imprint</a>
       {#if count}
-        <div class="flex-1" />
+        <div class="flex-1"></div>
         <div class="text-xs font-normal flex items-center space-x-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"

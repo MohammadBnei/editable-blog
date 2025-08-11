@@ -75,6 +75,6 @@
   {disabled}
   class={classNames('hover:bg-gray-100 sm:mx-1 rounded-full p-2 disabled:opacity-30')}
 >
-  <slot />
+  {@render children()}
   {progress || ''}
 </button>
