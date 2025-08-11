@@ -7,8 +7,8 @@
   import '../app.css';
 
   import { currentLang } from '$lib/stores';
-  let {data} = $props()
-  
+  let { data, children } = $props();
+
   currentLang.set(data.lang);
 </script>
 

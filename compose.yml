@@ -19,6 +19,7 @@ services:
       - '3000:3000'
     environment:
       DATABASE_URL: postgres://user:pass@db:5432/ad?schema=public
+      ADMIN_PASSWORD: test
     depends_on:
       - db
 

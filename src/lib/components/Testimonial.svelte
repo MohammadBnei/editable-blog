@@ -37,6 +37,7 @@
         <button
           class="w-6 h-6 p-1 rounded-full bg-gray-900 hover:bg-gray-800 text-white"
           on:click={() => dispatch('delete')}
+          aria-label="Delete"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -55,6 +56,7 @@
             firstEntry ? 'opacity-20' : ''
           )}
           on:click={() => dispatch('up')}
+          aria-label="Move up"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -73,6 +75,7 @@
             lastEntry ? 'opacity-20' : ''
           )}
           on:click={() => dispatch('down')}
+          aria-label="Move down"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

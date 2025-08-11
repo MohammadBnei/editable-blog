@@ -1,6 +1,8 @@
 <script>
   import { classNames } from '$lib/util';
   import { isEditing } from '$lib/stores.js';
+
+  let { children } = $props();
 </script>
 
 <div class={classNames($isEditing ? 'opacity-25 cursor-not-allowed relative' : '')}>
