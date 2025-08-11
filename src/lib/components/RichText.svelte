@@ -30,11 +30,4 @@
     letter-spacing: normal;
     padding: 1rem;
   }
-
-  :global(.carta-editor > textarea) {
-		height: 100% !important; /* Use !important cautiously */
-		min-height: 100%;
-		/* Add box-sizing if needed */
-		box-sizing: border-box;
-	}
 </style>
