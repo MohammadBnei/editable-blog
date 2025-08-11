@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/MohammadBnei/editable-blog/compare/0.4.0...0.4.1) (2025-08-11)
+
+
+### Bug Fixes
+
+* **richtext:** removing unused style to see if ithe hydratation error is gone ([a9436e2](https://github.com/MohammadBnei/editable-blog/commit/a9436e2ea092720f88ca89465583676771a89ca8))
+
 # [0.4.0](https://github.com/MohammadBnei/editable-blog/compare/0.3.1...0.4.0) (2025-08-09)
 
 
