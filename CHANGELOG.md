@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.5.0](https://github.com/MohammadBnei/editable-blog/compare/0.4.4...0.5.0) (2025-08-12)
+
+
+### Features
+
+* Add i18n to website teaser using currentLang store ([fc98725](https://github.com/MohammadBnei/editable-blog/commit/fc98725c6f36fc8be89c3c603034afe637429e2e))
+
 ## [0.4.4](https://github.com/MohammadBnei/editable-blog/compare/0.4.3...0.4.4) (2025-08-12)
 
 
