@@ -8,35 +8,13 @@
   import { currentUser, isEditing } from '$lib/stores.js';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
 
-  export let data;
+  let { data } = $props();
 
-  let showUserMenu = false,
-    title,
-    imprint;
+  let showUserMenu = $state(false);
+  let title = $derived(data.page?.title);
+  let imprint = $derived(data.page?.imprint);
 
-  // --------------------------------------------------------------------------
-  // DEFAULT PAGE CONTENT - AJDUST TO YOUR NEEDS
-  // --------------------------------------------------------------------------
-
-  function initOrReset() {
-    $currentUser = data.currentUser;
-    title = data.page?.title || 'Imprint';
-    imprint =
-      data.page?.imprint ||
-      [
-        ['Ken Experiences GmbH', 'Mozartstraße 56', '4020 Linz, Austria'].join('<br/>'),
-        [
-          'Managing Director: DI Michael Aufreiter',
-          'Register No: FN 408728x',
-          'Court: Linz',
-          'VAT ID: ATU68395257'
-        ].join('<br/>')
-      ]
-        .map(text => `<p>${text}</p>`)
-        .join('\n');
-  }
-
-  initOrReset();
+  $currentUser = data.currentUser;
 
   function toggleEdit() {
     $isEditing = true;
@@ -65,7 +43,7 @@
   <title>Imprint</title>
 </svelte:head>
 
-<WebsiteHeader bind:showUserMenu cancel={initOrReset} save={savePage}>
+<WebsiteHeader bind:showUserMenu save={savePage}>
   <PrimaryButton on:click={toggleEdit}>Edit page</PrimaryButton>
   <LoginMenu />
 </WebsiteHeader>

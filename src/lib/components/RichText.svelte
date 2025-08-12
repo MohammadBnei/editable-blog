@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { carta } from '$lib/carta';
+  import { carta } from '$lib/carta';
   import { isEditing } from '$lib/stores';
   import { Markdown, MarkdownEditor } from 'carta-md';
 
@@ -7,14 +7,12 @@
   import '@cartamd/plugin-code/default.css';
   import '@cartamd/plugin-attachment/default.css';
 
-  
-
   let { content = $bindable<string>() } = $props();
 </script>
 
 {#if $isEditing}
   <div class="not-prose">
-    <MarkdownEditor {carta} bind:value={content}  />
+    <MarkdownEditor {carta} bind:value={content} />
   </div>
 {:else}
   {#key content}
