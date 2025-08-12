@@ -4,7 +4,7 @@
   import { insertImage } from '$lib/editor/prosemirrorCommands';
   import { currentUser } from '$lib/stores';
 
-  let { editorView, editorState } = $props();
+  let { editorView, editorState, children } = $props();
 
   let fileInput; // for uploading an image
   let progress = $state(); // file upload progress

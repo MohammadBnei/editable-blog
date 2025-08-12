@@ -2,7 +2,7 @@
   import { classNames } from '$lib/util';
   import { wrapIn } from 'prosemirror-commands';
 
-  let { editorView, editorState } = $props();
+  let { editorView, editorState, children } = $props();
 
   const schema = $derived(editorState.schema);
   const disabled = $derived(!wrapIn(schema.nodes.blockquote)(editorView.state));

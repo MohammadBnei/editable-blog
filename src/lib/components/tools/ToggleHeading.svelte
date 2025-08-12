@@ -3,7 +3,7 @@
   import { setBlockType } from 'prosemirror-commands';
   import { blockTypeActive } from '$lib/editor/prosemirrorUtil';
 
-  let { editorView, editorState } = $props();
+  let { editorView, editorState, children } = $props();
 
   const schema = $derived(editorState.schema);
   const disabled = $derived(

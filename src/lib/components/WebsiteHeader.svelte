@@ -3,7 +3,7 @@
   import Modal from '$lib/components/Modal.svelte';
   import EditorToolbar from '$lib/components/tools/EditorToolbar.svelte';
 
-  let { showUserMenu = $bindable(), cancel, save } = $props();
+  let { showUserMenu = $bindable(), cancel, save, children } = $props();
 </script>
 
 <EditorToolbar {cancel} {save} />

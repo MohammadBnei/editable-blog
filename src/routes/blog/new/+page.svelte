@@ -23,10 +23,8 @@
     if (!$currentUser) {
       return alert('Sorry, you are not authorized to create new articles.');
     }
-    // For markdown content, we need to create a temporary div to extract the teaser
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = await carta.render(content);
-    const teaser = extractTeaser(tempDiv);
+    
+    const teaser = extractTeaser(content);
     try {
       const { slug } = await fetchJSON('POST', '/api/create-article', {
         title,

@@ -3,7 +3,7 @@
   import { browser } from '$app/environment';
   import { classNames } from '$lib/util';
 
-  const { close, position = 'bottom' } = $props();
+  const { close, position = 'bottom', children } = $props();
 
   let surface = $state();
   onMount(async () => {
@@ -31,7 +31,7 @@
       )}
     >
       <div
-        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl sm:my-8 w-full sm:max-w-lg"
+        class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl sm:my-8 w-full sm:max-w-lg p-2"
       >
         {@render children()}
       </div>

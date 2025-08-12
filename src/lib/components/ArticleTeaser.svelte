@@ -1,10 +1,10 @@
 <script>
-	import { carta } from '$lib/carta';
-  export let article;
-  export let firstEntry;
+  import { carta } from '$lib/carta';
   import { classNames } from '$lib/util';
   import { Markdown } from 'carta-md';
   import SecondaryButton from './SecondaryButton.svelte';
+
+  const { article, firstEntry } = $props();
 </script>
 
 <div>
@@ -26,7 +26,9 @@
       <div class="pt-2 pb-4">
         <div class="line-clamp-4">
           <a href={`/blog/${article.slug}`}>
-            <Markdown {carta} value={article.teaser} />
+            {#key article}
+              <Markdown {carta} value={article.teaser} />
+            {/key}
           </a>
         </div>
       </div>

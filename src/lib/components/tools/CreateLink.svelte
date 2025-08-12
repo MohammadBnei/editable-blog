@@ -3,7 +3,7 @@
   import { toggleMark } from 'prosemirror-commands';
   import { createLink } from '$lib/editor/prosemirrorCommands';
 
-  let { editorView, editorState } = $props();
+  let { editorView, editorState, children } = $props();
 
   const schema = $derived(editorState.schema);
   const disabled = $derived(!createLink(editorState, null, editorView));

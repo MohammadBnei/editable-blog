@@ -5,14 +5,10 @@
   import ArticleTeaser from '$lib/components/ArticleTeaser.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import EditableWebsiteTeaser from '$lib/components/EditableWebsiteTeaser.svelte';
-  import { currentUser } from '$lib/stores.js';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
 
-  export let data;
-  let showUserMenu;
-  $: {
-    $currentUser = data.currentUser;
-  }
+  let { data } = $props();
+  let showUserMenu = $state(false);
 </script>
 
 <svelte:head>
