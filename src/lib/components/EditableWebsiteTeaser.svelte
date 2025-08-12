@@ -4,7 +4,7 @@
   import { currentLang } from '$lib/stores';
 
   $: greeting =
-    $currentLang === 'fr' ? 'Salut, je suis Mohammad-Amine.' : "Hi, I'm Mohammad-Amine.";
+    $currentLang === 'fr' ? 'Hello, ici Mohammad-Amine.' : "Hi, I'm Mohammad-Amine.";
   $: bio =
     $currentLang === 'fr'
       ? 'Je suis un développeur passionné par la création de solutions efficaces et précises, avec un accent sur Go, JavaScript et l\'architecture système.'
