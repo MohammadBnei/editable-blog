@@ -3,11 +3,13 @@
   import PrimaryButton from './PrimaryButton.svelte';
   import { currentLang } from '$lib/stores';
 
-  $: greeting = $currentLang === 'fr' ? "Salut, je suis Mohammad-Amine." : "Hi, I'm Mohammad-Amine.";
-  $: bio = $currentLang === 'fr' ?
-    "Je suis un développeur passionné par la création de solutions efficaces et précises, avec un accent sur Go, JavaScript et une architecture système robuste." :
-    "I'm a developer passionate about building efficient and precise solutions, with a focus on Go, JavaScript, and robust system architecture.";
-  $: learnMore = $currentLang === 'fr' ? "En savoir plus" : "Learn more";
+  $: greeting =
+    $currentLang === 'fr' ? 'Salut, je suis Mohammad-Amine.' : "Hi, I'm Mohammad-Amine.";
+  $: bio =
+    $currentLang === 'fr'
+      ? 'Je suis un développeur passionné par la création de solutions efficaces et précises, avec un accent sur Go, JavaScript et l\'architecture système.'
+      : "I'm a developer passionate about building efficient and precise solutions, with a focus on Go, JavaScript, and robust system architecture.";
+  $: learnMore = $currentLang === 'fr' ? 'En savoir plus' : 'Learn more';
 </script>
 
 <div class={classNames('py-12 sm:py-24 border-t-2 border-gray-100')}>
