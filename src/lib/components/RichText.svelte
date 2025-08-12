@@ -11,7 +11,7 @@
 </script>
 
 {#if $isEditing}
-  <div class="not-prose">
+  <div class="[all:initial] not-prose">
     <MarkdownEditor {carta} bind:value={content} />
   </div>
 {:else}
