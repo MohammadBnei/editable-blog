@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.4](https://github.com/MohammadBnei/editable-blog/compare/0.4.3...0.4.4) (2025-08-12)
+
+
+### Bug Fixes
+
+* **imprint:** fixed lang change not updating the content ([a65d647](https://github.com/MohammadBnei/editable-blog/commit/a65d647a2f97bc56728e93eb7b911974cda33216))
+
 ## [0.4.3](https://github.com/MohammadBnei/editable-blog/compare/0.4.2...0.4.3) (2025-08-12)
 
 ## [0.4.2](https://github.com/MohammadBnei/editable-blog/compare/0.4.1...0.4.2) (2025-08-11)
