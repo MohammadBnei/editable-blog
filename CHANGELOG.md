@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.6.0](https://github.com/MohammadBnei/editable-blog/compare/0.5.1...0.6.0) (2025-08-13)
+
+
+### Features
+
+* **src/lib/carta.ts:** add UnifiedTransformer for rehype-mermaid to transform Mermaid diagrams into SVG images ([9c70ac6](https://github.com/MohammadBnei/editable-blog/commit/9c70ac6226a2efe3fe6eef4e98ce5bc989930f7a))
+
 ## [0.5.1](https://github.com/MohammadBnei/editable-blog/compare/0.5.0...0.5.1) (2025-08-12)
 
 # [0.5.0](https://github.com/MohammadBnei/editable-blog/compare/0.4.4...0.5.0) (2025-08-12)
