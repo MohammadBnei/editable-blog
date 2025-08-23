@@ -205,12 +205,6 @@
     <h1 class="text-4xl md:text-7xl font-bold text-center">
       <PlainText bind:content={title} />
     </h1>
-    <NotEditable>
-      <div class="text-center pt-8 pb-4 bounce text-xl">↓</div>
-      <div class="text-center">
-        <PrimaryButton size="lg" type="button" on:click={toggleEdit}>Edit Page</PrimaryButton>
-      </div>
-    </NotEditable>
   </div>
 </div>
 
