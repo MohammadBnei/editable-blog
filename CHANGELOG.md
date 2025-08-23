@@ -1,5 +1,13 @@
 # Changelog
 
+# [0.7.0](https://github.com/MohammadBnei/editable-blog/compare/0.6.0...0.7.0) (2025-08-23)
+
+
+### Features
+
+* Add resume page with dynamic content fetching ([f921e3e](https://github.com/MohammadBnei/editable-blog/commit/f921e3ef36836b9fe0b10580a07309db7fdaffc5))
+* **resume page:** fixed resume page last errors ([c322e76](https://github.com/MohammadBnei/editable-blog/commit/c322e76fa3722737b15dd79c13e7cebbf7d38095))
+
 # [0.6.0](https://github.com/MohammadBnei/editable-blog/compare/0.5.1...0.6.0) (2025-08-13)
 
 
