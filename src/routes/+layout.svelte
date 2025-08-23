@@ -12,4 +12,9 @@
   currentLang.set(data.lang);
 </script>
 
+<!-- Add this navigation link -->
+<nav>
+  <a href="/resume">Resume</a>
+</nav>
+
 {@render children()}
