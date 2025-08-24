@@ -29,9 +29,14 @@ export const carta = new Carta({
     attachment({
       upload: async file => {
         try {
-          // We convert all uploads to the WEBP image format
-          const extension = is_safari() ? 'jpg' : 'webp';
-          const path = [['images', nanoid()].join('/'), extension].join('.');
+          let extension;
+          if (file.type === 'application/pdf') {
+            extension = 'pdf';
+          } else {
+            // We convert all image uploads to the WEBP image format
+            extension = is_safari() ? 'jpg' : 'webp';
+          }
+          const path = [[extension === 'pdf' ? 'files' : 'images', nanoid()].join('/'), extension].join('.');
 
           // Upload the file using your existing uploadAsset function
           await uploadAsset(file, path, p => {
@@ -46,8 +51,8 @@ export const carta = new Carta({
           return null;
         }
       },
-      // Support common image formats
-      supportedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml']
+      // Support common image formats and PDF
+      supportedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml', 'application/pdf']
     })
   ],
 });
