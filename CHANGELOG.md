@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.8.0](https://github.com/MohammadBnei/editable-blog/compare/0.7.0...0.8.0) (2025-08-24)
+
+
+### Features
+
+* Add PDF upload support to Carta attachment plugin ([532bd2b](https://github.com/MohammadBnei/editable-blog/commit/532bd2b282f5dd80f11c38b82e761ac15d876a39))
+
 # [0.7.0](https://github.com/MohammadBnei/editable-blog/compare/0.6.0...0.7.0) (2025-08-23)
 
 
