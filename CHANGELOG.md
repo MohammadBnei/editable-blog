@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.9.0](https://github.com/MohammadBnei/editable-blog/compare/0.8.0...0.9.0) (2025-08-25)
+
+
+### Features
+
+* **resume:** removed imprint page and added resume to quick link navigation ([47a893d](https://github.com/MohammadBnei/editable-blog/commit/47a893d063c31d8c087d9b056c5b2062ea6c63b5))
+
 # [0.8.0](https://github.com/MohammadBnei/editable-blog/compare/0.7.0...0.8.0) (2025-08-24)
 
 
