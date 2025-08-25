@@ -62,7 +62,7 @@
         <div class="flex-1"></div>
         <button
           title="Search"
-          class='mr-6 hover:text-black cursor-pointer'
+          class="mr-6 hover:text-black cursor-pointer"
           onclick={() => (showSearch = true)}
           aria-label="Search"
         >
@@ -83,9 +83,7 @@
         </button>
         <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href="/"> About </a>
         <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href="/blog"> Blog </a>
-        <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href="/#contact">
-          Contact
-        </a>
+        <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href="/resume"> Resume</a>
         <div class="flex-1"></div>
         {#if $currentUser}
           <button
@@ -114,8 +112,8 @@
           <button
             onclick={() => setLanguage(toggleLangValue)}
             class={`ml-4 uppercase hover:underline cursor-pointer`}
-            aria-label="Toggle Language"
-          >{$currentLang}</button>
+            aria-label="Toggle Language">{$currentLang}</button
+          >
         </div>
       </div>
     </NotEditable>

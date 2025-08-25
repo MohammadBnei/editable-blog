@@ -20,7 +20,7 @@
       <a href="/">About</a>
       <a href="/blog">Blog</a>
       <a href="/#contact">Contact</a>
-      <a href="/imprint">Imprint</a>
+      <a href="/resume">Resume</a>
       {#if count}
         <div class="flex-1"></div>
         <div class="text-xs font-normal flex items-center space-x-2">
