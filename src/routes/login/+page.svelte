@@ -2,6 +2,8 @@
   import Limiter from '$lib/components/Limiter.svelte';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
   import Input from '$lib/components/Input.svelte';
+  import { enhance } from '$app/forms';
+
   export let form;
 </script>
 
@@ -14,7 +16,18 @@
     <p class="p-4 bg-red-100 text-red-600 my-4 rounded-md">Login incorrect. Please try again.</p>
   {/if}
   <div class="w-full flex flex-col space-y-4 mt-12 mb-4">
-    <form method="POST" class="flex flex-col space-y-8">
+    <form
+      method="POST"
+      class="flex flex-col space-y-8"
+      use:enhance={() => {
+        return async ({ result, update }) => {
+          if (result.type === 'redirect') {
+            window.history.back();
+          }
+          update();
+        };
+      }}
+    >
       <!-- <div class="flex flex-col">
 				<label for="email" class="font-semibold mb-2">E-Mail</label>
 				<Input type="text" name="email" id="email" />
