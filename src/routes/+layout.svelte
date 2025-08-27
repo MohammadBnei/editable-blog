@@ -12,4 +12,4 @@
   currentLang.set(data.lang);
 </script>
 
-{@render children()}
+and{@render children()}

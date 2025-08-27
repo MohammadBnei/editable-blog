@@ -1,4 +1,5 @@
 <script>
+	import { currentLang } from './../../lib/stores.js';
   import Footer from '$lib/components/Footer.svelte';
   import PlainText from '$lib/components/PlainText.svelte';
   import RichText from '$lib/components/RichText.svelte';
@@ -50,10 +51,11 @@
 
 <div class="py-12 sm:py-24">
   <div class="max-w-(--breakpoint-md) mx-auto px-6 md:text-xl">
-    <h1 class="text-4xl md:text-7xl font-bold pb-8">
+    <a class="btn" href="/api/resume" download={`resume_Mohammad-Amine_BANAEI${$currentLang === 'fr' ? '_fr' : '_en'}.pdf`}>Download PDF</a>
+    <h1 class="pb-8 text-4xl font-bold md:text-7xl">
       <PlainText bind:content={title} />
     </h1>
-    <div class="prose md:prose-xl pb-12 sm:pb-24">
+    <div class="pb-12 prose md:prose-xl sm:pb-24">
       <RichText multiLine bind:content={resumeContent} />
     </div>
   </div>
