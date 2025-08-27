@@ -1,5 +1,13 @@
 # Changelog
 
+# [0.10.0](https://github.com/MohammadBnei/editable-blog/compare/0.9.0...0.10.0) (2025-08-27)
+
+
+### Features
+
+* Add resume download button and dynamic filename ([7ec54a3](https://github.com/MohammadBnei/editable-blog/commit/7ec54a35b53d7efcc28e9a5024c66f7eeffeae68))
+* **login:** will go to previous page instead of home after successful login. ([b7e9b44](https://github.com/MohammadBnei/editable-blog/commit/b7e9b44d394abe49023de7934f17961a80645306))
+
 # [0.9.0](https://github.com/MohammadBnei/editable-blog/compare/0.8.0...0.9.0) (2025-08-25)
 
 
