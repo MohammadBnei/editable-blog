@@ -1,5 +1,4 @@
 <script>
-	import { currentLang } from './../../lib/stores.js';
   import Footer from '$lib/components/Footer.svelte';
   import PlainText from '$lib/components/PlainText.svelte';
   import RichText from '$lib/components/RichText.svelte';
@@ -14,6 +13,7 @@
   let showUserMenu = $state(false);
   let title = $derived(data.page?.title);
   let resumeContent = $derived(data.page?.resumeContent || ''); // Assuming the markdown content will be stored under 'resumeContent'
+  let resumeDownloadContent = $derived(data.page?.resumeDL || '');
 
   $currentUser = data.currentUser;
 
@@ -29,7 +29,8 @@
         pageId: 'resume',
         page: {
           title,
-          resumeContent // Save the content back
+          resumeContent, // Save the content back
+          resumeDownloadContent
         }
       });
       $isEditing = false;
@@ -51,7 +52,7 @@
 
 <div class="py-12 sm:py-24">
   <div class="max-w-(--breakpoint-md) mx-auto px-6 md:text-xl">
-    <a class="btn" href="/api/resume" download={`resume_Mohammad-Amine_BANAEI${$currentLang === 'fr' ? '_fr' : '_en'}.pdf`}>Download PDF</a>
+    <RichText bind:content={resumeDownloadContent} />
     <h1 class="pb-8 text-4xl font-bold md:text-7xl">
       <PlainText bind:content={title} />
     </h1>
