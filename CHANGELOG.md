@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.11.0](https://github.com/MohammadBnei/editable-blog/compare/0.10.0...0.11.0) (2025-09-03)
+
+
+### Features
+
+* **resume:** added editing option for resume ([9c185ef](https://github.com/MohammadBnei/editable-blog/commit/9c185efa0e43b3b50ab3da7a6af876056402f4d1))
+
 # [0.10.0](https://github.com/MohammadBnei/editable-blog/compare/0.9.0...0.10.0) (2025-08-27)
 
 
