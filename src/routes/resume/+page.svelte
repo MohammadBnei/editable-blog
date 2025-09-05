@@ -13,7 +13,7 @@
   let showUserMenu = $state(false);
   let title = $derived(data.page?.title);
   let resumeContent = $derived(data.page?.resumeContent || ''); // Assuming the markdown content will be stored under 'resumeContent'
-  let resumeDownloadContent = $derived(data.page?.resumeDL || '');
+  let resumeDownloadContent = $derived(data.page?.resumeDownloadContent || '');
 
   $currentUser = data.currentUser;
 
