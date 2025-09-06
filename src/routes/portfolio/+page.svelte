@@ -13,6 +13,7 @@
   let showUserMenu = $state(false);
   let title = $derived(data.page?.title || 'My Portfolio');
   let introContent = $derived(data.page?.introContent || ''); // Optional intro text for the page
+  let projects = $derived(data.page?.projects || []); // Array of projects, each with title, content (markdown), gitLink, liveLink
 
   $currentUser = data.currentUser;
 
@@ -28,7 +29,8 @@
         pageId: 'portfolio',
         page: {
           title,
-          introContent
+          introContent,
+          projects
         }
       });
       $isEditing = false;
@@ -57,16 +59,20 @@
       <RichText multiLine bind:content={introContent} />
     </div>
     <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-      {#each data.projects as project}
+      {#each projects as project}
         <div class="border rounded-lg p-6 shadow-md">
-          {#if project.image}
-            <img src={project.image} alt={project.title} class="w-full h-48 object-cover rounded mb-4" />
-          {/if}
           <h2 class="text-2xl font-bold mb-2">{project.title}</h2>
-          <p class="text-gray-700 mb-4">{project.description}</p>
-          {#if project.link}
-            <a href={project.link} target="_blank" rel="noopener" class="text-blue-600 hover:underline">View Project</a>
-          {/if}
+          <div class="prose mb-4">
+            <RichText multiLine bind:content={project.content} />
+          </div>
+          <div class="flex gap-4">
+            {#if project.gitLink}
+              <a href={project.gitLink} target="_blank" rel="noopener" class="text-blue-600 hover:underline">Git Repo</a>
+            {/if}
+            {#if project.liveLink}
+              <a href={project.liveLink} target="_blank" rel="noopener" class="text-green-600 hover:underline">Live Page</a>
+            {/if}
+          </div>
         </div>
       {/each}
     </div>

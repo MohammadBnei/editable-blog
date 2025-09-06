@@ -1,5 +1,4 @@
 import { getPage } from '$lib/api';
-import { getProjects } from '$lib/api';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ locals }) {
