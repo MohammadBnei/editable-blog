@@ -13,13 +13,23 @@
   let showUserMenu = $state(false);
   let title = $derived(data.page?.title || 'My Portfolio');
   let introContent = $derived(data.page?.introContent || ''); // Optional intro text for the page
-  let projects = $derived(data.page?.projects || []); // Array of projects, each with title, content (markdown), gitLink, liveLink
+  let projects = $state(data.page?.projects || []); // Array of projects, each with title, content (markdown), gitLink, liveLink
 
   $currentUser = data.currentUser;
 
   function toggleEdit() {
     $isEditing = true;
     showUserMenu = false;
+  }
+
+  function addProject() {
+    projects.push({ title: '', content: '', gitLink: '', liveLink: '' });
+    projects = [...projects]; // Trigger reactivity
+  }
+
+  function removeProject(index) {
+    projects.splice(index, 1);
+    projects = [...projects]; // Trigger reactivity
   }
 
   async function savePage() {
@@ -58,14 +68,19 @@
     <div class="pb-12 prose md:prose-xl">
       <RichText multiLine bind:content={introContent} />
     </div>
+    {#if $isEditing}
+      <div class="mb-8">
+        <PrimaryButton on:click={addProject}>Add Project</PrimaryButton>
+      </div>
+    {/if}
     <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-      {#each projects as project}
+      {#each projects as project, index}
         <div class="border rounded-lg p-6 shadow-md">
           <h2 class="text-2xl font-bold mb-2">{project.title}</h2>
           <div class="prose mb-4">
             <RichText multiLine bind:content={project.content} />
           </div>
-          <div class="flex gap-4">
+          <div class="flex gap-4 mb-4">
             {#if project.gitLink}
               <a href={project.gitLink} target="_blank" rel="noopener" class="text-blue-600 hover:underline">Git Repo</a>
             {/if}
@@ -73,6 +88,9 @@
               <a href={project.liveLink} target="_blank" rel="noopener" class="text-green-600 hover:underline">Live Page</a>
             {/if}
           </div>
+          {#if $isEditing}
+            <button on:click={() => removeProject(index)} class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Remove Project</button>
+          {/if}
         </div>
       {/each}
     </div>
