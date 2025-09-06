@@ -73,27 +73,21 @@
         <PrimaryButton on:click={addProject}>Add Project</PrimaryButton>
       </div>
     {/if}
-    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-      {#each projects as project, index}
-        <div class="border rounded-lg p-6 shadow-md">
-          <h2 class="text-2xl font-bold mb-2">{project.title}</h2>
-          <div class="prose mb-4">
-            <RichText multiLine bind:content={project.content} />
-          </div>
-          <div class="flex gap-4 mb-4">
-            {#if project.gitLink}
-              <a href={project.gitLink} target="_blank" rel="noopener" class="text-blue-600 hover:underline">Git Repo</a>
-            {/if}
-            {#if project.liveLink}
-              <a href={project.liveLink} target="_blank" rel="noopener" class="text-green-600 hover:underline">Live Page</a>
-            {/if}
-          </div>
-          {#if $isEditing}
-            <button on:click={() => removeProject(index)} class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Remove Project</button>
-          {/if}
+
+    {#each projects as project, index}
+      <div class="border rounded-lg p-6 shadow-md">
+        <h2 class="text-2xl font-bold mb-2">{project.title}</h2>
+        <div class="prose mb-4">
+          <RichText multiLine bind:content={project.content} />
         </div>
-      {/each}
-    </div>
+      </div>
+      {#if $isEditing}
+        <button
+          on:click={() => removeProject(index)}
+          class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Remove Project</button
+        >
+      {/if}
+    {/each}
   </div>
 </div>
 
