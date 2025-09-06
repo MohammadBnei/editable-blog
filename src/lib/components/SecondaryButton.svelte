@@ -1,9 +1,6 @@
 <script>
   import BaseButton from '$lib/components/BaseButton.svelte';
-  export let disabled = undefined;
-  export let type = 'button';
-  export let size = undefined;
-  export let href = undefined;
+  let { disabled, type = 'button', size, href } = $props();
 </script>
 
 <BaseButton
