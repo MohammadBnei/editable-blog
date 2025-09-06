@@ -5,6 +5,7 @@
   import LoginMenu from '$lib/components/LoginMenu.svelte';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
   import { fetchJSON } from '$lib/util';
+  import { extractTeaser } from '$lib/util';
   import { currentUser, isEditing } from '$lib/stores.js';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
 
@@ -23,12 +24,17 @@
   }
 
   function addProject() {
-    projects.push({ title: '', content: '', gitLink: '', liveLink: '' });
+    projects.push({ title: '', content: '', gitLink: '', liveLink: '', expanded: false });
     projects = [...projects]; // Trigger reactivity
   }
 
   function removeProject(index) {
     projects.splice(index, 1);
+    projects = [...projects]; // Trigger reactivity
+  }
+
+  function toggleProject(index) {
+    projects[index].expanded = !projects[index].expanded;
     projects = [...projects]; // Trigger reactivity
   }
 
@@ -75,18 +81,38 @@
     {/if}
 
     {#each projects as project, index}
-      <div class="border rounded-lg p-6 shadow-md">
-        <h2 class="text-2xl font-bold mb-2">{project.title}</h2>
+      <div class="border rounded-lg p-6 shadow-md mb-6">
+        <h2 class="text-2xl font-bold mb-2">
+          <PlainText bind:content={project.title} />
+        </h2>
+        {#if project.gitLink || project.liveLink}
+          <div class="mb-4">
+            {#if project.gitLink}
+              <a href={project.gitLink} target="_blank" class="text-blue-500 hover:underline mr-4">GitHub</a>
+            {/if}
+            {#if project.liveLink}
+              <a href={project.liveLink} target="_blank" class="text-blue-500 hover:underline">Live Demo</a>
+            {/if}
+          </div>
+        {/if}
         <div class="prose mb-4">
-          <RichText multiLine bind:content={project.content} />
+          {#if project.expanded}
+            <RichText multiLine bind:content={project.content} />
+          {:else}
+            <p>{extractTeaser(project.content, 100)}</p>
+          {/if}
         </div>
-      </div>
-      {#if $isEditing}
         <button
-          on:click={() => removeProject(index)}
-          class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Remove Project</button
-        >
-      {/if}
+          on:click={() => toggleProject(index)}
+          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+          {project.expanded ? 'Collapse' : 'Expand'}
+        </button>
+        {#if $isEditing}
+          <button
+            on:click={() => removeProject(index)}
+            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 ml-4">Remove Project</button>
+        {/if}
+      </div>
     {/each}
   </div>
 </div>
