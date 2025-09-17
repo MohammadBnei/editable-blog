@@ -4,7 +4,7 @@
   import NotEditable from './NotEditable.svelte';
   import Search from './Search.svelte';
   import { isEditing, currentUser, currentLang } from '$lib/stores'; // Import currentLang store
-  import { invalidateAll } from '$app/navigation';
+  import { invalidateAll, goto } from '$app/navigation'; // Import goto
 
   let { showUserMenu = $bindable(), showSearch } = $props();
 
@@ -38,6 +38,10 @@
       // Update the Svelte store immediately
       $currentLang = lang;
       invalidateAll();
+      // Remove the 'lang' URL parameter
+      const url = new URL(window.location.href);
+      url.searchParams.delete('lang');
+      goto(url.pathname + url.search, { replaceState: true });
     }
   }
 
