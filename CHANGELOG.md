@@ -1,5 +1,15 @@
 # Changelog
 
+# [0.12.0](https://github.com/MohammadBnei/editable-blog/compare/0.11.1...0.12.0) (2025-09-06)
+
+
+### Features
+
+* add expandable project previews in portfolio ([e9f90bb](https://github.com/MohammadBnei/editable-blog/commit/e9f90bb90db5591d9059b36dca900fe2cc38a036))
+* add portfolio page with projects API and display ([6b420db](https://github.com/MohammadBnei/editable-blog/commit/6b420dbbbc511f2517faaa16fdd29938c74f12af))
+* add project editing functionality in portfolio page ([35daf44](https://github.com/MohammadBnei/editable-blog/commit/35daf44c750b10c82e36e76a3372caa9344750a7))
+* add projects section to portfolio page with markdown content and links ([43cf1ae](https://github.com/MohammadBnei/editable-blog/commit/43cf1ae8f7d36f995f698f17a12ad867b0c4a77b))
+
 ## [0.11.1](https://github.com/MohammadBnei/editable-blog/compare/0.11.0...0.11.1) (2025-09-05)
 
 # [0.11.0](https://github.com/MohammadBnei/editable-blog/compare/0.10.0...0.11.0) (2025-09-03)
