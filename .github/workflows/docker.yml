@@ -8,7 +8,8 @@ on:
 
 env:
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/editable-blog
-  PLATFORMS: ${{ github.event_name == 'push' && 'linux/amd64, linux/arm64' || 'linux/amd64' }}
+  # PLATFORMS: ${{ github.event_name == 'push' && 'linux/amd64, linux/arm64' || 'linux/amd64' }}
+  PLATFORMS: linux/amd64
 
 jobs:
   build-push:
