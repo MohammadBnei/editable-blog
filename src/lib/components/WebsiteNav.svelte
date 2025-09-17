@@ -4,7 +4,7 @@
   import NotEditable from './NotEditable.svelte';
   import Search from './Search.svelte';
   import { isEditing, currentUser, currentLang } from '$lib/stores'; // Import currentLang store
-  import { invalidateAll, goto } from '$app/navigation'; // Import goto
+  import { goto, invalidateAll } from '$app/navigation';
 
   let { showUserMenu = $bindable(), showSearch } = $props();
 
@@ -26,6 +26,13 @@
   }
 
   async function setLanguage(lang) {
+    // Remove the 'lang' URL parameter
+    const url = new URL(window.location.toString());
+    if (url.searchParams.has('lang')) {
+      url.searchParams.delete('lang');
+      goto(url.toString());
+    }
+
     const response = await fetch('/api/set-lang', {
       method: 'POST',
       headers: {
@@ -38,10 +45,6 @@
       // Update the Svelte store immediately
       $currentLang = lang;
       invalidateAll();
-      // Remove the 'lang' URL parameter
-      const url = new URL(window.location.href);
-      url.searchParams.delete('lang');
-      goto(url.pathname + url.search, { replaceState: true });
     }
   }
 

@@ -15,8 +15,14 @@
 
   let { data } = $props();
 
-  let showUserMenu = false;
-  let title, teaser, content, published_at, updatedAt;
+  let { showUserMenu, title, teaser, content, published_at, updatedAt } = $state({
+    showUserMenu: false,
+    title: data.title,
+    teaser: data.teaser,
+    content: data.content,
+    published_at: data.published_at,
+    updatedAt: data.updatedAt
+  });
 
   $effect(() => {
     $currentUser = data.currentUser;
@@ -41,7 +47,7 @@
     if (!$currentUser) return alert('Sorry, you are not authorized.');
     try {
       fetchJSON('POST', '/api/delete-article', {
-        slug: data.slug,
+        slug: data.slug
       });
       goto('/blog');
     } catch (err) {
@@ -72,7 +78,9 @@
   }
 
   // Extract image from content for OG image
-  const ogImage = $derived((content.match(/<img src="([^"]+)"/) || [])[1] || '/images/default-blog-image.jpg');
+  const ogImage = $derived(
+    (content?.match(/<img src="([^"]+)"/) || [])?.[1] || '/images/default-blog-image.jpg'
+  );
   const articleUrl = $derived(`https://blog.bnei.dev/blog/${data.slug}`);
 </script>
 
