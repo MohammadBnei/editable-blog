@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.13.1](https://github.com/MohammadBnei/editable-blog/compare/0.13.0...0.13.1) (2025-09-17)
+
+
+### Bug Fixes
+
+* Remove [@html](https://github.com/html) from title tag in svelte:head ([658a31b](https://github.com/MohammadBnei/editable-blog/commit/658a31b02c1ff971479a9f0155594421c4f9da81))
+* Replace Svelte reactive declarations with `$derived` and `$effect` ([d13dcf4](https://github.com/MohammadBnei/editable-blog/commit/d13dcf42aa060c74917d343e561165e9d0bc0eb1))
+* Update Svelte 5 runes syntax for page data ([04ca99e](https://github.com/MohammadBnei/editable-blog/commit/04ca99e7812edcdb190f2feae4fa142b7dc3b0cb))
+
 # [0.13.0](https://github.com/MohammadBnei/editable-blog/compare/0.12.1...0.13.0) (2025-09-17)
 
 
