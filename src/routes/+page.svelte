@@ -178,13 +178,31 @@
   $effect(() => {
     initOrReset();
   })
+
+  // Clean up HTML tags from bio for meta description
+  $: cleanedBio = bio.replace(/<[^>]*>/g, '');
+  $: pageTitle = title.replace(/<br>/g, ' '); // Replace <br> for cleaner title in meta
 </script>
 
 <svelte:head>
-  <title>{title}</title>
-  <meta name="description" content={bio.replace(/<[^>]*>/g, '')} />
+  <title>{@html pageTitle}</title>
+  <meta name="description" content={cleanedBio} />
   <link rel="alternate" hreflang="en" href="https://blog.bnei.dev" />
   <link rel="canonical" href="https://blog.bnei.dev" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://blog.bnei.dev" />
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={cleanedBio} />
+  <meta property="og:image" content="https://blog.bnei.dev{bioPicture}" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://blog.bnei.dev" />
+  <meta property="twitter:title" content={pageTitle} />
+  <meta property="twitter:description" content={cleanedBio} />
+  <meta property="twitter:image" content="https://blog.bnei.dev{bioPicture}" />
 </svelte:head>
 
 <WebsiteHeader bind:showUserMenu cancel={initOrReset} save={savePage}>

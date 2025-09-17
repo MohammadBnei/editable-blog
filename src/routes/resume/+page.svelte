@@ -39,10 +39,27 @@
       alert('There was an error. Please try again.');
     }
   }
+
+  // Generate a description from resumeContent or a default
+  $: pageDescription = resumeContent ? resumeContent.replace(/<[^>]*>/g, '').substring(0, 160) + '...' : 'View and download my professional resume.';
+  $: pageUrl = `https://blog.bnei.dev/resume`;
 </script>
 
 <svelte:head>
-  <title>Resume</title>
+  <title>{title || 'Resume'}</title>
+  <meta name="description" content={pageDescription} />
+  <link rel="canonical" href={pageUrl} />
+  <meta property="og:locale" content={data.lang === 'fr' ? 'fr_FR' : 'en_US'} />
+  <meta property="og:type" content="profile" /> <!-- Or 'website' if preferred -->
+  <meta property="og:title" content={title || 'Resume'} />
+  <meta property="og:description" content={pageDescription} />
+  <meta property="og:url" content={pageUrl} />
+  <meta property="og:image" content="https://blog.bnei.dev/images/default-resume-image.jpg" /> <!-- Consider a specific image for resume -->
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title || 'Resume'} />
+  <meta name="twitter:description" content={pageDescription} />
+  <meta name="twitter:image" content="https://blog.bnei.dev/images/default-resume-image.jpg" />
 </svelte:head>
 
 <WebsiteHeader bind:showUserMenu save={savePage}>

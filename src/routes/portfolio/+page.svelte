@@ -56,10 +56,27 @@
       alert('There was an error. Please try again.');
     }
   }
+
+  // Generate a description from introContent or a default
+  $: pageDescription = introContent ? extractTeaser(introContent, 160) : 'Explore my portfolio of projects and work.';
+  $: pageUrl = `https://blog.bnei.dev/portfolio`;
 </script>
 
 <svelte:head>
-  <title>Portfolio</title>
+  <title>{title}</title>
+  <meta name="description" content={pageDescription} />
+  <link rel="canonical" href={pageUrl} />
+  <meta property="og:locale" content={data.lang === 'fr' ? 'fr_FR' : 'en_US'} />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={pageDescription} />
+  <meta property="og:url" content={pageUrl} />
+  <meta property="og:image" content="https://blog.bnei.dev/images/default-portfolio-image.jpg" /> <!-- Consider a specific image for portfolio -->
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={pageDescription} />
+  <meta name="twitter:image" content="https://blog.bnei.dev/images/default-portfolio-image.jpg" />
 </svelte:head>
 
 <WebsiteHeader bind:showUserMenu save={savePage}>

@@ -41,7 +41,7 @@
     if (!$currentUser) return alert('Sorry, you are not authorized.');
     try {
       fetchJSON('POST', '/api/delete-article', {
-        slug: data.slug
+        slug: data.slug,
       });
       goto('/blog');
     } catch (err) {
@@ -70,11 +70,31 @@
       );
     }
   }
+
+  // Extract image from content for OG image
+  $: ogImage = (content.match(/<img src="([^"]+)"/) || [])[1] || '/images/default-blog-image.jpg';
+  $: articleUrl = `https://blog.bnei.dev/blog/${data.slug}`;
 </script>
 
 <svelte:head>
   <title>{title}</title>
   <meta name="description" content={teaser} />
+  <link rel="canonical" href={articleUrl} />
+  <meta property="og:locale" content={data.lang === 'fr' ? 'fr_FR' : 'en_US'} />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={teaser} />
+  <meta property="og:url" content={articleUrl} />
+  <meta property="og:image" content="https://blog.bnei.dev{ogImage}" />
+  <meta property="article:published_time" content={published_at} />
+  {#if updatedAt}
+    <meta property="article:modified_time" content={updatedAt} />
+  {/if}
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={teaser} />
+  <meta name="twitter:image" content="https://blog.bnei.dev{ogImage}" />
 </svelte:head>
 
 <EditorToolbar cancel={initOrReset} save={saveArticle} />
