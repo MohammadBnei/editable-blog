@@ -13,7 +13,7 @@
   import EditorToolbar from '$lib/components/tools/EditorToolbar.svelte';
   import { currentUser, isEditing } from '$lib/stores';
 
-  export let data;
+  let { data } = $props();
 
   let showUserMenu = false;
   let title, teaser, content, published_at, updatedAt;
