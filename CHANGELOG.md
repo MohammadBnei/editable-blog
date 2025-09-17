@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/MohammadBnei/editable-blog/compare/0.12.0...0.12.1) (2025-09-17)
+
+
+### Bug Fixes
+
+* Remove 'lang' URL parameter after language change ([a4ba0cf](https://github.com/MohammadBnei/editable-blog/commit/a4ba0cf840a6e1d7b04197eaeb634b5ae5e69fda))
+
 # [0.12.0](https://github.com/MohammadBnei/editable-blog/compare/0.11.1...0.12.0) (2025-09-06)
 
 
