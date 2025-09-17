@@ -1,5 +1,15 @@
 # Changelog
 
+# [0.14.0](https://github.com/MohammadBnei/editable-blog/compare/0.13.2...0.14.0) (2025-09-17)
+
+
+### Features
+
+* Add healthz endpoint for k8s liveness probes ([c5ddb91](https://github.com/MohammadBnei/editable-blog/commit/c5ddb910e04122019ead484d4d66eac5db710e12))
+* Add liveness and readiness probes to deployment ([7e47891](https://github.com/MohammadBnei/editable-blog/commit/7e478913c7e8b03a670fd535fe7bb0d95f7078e6))
+* Implement healthz endpoint ([97704e6](https://github.com/MohammadBnei/editable-blog/commit/97704e6e1e77e5b80dd431d313f862527a604f29))
+* **k8s:** added compress middleware for gzip ([37a5e0e](https://github.com/MohammadBnei/editable-blog/commit/37a5e0e904f95c69d20d310a6f85882f4bebfdba))
+
 ## [0.13.2](https://github.com/MohammadBnei/editable-blog/compare/0.13.1...0.13.2) (2025-09-17)
 
 ## [0.13.1](https://github.com/MohammadBnei/editable-blog/compare/0.13.0...0.13.1) (2025-09-17)
