@@ -185,7 +185,7 @@
 </script>
 
 <svelte:head>
-  <title>{@html pageTitle}</title>
+  <title>{pageTitle}</title>
   <meta name="description" content={cleanedBio} />
   <link rel="alternate" hreflang="en" href="https://blog.bnei.dev" />
   <link rel="canonical" href="https://blog.bnei.dev" />
