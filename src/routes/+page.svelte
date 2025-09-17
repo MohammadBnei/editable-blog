@@ -180,8 +180,8 @@
   })
 
   // Clean up HTML tags from bio for meta description
-  $: cleanedBio = bio.replace(/<[^>]*>/g, '');
-  $: pageTitle = title.replace(/<br>/g, ' '); // Replace <br> for cleaner title in meta
+  const cleanedBio = $derived(bio.replace(/<[^>]*>/g, ''));
+  const pageTitle = $derived(title.replace(/<br>/g, ' ')); // Replace <br> for cleaner title in meta
 </script>
 
 <svelte:head>

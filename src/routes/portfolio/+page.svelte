@@ -58,15 +58,14 @@
   }
 
   // Generate a description from introContent or a default
-  $: pageDescription = introContent ? extractTeaser(introContent, 160) : 'Explore my portfolio of projects and work.';
-  $: pageUrl = `https://blog.bnei.dev/portfolio`;
+  const pageDescription = $derived(introContent ? extractTeaser(introContent, 160) : 'Explore my portfolio of projects and work.');
+  const pageUrl = $derived(`https://blog.bnei.dev/portfolio`);
 </script>
 
 <svelte:head>
   <title>{title}</title>
   <meta name="description" content={pageDescription} />
   <link rel="canonical" href={pageUrl} />
-  <meta property="og:locale" content={data.lang === 'fr' ? 'fr_FR' : 'en_US'} />
   <meta property="og:type" content="website" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={pageDescription} />

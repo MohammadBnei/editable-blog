@@ -18,10 +18,10 @@
   let showUserMenu = false;
   let title, teaser, content, published_at, updatedAt;
 
-  $: {
+  $effect(() => {
     $currentUser = data.currentUser;
     initOrReset();
-  }
+  });
 
   function initOrReset() {
     title = data.title;
@@ -72,15 +72,14 @@
   }
 
   // Extract image from content for OG image
-  $: ogImage = (content.match(/<img src="([^"]+)"/) || [])[1] || '/images/default-blog-image.jpg';
-  $: articleUrl = `https://blog.bnei.dev/blog/${data.slug}`;
+  const ogImage = $derived((content.match(/<img src="([^"]+)"/) || [])[1] || '/images/default-blog-image.jpg');
+  const articleUrl = $derived(`https://blog.bnei.dev/blog/${data.slug}`);
 </script>
 
 <svelte:head>
   <title>{title}</title>
   <meta name="description" content={teaser} />
   <link rel="canonical" href={articleUrl} />
-  <meta property="og:locale" content={data.lang === 'fr' ? 'fr_FR' : 'en_US'} />
   <meta property="og:type" content="article" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={teaser} />

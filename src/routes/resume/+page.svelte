@@ -41,15 +41,14 @@
   }
 
   // Generate a description from resumeContent or a default
-  $: pageDescription = resumeContent ? resumeContent.replace(/<[^>]*>/g, '').substring(0, 160) + '...' : 'View and download my professional resume.';
-  $: pageUrl = `https://blog.bnei.dev/resume`;
+  const pageDescription = $derived(resumeContent ? resumeContent.replace(/<[^>]*>/g, '').substring(0, 160) + '...' : 'View and download my professional resume.');
+  const pageUrl = $derived(`https://blog.bnei.dev/resume`);
 </script>
 
 <svelte:head>
   <title>{title || 'Resume'}</title>
   <meta name="description" content={pageDescription} />
   <link rel="canonical" href={pageUrl} />
-  <meta property="og:locale" content={data.lang === 'fr' ? 'fr_FR' : 'en_US'} />
   <meta property="og:type" content="profile" /> <!-- Or 'website' if preferred -->
   <meta property="og:title" content={title || 'Resume'} />
   <meta property="og:description" content={pageDescription} />
