@@ -13,7 +13,6 @@
 </script>
 
 <svelte:head>
-  <html lang={data.lang || 'en'} />
   <meta charset="utf-8" />
   <link rel="icon" href="/favicon.png" />
   <meta name="viewport" content="width=device-width" />
