@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.13.0](https://github.com/MohammadBnei/editable-blog/compare/0.12.1...0.13.0) (2025-09-17)
+
+
+### Features
+
+* Implement SEO and social media meta tags for all pages ([7625d98](https://github.com/MohammadBnei/editable-blog/commit/7625d9850c7c65dac0e08f150b468ee37b2b9827))
+
 ## [0.12.1](https://github.com/MohammadBnei/editable-blog/compare/0.12.0...0.12.1) (2025-09-17)
 
 
