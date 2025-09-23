@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.1](https://github.com/MohammadBnei/editable-blog/compare/0.16.0...0.16.1) (2025-09-23)
+
+
+### Bug Fixes
+
+* **env:** get auth for n8n is now entirely on the server side ([606718c](https://github.com/MohammadBnei/editable-blog/commit/606718c375bb97095e995aa4aa4e8b1fc16d740e))
+
 # [0.16.0](https://github.com/MohammadBnei/editable-blog/compare/0.15.0...0.16.0) (2025-09-23)
 
 
