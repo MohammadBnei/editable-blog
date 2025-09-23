@@ -174,10 +174,10 @@
   }
 
   initOrReset();
-  
+
   $effect(() => {
     initOrReset();
-  })
+  });
 
   // Clean up HTML tags from bio for meta description
   const cleanedBio = $derived(bio.replace(/<[^>]*>/g, ''));

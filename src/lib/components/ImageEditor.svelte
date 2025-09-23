@@ -5,7 +5,16 @@
   import uploadAsset from '$lib/uploadAsset';
   import Cropper from '$lib/components/Cropper.svelte';
 
-  let { src = $bindable(), alt, uploadPrompt = undefined, maxWidth, maxHeight, quality, class: className = '', previewSrc = $bindable() } = $props();
+  let {
+    src = $bindable(),
+    alt,
+    uploadPrompt = undefined,
+    maxWidth,
+    maxHeight,
+    quality,
+    class: className = '',
+    previewSrc = $bindable()
+  } = $props();
 
   function onKeyDown(e) {
     // Trigger save
@@ -38,9 +47,10 @@
   }
 
   async function uploadImage() {
-    if (!cropDetail) { // Add a check for cropDetail
-      console.error("cropDetail is undefined. Cropping might not have completed.");
-      alert("Please crop the image first.");
+    if (!cropDetail) {
+      // Add a check for cropDetail
+      console.error('cropDetail is undefined. Cropping might not have completed.');
+      alert('Please crop the image first.');
       return;
     }
 
@@ -96,7 +106,6 @@
     previewSrc = newSrc; // Set previewSrc for Image.svelte to display
     is_cropping = true;
   }
-
 </script>
 
 <div
@@ -154,7 +163,9 @@
       title={uploadPrompt}
       role="button"
       tabindex="0"
-      onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); }}
+      onkeydown={e => {
+        if (e.key === 'Enter' || e.key === ' ') fileInput.click();
+      }}
     />
   {/if}
 </div>

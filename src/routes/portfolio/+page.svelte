@@ -58,7 +58,9 @@
   }
 
   // Generate a description from introContent or a default
-  const pageDescription = $derived(introContent ? extractTeaser(introContent, 160) : 'Explore my portfolio of projects and work.');
+  const pageDescription = $derived(
+    introContent ? extractTeaser(introContent, 160) : 'Explore my portfolio of projects and work.'
+  );
   const pageUrl = $derived(`https://blog.bnei.dev/portfolio`);
 </script>
 
@@ -70,7 +72,8 @@
   <meta property="og:title" content={title} />
   <meta property="og:description" content={pageDescription} />
   <meta property="og:url" content={pageUrl} />
-  <meta property="og:image" content="https://blog.bnei.dev/images/default-portfolio-image.jpg" /> <!-- Consider a specific image for portfolio -->
+  <meta property="og:image" content="https://blog.bnei.dev/images/default-portfolio-image.jpg" />
+  <!-- Consider a specific image for portfolio -->
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
@@ -113,9 +116,7 @@
         </div>
 
         {#if $isEditing}
-          <SecondaryButton
-            on:click={() => removeProject(index)}
-            size="sm"
+          <SecondaryButton on:click={() => removeProject(index)} size="sm"
             >Remove Project</SecondaryButton
           >
         {/if}

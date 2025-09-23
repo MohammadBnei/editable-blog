@@ -28,12 +28,12 @@ export async function handle({ event, resolve }) {
   }
   // 4. Fallback to 'en' if header is not useful or no other source
   if (!['en', 'fr'].includes(lang)) lang = 'en'; // Only support 'en' and 'fr' for now
-  
+
   // Always set the cookie to reflect the determined language for future requests
   event.cookies.set('lang', lang, { path: '/' });
-  
+
   event.locals.lang = lang;
-  
+
   const response = await resolve(event);
   return response;
 }

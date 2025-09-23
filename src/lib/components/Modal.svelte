@@ -15,6 +15,7 @@
     }
   });
   function onMouseUp(e) {
+    console.log({ e: e.target === surface, close });
     if (e.target === surface) close?.();
   }
 </script>

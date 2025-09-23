@@ -1,8 +1,7 @@
 <script>
   import { extractTeaser, fetchJSON } from '$lib/util';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
-  import WebsiteNav from '$lib/components/WebsiteNav.svelte';
-  import Modal from '$lib/components/Modal.svelte';
+  import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
   import LoginMenu from '$lib/components/LoginMenu.svelte';
   import { goto } from '$app/navigation';
   import Footer from '$lib/components/Footer.svelte';
@@ -97,7 +96,7 @@
     if (!$currentUser) return alert('Sorry, you are not authorized.');
     try {
       await fetchJSON('POST', '/api/linkedin-posts/trigger-n8n', {
-        slug: data.slug,
+        slug: data.slug
       });
       alert('N8N webhook triggered successfully!');
     } catch (err) {
@@ -134,26 +133,21 @@
 </svelte:head>
 
 <EditorToolbar cancel={initOrReset} save={saveArticle} />
-<WebsiteNav bind:showUserMenu />
-{#if showUserMenu}
-  <Modal on:close={() => (showUserMenu = false)}>
-    <form class="w-full block" method="POST">
-      <div class="w-full flex flex-col space-y-4 p-4 sm:p-6 gap-0.5">
-        <PrimaryButton on:click={toggleEdit}>Edit post</PrimaryButton>
-        <PrimaryButton type="button" on:click={deleteArticle}>Delete post</PrimaryButton>
-        {#if $currentUser}
-          <PrimaryButton type="button" on:click={togglePublishedStatus}>
-            {published_at ? 'Unpublish post' : 'Publish post'}
-          </PrimaryButton>
-          <PrimaryButton type="button" on:click={triggerN8nWebhook}>
-            Trigger N8N LinkedIn Post
-          </PrimaryButton>
-        {/if}
-        <LoginMenu />
-      </div>
-    </form>
-  </Modal>
-{/if}
+<WebsiteHeader bind:showUserMenu>
+  <div class="w-full flex flex-col space-y-4 p-4 sm:p-6 gap-0.5">
+    <PrimaryButton on:click={toggleEdit}>Edit post</PrimaryButton>
+    <PrimaryButton type="button" on:click={deleteArticle}>Delete post</PrimaryButton>
+    {#if $currentUser}
+      <PrimaryButton type="button" on:click={togglePublishedStatus}>
+        {published_at ? 'Unpublish post' : 'Publish post'}
+      </PrimaryButton>
+      <PrimaryButton type="button" on:click={triggerN8nWebhook}>
+        Trigger N8N LinkedIn Post
+      </PrimaryButton>
+    {/if}
+    <LoginMenu />
+  </div>
+</WebsiteHeader>
 
 <Article bind:title bind:content bind:published_at />
 

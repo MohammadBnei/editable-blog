@@ -1,10 +1,16 @@
 <script>
   import { isEditing } from '$lib/stores.js';
 
-  let { src = $bindable(), alt, uploadPrompt, maxWidth, maxHeight, quality, class: className = '' } = $props();
+  let {
+    src = $bindable(),
+    alt,
+    uploadPrompt,
+    maxWidth,
+    maxHeight,
+    quality,
+    class: className = ''
+  } = $props();
   let previewSrc = $state(); // Make previewSrc a state variable
-
-
 </script>
 
 {#if $isEditing}

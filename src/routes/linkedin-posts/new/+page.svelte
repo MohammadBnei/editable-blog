@@ -45,7 +45,9 @@
       goto(`/linkedin-posts/${result.id}`);
     } catch (err) {
       console.error(err);
-      alert('Error creating the LinkedIn post. Please ensure the Article Slug and Language are valid and try again.');
+      alert(
+        'Error creating the LinkedIn post. Please ensure the Article Slug and Language are valid and try again.'
+      );
     }
   }
 
@@ -66,7 +68,9 @@
 
   <div class="space-y-4">
     <div>
-      <label for="article-slug" class="block text-sm font-medium text-gray-700">Associated Article Slug</label>
+      <label for="article-slug" class="block text-sm font-medium text-gray-700"
+        >Associated Article Slug</label
+      >
       <input
         type="text"
         id="article-slug"
@@ -74,29 +78,19 @@
         bind:value={article_slug}
         placeholder="e.g., my-awesome-article"
       />
-      <p class="mt-1 text-xs text-gray-500">This post will be linked to an existing article by its slug.</p>
+      <p class="mt-1 text-xs text-gray-500">
+        This post will be linked to an existing article by its slug.
+      </p>
     </div>
     <div>
       <label class="block text-sm font-medium text-gray-700">Language</label>
       <div class="mt-1 flex items-center space-x-4">
         <label class="inline-flex items-center">
-          <input
-            type="radio"
-            class="form-radio"
-            name="post-lang"
-            value="en"
-            bind:group={lang}
-          />
+          <input type="radio" class="form-radio" name="post-lang" value="en" bind:group={lang} />
           <span class="ml-2">English (en)</span>
         </label>
         <label class="inline-flex items-center">
-          <input
-            type="radio"
-            class="form-radio"
-            name="post-lang"
-            value="fr"
-            bind:group={lang}
-          />
+          <input type="radio" class="form-radio" name="post-lang" value="fr" bind:group={lang} />
           <span class="ml-2">French (fr)</span>
         </label>
       </div>

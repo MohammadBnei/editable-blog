@@ -8,7 +8,7 @@
   const schema = $derived(editorState.schema);
   const disabled = $derived(
     !setBlockType(schema.nodes.heading)(editorState) &&
-    !setBlockType(schema.nodes.paragraph)(editorState)
+      !setBlockType(schema.nodes.paragraph)(editorState)
   );
   const active = $derived(blockTypeActive(schema.nodes.heading, { level: 1 })(editorState));
 

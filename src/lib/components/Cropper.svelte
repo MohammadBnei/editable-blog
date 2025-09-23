@@ -64,7 +64,7 @@
   };
 
   const onImgLoad = () => {
-    console.log('emitted')
+    console.log('emitted');
     computeSizes();
     emitCropData();
   };

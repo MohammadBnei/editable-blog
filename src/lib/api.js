@@ -1,7 +1,7 @@
 import slugify from 'slugify';
 import { SHORTCUTS } from './constants';
 import { env } from '$env/dynamic/private';
-import { query } from '$lib/db'; 
+import { query } from '$lib/db';
 import { nanoid } from '$lib/util';
 import { Blob } from 'node:buffer';
 
@@ -17,7 +17,10 @@ export async function createArticle(title, content, teaser, currentUser, lang = 
   });
 
   // If (slug, lang) is already used, we add a unique postfix to the slug
-  const articleExistsResult = await query('SELECT * FROM articles WHERE slug = $1 AND lang = $2', [slug, lang]);
+  const articleExistsResult = await query('SELECT * FROM articles WHERE slug = $1 AND lang = $2', [
+    slug,
+    lang
+  ]);
   if (articleExistsResult.rows.length > 0) {
     slug = slug + '-' + nanoid();
   }
@@ -39,7 +42,7 @@ export async function createArticle(title, content, teaser, currentUser, lang = 
       const auth = Buffer.from(`${env.N8N_USERNAME}:${env.N8N_PASSWORD}`).toString('base64');
       const fetchOptions = {
         headers: {
-          'Authorization': `Basic ${auth}`
+          Authorization: `Basic ${auth}`
         }
       };
 
@@ -54,7 +57,6 @@ export async function createArticle(title, content, teaser, currentUser, lang = 
         const translationWebhookUrl = `${env.N8N_TRANSLATION_WEBHOOK_URL}?slug=${slug}&lang=${lang}`;
         await fetch(translationWebhookUrl, fetchOptions);
       }
-
     } catch (error) {
       console.error('Error triggering webhook:', error);
     }
@@ -168,12 +170,14 @@ export async function destroySession(sessionId) {
 /**
  * List all available articles (newest first)
  */
-export async function getArticles(currentUser, lang = null) { // Added optional lang parameter
+export async function getArticles(currentUser, lang = null) {
+  // Added optional lang parameter
   let articlesResult;
   let queryParams = [];
   let langFilter = '';
 
-  if (lang) { // Only apply language filter if lang is provided
+  if (lang) {
+    // Only apply language filter if lang is provided
     langFilter = ' AND lang = $1';
     queryParams.push(lang);
   }
@@ -191,7 +195,7 @@ export async function getArticles(currentUser, lang = null) { // Added optional 
       queryParams
     );
   }
-  
+
   return articlesResult.rows;
 }
 
@@ -240,7 +244,8 @@ export async function getNextArticle(slug, lang) {
 /**
  * Search within all searchable items (including articles and website sections)
  */
-export async function search(q, currentUser, lang = null) { // Add lang parameter
+export async function search(q, currentUser, lang = null) {
+  // Add lang parameter
   let queryText;
   let queryParams = [`%${q}%`];
   let langFilter = '';
@@ -294,22 +299,25 @@ export async function deleteArticle(slug, lang, currentUser) {
 
   const article = await getArticleBySlug(slug, lang);
   if (!article) throw new Error('Article not found');
-    
+
   // Extract asset IDs from the article content and delete them
   const imgRegex = /<img src="\/assets\/(images\/[^"]+)"/g;
   let match;
   const assetIdsToDelete = [];
-  
+
   while ((match = imgRegex.exec(article.content)) !== null) {
     assetIdsToDelete.push(match[1]);
   }
-  
+
   // Delete assets in a separate promise
   Promise.all(assetIdsToDelete.map(assetId => deleteAsset(assetId))).catch(error => {
     console.error('Error deleting assets during article deletion:', error);
   });
 
-  const deleteResult = await query('DELETE FROM articles WHERE slug = $1 AND lang = $2', [slug, lang]);
+  const deleteResult = await query('DELETE FROM articles WHERE slug = $1 AND lang = $2', [
+    slug,
+    lang
+  ]);
 
   return deleteResult.rowCount > 0;
 }
@@ -338,7 +346,10 @@ export async function getCurrentUser(session_id) {
 export async function createOrUpdatePage(page_id, page, currentUser, lang = 'en') {
   if (!currentUser) throw new Error('Not authorized');
 
-  const pageExistsResult = await query('SELECT page_id FROM pages WHERE page_id = $1 AND lang = $2', [page_id, lang]);
+  const pageExistsResult = await query(
+    'SELECT page_id FROM pages WHERE page_id = $1 AND lang = $2',
+    [page_id, lang]
+  );
   if (pageExistsResult.rows.length > 0) {
     const updateResult = await query(
       'UPDATE pages SET data = $1, updated_at = NOW() WHERE page_id = $2 AND lang = $3 RETURNING page_id',
@@ -357,9 +368,13 @@ export async function createOrUpdatePage(page_id, page, currentUser, lang = 'en'
 /**
  * E.g. getPage("home") gets all dynamic data for the home page
  */
-export async function getPage(page_id, lang = 'en') { // Add lang parameter with default
+export async function getPage(page_id, lang = 'en') {
+  // Add lang parameter with default
   const queryParams = [page_id, lang];
-  const result = await query(`SELECT data FROM pages WHERE page_id = $1 AND lang = $2`, queryParams);
+  const result = await query(
+    `SELECT data FROM pages WHERE page_id = $1 AND lang = $2`,
+    queryParams
+  );
   const page = result.rows[0];
   if (page?.data) {
     return JSON.parse(page.data);
@@ -545,7 +560,6 @@ export async function deleteLinkedInPost(id, currentUser) {
   return deleteResult.rowCount > 0;
 }
 
-
 /**
  * Helpers
  */
@@ -557,8 +571,8 @@ export const getAuthForN8N = () => {
   const auth = Buffer.from(`${env.N8N_USERNAME}:${env.N8N_PASSWORD}`).toString('base64');
   const fetchOptions = {
     headers: {
-      'Authorization': `Basic ${auth}`
+      Authorization: `Basic ${auth}`
     }
   };
   return fetchOptions;
-}
+};

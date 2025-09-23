@@ -143,7 +143,9 @@ export async function applyMigrations() {
   await query(MIGRATIONS_TABLE_SQL); // Ensure migrations table exists
 
   for (const migration of migrations) {
-    const checkResult = await query('SELECT name FROM applied_migrations WHERE name = $1', [migration.name]);
+    const checkResult = await query('SELECT name FROM applied_migrations WHERE name = $1', [
+      migration.name
+    ]);
     if (checkResult.rows.length === 0) {
       console.log(`Applying migration: ${migration.name}`);
       try {

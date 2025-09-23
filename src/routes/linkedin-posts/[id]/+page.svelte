@@ -1,8 +1,9 @@
 <script>
+  import EditableWebsiteTeaser from '$lib/components/EditableWebsiteTeaser.svelte';
+  import NotEditable from '$lib/components/NotEditable.svelte';
   import { fetchJSON, formatDate } from '$lib/util';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
-  import WebsiteNav from '$lib/components/WebsiteNav.svelte';
-  import Modal from '$lib/components/Modal.svelte';
+  import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
   import LoginMenu from '$lib/components/LoginMenu.svelte';
   import { goto } from '$app/navigation';
   import Footer from '$lib/components/Footer.svelte';
@@ -125,34 +126,30 @@
 </svelte:head>
 
 <EditorToolbar cancel={initOrReset} save={savePost} />
-<WebsiteNav bind:showUserMenu />
-{#if showUserMenu}
-  <Modal on:close={() => (showUserMenu = false)}>
-    <form class="w-full block" method="POST">
-      <div class="w-full flex flex-col space-y-4 p-4 sm:p-6 gap-0.5">
-        <PrimaryButton on:click={toggleEdit}>Edit Post</PrimaryButton>
-        <PrimaryButton type="button" on:click={deletePost}>Delete Post</PrimaryButton>
-        {#if $currentUser}
-          <PrimaryButton type="button" on:click={toggleValidationStatus}>
-            {validated ? 'Unvalidate Post' : 'Validate Post'}
-          </PrimaryButton>
-          <PrimaryButton type="button" on:click={togglePublishedStatus}>
-            {published_at ? 'Unpublish Post' : 'Publish Post'}
-          </PrimaryButton>
-        {/if}
-        <LoginMenu />
-      </div>
-    </form>
-  </Modal>
-{/if}
-
+<WebsiteHeader bind:showUserMenu>
+  <div class="w-full flex flex-col space-y-4 p-4 sm:p-6 gap-0.5">
+    <PrimaryButton on:click={toggleEdit}>Edit Post</PrimaryButton>
+    <PrimaryButton type="button" on:click={deletePost}>Delete Post</PrimaryButton>
+    {#if $currentUser}
+      <PrimaryButton type="button" on:click={toggleValidationStatus}>
+        {validated ? 'Unvalidate Post' : 'Validate Post'}
+      </PrimaryButton>
+      <PrimaryButton type="button" on:click={togglePublishedStatus}>
+        {published_at ? 'Unpublish Post' : 'Publish Post'}
+      </PrimaryButton>
+    {/if}
+    <LoginMenu />
+  </div>
+</WebsiteHeader>
 <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24 pb-8">
   <h1 class="text-3xl font-bold mb-4">LinkedIn Post #{id}</h1>
 
   {#if $isEditing}
     <div class="space-y-4">
       <div>
-        <label for="post-content" class="block text-sm font-medium text-gray-700">Post Content</label>
+        <label for="post-content" class="block text-sm font-medium text-gray-700"
+          >Post Content</label
+        >
         <textarea
           id="post-content"
           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -161,7 +158,9 @@
         ></textarea>
       </div>
       <div>
-        <label for="linkedin-url" class="block text-sm font-medium text-gray-700">LinkedIn URL</label>
+        <label for="linkedin-url" class="block text-sm font-medium text-gray-700"
+          >LinkedIn URL</label
+        >
         <input
           type="text"
           id="linkedin-url"
@@ -176,14 +175,29 @@
       <p><strong>Article Slug:</strong> {article_slug}</p>
       <p><strong>Language:</strong> {lang}</p>
       <p><strong>Validated:</strong> {validated ? 'Yes' : 'No'}</p>
-      <p><strong>Published At:</strong> {published_at ? formatDate(published_at, true) : 'Not Published'}</p>
+      <p>
+        <strong>Published At:</strong>
+        {published_at ? formatDate(published_at, true) : 'Not Published'}
+      </p>
       {#if linkedin_url}
-        <p><strong>LinkedIn URL:</strong> <a href={linkedin_url} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{linkedin_url}</a></p>
+        <p>
+          <strong>LinkedIn URL:</strong>
+          <a
+            href={linkedin_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-blue-600 hover:underline">{linkedin_url}</a
+          >
+        </p>
       {/if}
       <p><strong>Created At:</strong> {formatDate(created_at, true)}</p>
       <p><strong>Last Updated:</strong> {formatDate(updated_at, true)}</p>
     </div>
   {/if}
 </div>
+
+<NotEditable>
+  <EditableWebsiteTeaser />
+</NotEditable>
 
 <Footer />

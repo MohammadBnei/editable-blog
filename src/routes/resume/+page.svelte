@@ -41,7 +41,11 @@
   }
 
   // Generate a description from resumeContent or a default
-  const pageDescription = $derived(resumeContent ? resumeContent.replace(/<[^>]*>/g, '').substring(0, 160) + '...' : 'View and download my professional resume.');
+  const pageDescription = $derived(
+    resumeContent
+      ? resumeContent.replace(/<[^>]*>/g, '').substring(0, 160) + '...'
+      : 'View and download my professional resume.'
+  );
   const pageUrl = $derived(`https://blog.bnei.dev/resume`);
 </script>
 
@@ -49,11 +53,13 @@
   <title>{title || 'Resume'}</title>
   <meta name="description" content={pageDescription} />
   <link rel="canonical" href={pageUrl} />
-  <meta property="og:type" content="profile" /> <!-- Or 'website' if preferred -->
+  <meta property="og:type" content="profile" />
+  <!-- Or 'website' if preferred -->
   <meta property="og:title" content={title || 'Resume'} />
   <meta property="og:description" content={pageDescription} />
   <meta property="og:url" content={pageUrl} />
-  <meta property="og:image" content="https://blog.bnei.dev/images/default-resume-image.jpg" /> <!-- Consider a specific image for resume -->
+  <meta property="og:image" content="https://blog.bnei.dev/images/default-resume-image.jpg" />
+  <!-- Consider a specific image for resume -->
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title || 'Resume'} />

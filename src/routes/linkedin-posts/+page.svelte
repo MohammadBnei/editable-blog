@@ -34,7 +34,10 @@
     {:else}
       <div class="mt-4 grid gap-4">
         {#each data.linkedinPosts as post}
-          <a href="/linkedin-posts/{post.id}" class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow">
+          <a
+            href="/linkedin-posts/{post.id}"
+            class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+          >
             <h3 class="text-lg font-semibold">Post ID: {post.id}</h3>
             <p class="text-gray-700 line-clamp-2">{post.post}</p>
             <div class="text-sm text-gray-500 mt-2">
@@ -47,7 +50,14 @@
                 <p>Not Published</p>
               {/if}
               {#if post.linkedin_url}
-                <p>LinkedIn URL: <a href={post.linkedin_url} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">{post.linkedin_url}</a></p>
+                <p>
+                  LinkedIn URL: <a
+                    href={post.linkedin_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-600 hover:underline">{post.linkedin_url}</a
+                  >
+                </p>
               {/if}
               <p>Created: {formatDate(post.created_at, true)}</p>
               <p>Last Updated: {formatDate(post.updated_at, true)}</p>

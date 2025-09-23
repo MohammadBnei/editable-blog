@@ -129,7 +129,10 @@ export async function getDimensions(file) {
   return new Promise((resolve, reject) => {
     const img = new window.Image();
     img.onload = function () {
-      resolve({ width: (this as HTMLImageElement).width, height: (this as HTMLImageElement).height });
+      resolve({
+        width: (this as HTMLImageElement).width,
+        height: (this as HTMLImageElement).height
+      });
     };
     img.onerror = function (err) {
       reject(err);
@@ -150,4 +153,3 @@ export async function fetchJSON(method: 'GET' | 'POST', url: string, data = unde
   const result = await response.json();
   return result;
 }
-

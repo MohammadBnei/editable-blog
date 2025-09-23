@@ -12,7 +12,8 @@
 
   let showUserMenu = false,
     title = 'Untitled',
-    content = '# Your Markdown Title\n\nStart writing your content here using Markdown syntax.\n\n## Subheading\n\n- Bullet point 1\n- Bullet point 2\n\n**Bold text** and *italic text*.\n\n```js\n// Code block\nconsole.log("Hello world!");\n```';
+    content =
+      '# Your Markdown Title\n\nStart writing your content here using Markdown syntax.\n\n## Subheading\n\n- Bullet point 1\n- Bullet point 2\n\n**Bold text** and *italic text*.\n\n```js\n// Code block\nconsole.log("Hello world!");\n```';
 
   $: {
     $currentUser = data.currentUser;
@@ -23,7 +24,7 @@
     if (!$currentUser) {
       return alert('Sorry, you are not authorized to create new articles.');
     }
-    
+
     const teaser = extractTeaser(content);
     try {
       const { slug } = await fetchJSON('POST', '/api/create-article', {

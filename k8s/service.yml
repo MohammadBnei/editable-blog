@@ -19,7 +19,7 @@ spec:
   commonName: blog.bnei.dev
   secretName: blog-certificate-secret
   dnsNames:
-    - "blog.bnei.dev"
+    - 'blog.bnei.dev'
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-prod
