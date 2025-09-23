@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { setLinkedInPostPublishedAt } from '$lib/api';
+import { getAuthForN8N } from '$lib/util';
 
 export async function POST({ request, locals, params }) {
   const currentUser = locals.user;
@@ -10,9 +11,7 @@ export async function POST({ request, locals, params }) {
     if (publish) {
       // Trigger N8N webhook for publishing
       const n8nWebhookUrl = `https://n8n.bnei.dev/webhook-test/32407588-b5a4-40f4-bd79-2f461a0f5764?id=${id}`;
-      const n8nResponse = await fetch(n8nWebhookUrl, {
-        method: 'GET', // N8N webhook expects a GET request
-      });
+      const n8nResponse = await fetch(n8nWebhookUrl, getAuthForN8N());
 
       if (!n8nResponse.ok) {
         const errorText = await n8nResponse.text();
@@ -24,7 +23,7 @@ export async function POST({ request, locals, params }) {
       }
     }
 
-    const updatedPost = await setLinkedInPostPublishedAt(parseInt(id), publish, currentUser);
+    const updatedPost = await getLinkedInPostById(id, currentUser);
     if (!updatedPost) {
       return json({ message: 'LinkedIn Post not found or unauthorized' }, { status: 404 });
     }

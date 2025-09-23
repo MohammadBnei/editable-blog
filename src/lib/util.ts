@@ -1,4 +1,5 @@
 import { customAlphabet } from 'nanoid';
+import { env } from '$env/dynamic/private';
 
 export function is_safari() {
   // Detect Chrome
@@ -68,7 +69,7 @@ export function debounce(node, params) {
 
 export function extractTeaser(content: string) {
   // Regex pattern to match markdown images
-    const imagePattern = /!\[(.*?)\]\((.*?)\)/g;
+  const imagePattern = /!\[(.*?)\]\((.*?)\)/g;
 
   content = content.replace(imagePattern, '');
 
@@ -138,7 +139,7 @@ export async function getDimensions(file) {
   });
 }
 
-export async function fetchJSON(method, url, data = undefined) {
+export async function fetchJSON(method: 'GET' | 'POST', url: string, data = undefined) {
   const response = await fetch(url, {
     method: method,
     body: JSON.stringify(data),
@@ -149,4 +150,14 @@ export async function fetchJSON(method, url, data = undefined) {
   if (!response.ok) throw new Error(response.statusText);
   const result = await response.json();
   return result;
+}
+
+export const getAuthForN8N = () => {
+  const auth = Buffer.from(`${env.N8N_USERNAME}:${env.N8N_PASSWORD}`).toString('base64');
+  const fetchOptions = {
+    headers: {
+      'Authorization': `Basic ${auth}`
+    }
+  };
+  return fetchOptions;
 }

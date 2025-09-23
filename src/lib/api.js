@@ -4,6 +4,7 @@ import { env } from '$env/dynamic/private';
 import { query } from '$lib/db'; // Import the PostgreSQL query function
 import { nanoid } from '$lib/util';
 import { Blob } from 'node:buffer';
+import { getAuthForN8N } from './util';
 // Removed readFile as schema initialization will be external for PostgreSQL
 
 // Removed SQLite-specific PRAGMA and schema execution
@@ -111,14 +112,8 @@ export async function updateArticle(slug, lang, title, content, teaser, currentU
   // Trigger translation webhook upon update
   if (env.N8N_TRANSLATION_WEBHOOK_URL) {
     try {
-      const auth = Buffer.from(`${env.N8N_USERNAME}:${env.N8N_PASSWORD}`).toString('base64');
-      const fetchOptions = {
-        headers: {
-          'Authorization': `Basic ${auth}`
-        }
-      };
       const translationWebhookUrl = `${env.N8N_TRANSLATION_WEBHOOK_URL}?slug=${slug}&lang=${lang}`;
-      await fetch(translationWebhookUrl, fetchOptions);
+      await fetch(translationWebhookUrl, getAuthForN8N());
     } catch (error) {
       console.error('Error triggering translation webhook on update:', error);
     }

@@ -98,7 +98,6 @@
     try {
       await fetchJSON('POST', '/api/linkedin-posts/trigger-n8n', {
         slug: data.slug,
-        lang: data.lang // Assuming data.lang is available from the page data
       });
       alert('N8N webhook triggered successfully!');
     } catch (err) {
