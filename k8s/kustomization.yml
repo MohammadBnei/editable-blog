@@ -9,5 +9,5 @@ resources:
   - pvc.yml
 
 images:
-  - name: mohammaddocker/editable-blog
-    newTag: 0.16.1
+- name: mohammaddocker/editable-blog
+  newTag: 0.16.2
