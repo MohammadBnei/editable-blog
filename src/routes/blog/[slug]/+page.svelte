@@ -77,6 +77,22 @@
     }
   }
 
+  async function togglePublishedStatus() {
+    if (!$currentUser) return alert('Sorry, you are not authorized.');
+    try {
+      const publish = !published_at; // If published_at exists, we want to unpublish, otherwise publish
+      const result = await fetchJSON('POST', '/api/set-published-at', {
+        slug: data.slug,
+        publish: publish
+      });
+      published_at = result.published_at;
+      updatedAt = result.updatedAt;
+    } catch (err) {
+      console.error(err);
+      alert('Error updating published status. Please try again.');
+    }
+  }
+
   // Extract image from content for OG image
   const ogImage = $derived(
     (content?.match(/<img src="([^"]+)"/) || [])?.[1] || '/images/default-blog-image.jpg'
@@ -112,6 +128,11 @@
       <div class="w-full flex flex-col space-y-4 p-4 sm:p-6 gap-0.5">
         <PrimaryButton on:click={toggleEdit}>Edit post</PrimaryButton>
         <PrimaryButton type="button" on:click={deleteArticle}>Delete post</PrimaryButton>
+        {#if $currentUser}
+          <PrimaryButton type="button" on:click={togglePublishedStatus}>
+            {published_at ? 'Unpublish post' : 'Publish post'}
+          </PrimaryButton>
+        {/if}
         <LoginMenu />
       </div>
     </form>
