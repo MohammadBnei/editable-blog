@@ -27,8 +27,8 @@ export async function createArticle(title, content, teaser, currentUser, lang = 
 
   const insertResult = await query(
     `
-    INSERT INTO articles (slug, title, content, teaser, published_at, lang)
-    VALUES($1, $2, $3, $4, NOW(), $5)
+    INSERT INTO articles (slug, title, content, teaser, lang)
+    VALUES($1, $2, $3, $4, $5)
     RETURNING slug, created_at, lang
     `,
     [slug, title, content, teaser, lang]
