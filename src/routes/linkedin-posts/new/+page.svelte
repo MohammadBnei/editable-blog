@@ -77,15 +77,29 @@
       <p class="mt-1 text-xs text-gray-500">This post will be linked to an existing article by its slug.</p>
     </div>
     <div>
-      <label for="post-lang" class="block text-sm font-medium text-gray-700">Language (e.g., en, fr)</label>
-      <input
-        type="text"
-        id="post-lang"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-        bind:value={lang}
-        maxlength="2"
-        placeholder="e.g., en"
-      />
+      <label class="block text-sm font-medium text-gray-700">Language</label>
+      <div class="mt-1 flex items-center space-x-4">
+        <label class="inline-flex items-center">
+          <input
+            type="radio"
+            class="form-radio"
+            name="post-lang"
+            value="en"
+            bind:group={lang}
+          />
+          <span class="ml-2">English (en)</span>
+        </label>
+        <label class="inline-flex items-center">
+          <input
+            type="radio"
+            class="form-radio"
+            name="post-lang"
+            value="fr"
+            bind:group={lang}
+          />
+          <span class="ml-2">French (fr)</span>
+        </label>
+      </div>
     </div>
     <div>
       <label for="post-content" class="block text-sm font-medium text-gray-700">Post Content</label>
