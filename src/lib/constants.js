@@ -4,5 +4,6 @@ export const SHORTCUTS = [
   { name: 'Resume', url: '/resume' },
   { name: 'Contact', url: '/#contact' },
   { name: 'Portfolio', url: '/portfolio' },
+  { name: 'Linkedin Posts', url: '/linkedin-posts' },
   { name: 'Login', url: '/login' }
 ];
