@@ -1,5 +1,24 @@
 # Changelog
 
+# [0.15.0](https://github.com/MohammadBnei/editable-blog/compare/0.14.0...0.15.0) (2025-09-23)
+
+
+### Bug Fixes
+
+* Protect LinkedIn posts routes with authentication ([a5ee6f7](https://github.com/MohammadBnei/editable-blog/commit/a5ee6f723d6139ce23a0035453cb0c736726e3c1))
+
+
+### Features
+
+* Add API route to set article published status ([e3415ac](https://github.com/MohammadBnei/editable-blog/commit/e3415ac5bce569271eda943616d66c4edb1e8266))
+* add API routes for LinkedIn post management ([7923849](https://github.com/MohammadBnei/editable-blog/commit/792384962631aadc7492cd996381ffdd2e9b2370))
+* Add LinkedIn post listing and detail pages with editing capabilities ([aa7eed1](https://github.com/MohammadBnei/editable-blog/commit/aa7eed13c77721417df1bb9553506bf4e22755fd))
+* Add LinkedIn post management API and migration for linkedin_posts table ([7e2d0fa](https://github.com/MohammadBnei/editable-blog/commit/7e2d0fa5156a9442144201964c85d9c410570cf9))
+* Add new LinkedIn post creation page ([9c19694](https://github.com/MohammadBnei/editable-blog/commit/9c19694f0f37020daf7b94a0759436f474d54b48))
+* Add publish/unpublish button to blog post page ([39ab306](https://github.com/MohammadBnei/editable-blog/commit/39ab306cef80e9be95a788c37caa141a2e63ae51))
+* add setPublishedAt function to publish/unpublish articles ([0a19350](https://github.com/MohammadBnei/editable-blog/commit/0a19350bdea6753ef18e4448e79f06dc2f9e0e8f))
+* Change language input to radio buttons for LinkedIn post creation ([63d60cf](https://github.com/MohammadBnei/editable-blog/commit/63d60cf930ddff529468cd6d2520f03b820c3722))
+
 # [0.14.0](https://github.com/MohammadBnei/editable-blog/compare/0.13.2...0.14.0) (2025-09-17)
 
 
