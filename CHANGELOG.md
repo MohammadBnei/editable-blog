@@ -1,5 +1,14 @@
 # Changelog
 
+# [0.16.0](https://github.com/MohammadBnei/editable-blog/compare/0.15.0...0.16.0) (2025-09-23)
+
+
+### Features
+
+* Add N8N webhook trigger for LinkedIn posts in admin panel ([25f8a99](https://github.com/MohammadBnei/editable-blog/commit/25f8a993f10b6f728dc09803065b88d85e6e3361))
+* **publish linkedin post:** added a webhook from n8n to publish to linkedin ([59b4751](https://github.com/MohammadBnei/editable-blog/commit/59b4751b1b8e50a249fbe7784a75b497fad7cc83))
+* Trigger N8N webhook for LinkedIn post publishing ([c8f3dcc](https://github.com/MohammadBnei/editable-blog/commit/c8f3dcc4fbf9a038632e0bc7a7d9074c0613baff))
+
 # [0.15.0](https://github.com/MohammadBnei/editable-blog/compare/0.14.0...0.15.0) (2025-09-23)
 
 
