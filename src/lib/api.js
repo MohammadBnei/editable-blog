@@ -127,6 +127,22 @@ export async function updateArticle(slug, lang, title, content, teaser, currentU
   return updateResult.rows[0];
 }
 
+/**
+ * Publishes or unpublishes an article by setting or unsetting its published_at timestamp.
+ */
+export async function setPublishedAt(slug, lang, publish, currentUser) {
+  if (!currentUser) throw new Error('Not authorized');
+
+  const publishedAtValue = publish ? 'NOW()' : 'NULL';
+  const updateResult = await query(
+    `
+    UPDATE articles SET published_at = ${publishedAtValue}, updated_at = NOW() WHERE slug = $1 AND lang = $2 RETURNING slug, published_at, updated_at
+    `,
+    [slug, lang]
+  );
+  return updateResult.rows[0];
+}
+
 /*
   This can be replaced with any user-based authentication system
 */
