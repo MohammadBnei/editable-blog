@@ -1,6 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { setLinkedInPostPublishedAt } from '$lib/api';
-import { getAuthForN8N } from '$lib/util';
+import { getAuthForN8N, getLinkedInPostById } from '$lib/api';
 
 export async function POST({ request, locals, params }) {
   const currentUser = locals.user;

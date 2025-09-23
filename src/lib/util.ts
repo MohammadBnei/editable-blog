@@ -1,5 +1,4 @@
 import { customAlphabet } from 'nanoid';
-import { env } from '$env/dynamic/private';
 
 export function is_safari() {
   // Detect Chrome
@@ -152,12 +151,3 @@ export async function fetchJSON(method: 'GET' | 'POST', url: string, data = unde
   return result;
 }
 
-export const getAuthForN8N = () => {
-  const auth = Buffer.from(`${env.N8N_USERNAME}:${env.N8N_PASSWORD}`).toString('base64');
-  const fetchOptions = {
-    headers: {
-      'Authorization': `Basic ${auth}`
-    }
-  };
-  return fetchOptions;
-}

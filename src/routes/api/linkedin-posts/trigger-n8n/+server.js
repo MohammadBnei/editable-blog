@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { getAuthForN8N } from '$lib/util';
+import { getAuthForN8N } from '$lib/api';
 
 export async function POST({ request, locals }) {
   const currentUser = locals.user;

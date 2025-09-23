@@ -1,13 +1,9 @@
 import slugify from 'slugify';
 import { SHORTCUTS } from './constants';
 import { env } from '$env/dynamic/private';
-import { query } from '$lib/db'; // Import the PostgreSQL query function
+import { query } from '$lib/db'; 
 import { nanoid } from '$lib/util';
 import { Blob } from 'node:buffer';
-import { getAuthForN8N } from './util';
-// Removed readFile as schema initialization will be external for PostgreSQL
-
-// Removed SQLite-specific PRAGMA and schema execution
 
 /**
  * Creates a new article
@@ -555,4 +551,14 @@ export async function deleteLinkedInPost(id, currentUser) {
  */
 function __getDateTimeMinutesAfter(minutes) {
   return new Date(new Date().getTime() + minutes * 60000).toISOString();
+}
+
+export const getAuthForN8N = () => {
+  const auth = Buffer.from(`${env.N8N_USERNAME}:${env.N8N_PASSWORD}`).toString('base64');
+  const fetchOptions = {
+    headers: {
+      'Authorization': `Basic ${auth}`
+    }
+  };
+  return fetchOptions;
 }
