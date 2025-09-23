@@ -93,6 +93,20 @@
     }
   }
 
+  async function triggerN8nWebhook() {
+    if (!$currentUser) return alert('Sorry, you are not authorized.');
+    try {
+      await fetchJSON('POST', '/api/linkedin-posts/trigger-n8n', {
+        slug: data.slug,
+        lang: data.lang // Assuming data.lang is available from the page data
+      });
+      alert('N8N webhook triggered successfully!');
+    } catch (err) {
+      console.error(err);
+      alert('Error triggering N8N webhook. Please check the console for details.');
+    }
+  }
+
   // Extract image from content for OG image
   const ogImage = $derived(
     (content?.match(/<img src="([^"]+)"/) || [])?.[1] || '/images/default-blog-image.jpg'
@@ -131,6 +145,9 @@
         {#if $currentUser}
           <PrimaryButton type="button" on:click={togglePublishedStatus}>
             {published_at ? 'Unpublish post' : 'Publish post'}
+          </PrimaryButton>
+          <PrimaryButton type="button" on:click={triggerN8nWebhook}>
+            Trigger N8N LinkedIn Post
           </PrimaryButton>
         {/if}
         <LoginMenu />
