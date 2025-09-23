@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { getAuthForN8N, getLinkedInPostById } from '$lib/api';
+import { env } from '$env/dynamic/private';
 
 export async function POST({ request, locals, params }) {
   const currentUser = locals.user;
@@ -9,8 +10,7 @@ export async function POST({ request, locals, params }) {
   try {
     if (publish) {
       // Trigger N8N webhook for publishing
-      const n8nWebhookUrl = `https://n8n.bnei.dev/webhook-test/32407588-b5a4-40f4-bd79-2f461a0f5764?id=${id}`;
-      const n8nResponse = await fetch(n8nWebhookUrl, getAuthForN8N());
+      const n8nResponse = await fetch(env.N8N_LINKEDIN_POSTER + `?id=${id}`, getAuthForN8N());
 
       if (!n8nResponse.ok) {
         const errorText = await n8nResponse.text();

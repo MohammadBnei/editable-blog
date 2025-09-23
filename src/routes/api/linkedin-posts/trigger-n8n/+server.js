@@ -1,5 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { getAuthForN8N } from '$lib/api';
+import { env } from '$env/dynamic/private';
+
 
 export async function POST({ request, locals }) {
   const currentUser = locals.user;
@@ -14,10 +16,9 @@ export async function POST({ request, locals }) {
     return json({ message: 'Missing slug or language' }, { status: 400 });
   }
 
-  const n8nWebhookUrl = `https://n8n.bnei.dev/webhook/311465fb-1b41-45f3-8473-20f9e61f132e?slug=${slug}&lang=${lang}`;
 
   try {
-    const response = await fetch(n8nWebhookUrl, getAuthForN8N());
+    const response = await fetch(env.N8N_LINKEDIN_POST_CREATOR+`?slug=${slug}&lang=${lang}`, getAuthForN8N());
 
     if (!response.ok) {
       const errorText = await response.text();
