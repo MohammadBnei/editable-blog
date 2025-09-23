@@ -59,12 +59,7 @@
   <meta name="description" content="Create a new LinkedIn post." />
 </svelte:head>
 
-<EditorToolbar cancel={discardDraft} save={createLinkedInPost} />
-<WebsiteHeader bind:showUserMenu>
-  <div class="w-full flex flex-col space-y-4 p-4 sm:p-6">
-    <LoginMenu />
-  </div>
-</WebsiteHeader>
+<WebsiteHeader bind:showUserMenu cancel={discardDraft} save={createLinkedInPost} />
 
 <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24 pb-8">
   <h1 class="text-3xl font-bold mb-4">Create New LinkedIn Post</h1>
