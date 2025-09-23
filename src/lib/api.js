@@ -452,6 +452,110 @@ export async function deleteAsset(asset_id) {
 }
 
 /**
+ * LinkedIn Post Management Functions
+ */
+
+/**
+ * Creates a new LinkedIn post associated with an article.
+ */
+export async function createLinkedInPost(article_slug, lang, post, currentUser) {
+  if (!currentUser) throw new Error('Not authorized');
+
+  const insertResult = await query(
+    `
+    INSERT INTO linkedin_posts (article_slug, lang, post)
+    VALUES ($1, $2, $3)
+    RETURNING id, article_slug, lang, post, validated, linkedin_url, published_at, created_at, updated_at
+    `,
+    [article_slug, lang, post]
+  );
+  return insertResult.rows[0];
+}
+
+/**
+ * Retrieves all LinkedIn posts for a given article.
+ */
+export async function getLinkedInPosts(lang, currentUser) {
+  if (!currentUser) throw new Error('Not authorized');
+
+  const result = await query(
+    `SELECT * FROM linkedin_posts WHERE lang = $2 ORDER BY created_at DESC`,
+    [lang]
+  );
+  return result.rows;
+}
+
+/**
+ * Retrieves a single LinkedIn post by its ID.
+ */
+export async function getLinkedInPostById(id, currentUser) {
+  if (!currentUser) throw new Error('Not authorized');
+
+  const result = await query(`SELECT * FROM linkedin_posts WHERE id = $1`, [id]);
+  return result.rows[0];
+}
+
+/**
+ * Updates an existing LinkedIn post.
+ */
+export async function updateLinkedInPost(id, post, linkedin_url, currentUser) {
+  if (!currentUser) throw new Error('Not authorized');
+
+  const updateResult = await query(
+    `
+    UPDATE linkedin_posts SET post = $1, linkedin_url = $2, updated_at = NOW() WHERE id = $3
+    RETURNING id, article_slug, lang, post, validated, linkedin_url, published_at, created_at, updated_at
+    `,
+    [post, linkedin_url, id]
+  );
+  return updateResult.rows[0];
+}
+
+/**
+ * Validates or unvalidates a LinkedIn post.
+ */
+export async function setLinkedInPostValidation(id, validated, currentUser) {
+  if (!currentUser) throw new Error('Not authorized');
+
+  const updateResult = await query(
+    `
+    UPDATE linkedin_posts SET validated = $1, updated_at = NOW() WHERE id = $2
+    RETURNING id, article_slug, lang, post, validated, linkedin_url, published_at, created_at, updated_at
+    `,
+    [validated, id]
+  );
+  return updateResult.rows[0];
+}
+
+/**
+ * Sets the published_at timestamp for a LinkedIn post.
+ */
+export async function setLinkedInPostPublishedAt(id, publish, currentUser) {
+  if (!currentUser) throw new Error('Not authorized');
+
+  const publishedAtValue = publish ? 'NOW()' : 'NULL';
+  const updateResult = await query(
+    `
+    UPDATE linkedin_posts SET published_at = ${publishedAtValue}, updated_at = NOW() WHERE id = $1
+    RETURNING id, article_slug, lang, post, validated, linkedin_url, published_at, created_at, updated_at
+    `,
+    [id]
+  );
+  return updateResult.rows[0];
+}
+
+/**
+ * Deletes a LinkedIn post.
+ */
+export async function deleteLinkedInPost(id, currentUser) {
+  if (!currentUser) throw new Error('Not authorized');
+
+  const deleteResult = await query(`DELETE FROM linkedin_posts WHERE id = $1`, [id]);
+  return deleteResult.rowCount > 0;
+}
+
+
+/**
  * Helpers
  */
 function __getDateTimeMinutesAfter(minutes) {

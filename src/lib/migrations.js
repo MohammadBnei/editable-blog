@@ -104,6 +104,29 @@ const migrations = [
 
       COMMIT;
     `
+  },
+  {
+    name: '20231102_create_linkedin_posts_table',
+    sql: `
+      BEGIN TRANSACTION;
+
+      CREATE TABLE IF NOT EXISTS linkedin_posts (
+        id SERIAL PRIMARY KEY,
+        article_slug TEXT NOT NULL,
+        lang TEXT NOT NULL,
+        post TEXT NOT NULL,
+        published_at TIMESTAMP WITH TIME ZONE,
+        validated BOOLEAN DEFAULT FALSE,
+        linkedin_url TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_article
+          FOREIGN KEY(article_slug, lang)
+          REFERENCES articles(slug, lang)
+      );
+
+      COMMIT;
+    `
   }
   // Add more migrations here as objects { name: '...', sql: '...' }
 ];
