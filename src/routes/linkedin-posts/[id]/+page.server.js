@@ -1,10 +1,10 @@
 import { getLinkedInPostById } from '$lib/api';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params, locals }) {
   const currentUser = locals.user;
   if (!currentUser) {
-    throw error(403, 'Unauthorized');
+    throw redirect(302, '/login');
   }
 
   const linkedinPost = await getLinkedInPostById(params.id, currentUser);

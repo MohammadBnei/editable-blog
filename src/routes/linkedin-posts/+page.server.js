@@ -1,14 +1,10 @@
 import { getLinkedInPosts } from '$lib/api';
+import { redirect } from '@sveltejs/kit';
 
 export async function load({ locals }) {
   const currentUser = locals.user;
   if (!currentUser) {
-    // Redirect to login or show an unauthorized message
-    // For now, let's return an empty array and handle in Svelte component
-    return {
-      currentUser: null,
-      linkedinPosts: []
-    };
+    throw redirect(302, '/login');
   }
 
   const linkedinPosts = await getLinkedInPosts(locals.lang, currentUser);
