@@ -10,9 +10,7 @@
   let showUserMenu = $state(false);
 
   function createNewPost() {
-    // You might want to navigate to a creation page or open a modal
-    // For now, let's assume a simple creation form or a default article slug
-    goto('/linkedin-posts/new'); // Or a more specific route for creating
+    goto('/linkedin-posts/new');
   }
 </script>
 
