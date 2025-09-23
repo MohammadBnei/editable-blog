@@ -473,13 +473,13 @@ export async function createLinkedInPost(article_slug, lang, post, currentUser) 
 }
 
 /**
- * Retrieves all LinkedIn posts for a given article.
+ * Retrieves all LinkedIn posts for a given language.
  */
 export async function getLinkedInPosts(lang, currentUser) {
   if (!currentUser) throw new Error('Not authorized');
 
   const result = await query(
-    `SELECT * FROM linkedin_posts WHERE lang = $2 ORDER BY created_at DESC`,
+    `SELECT * FROM linkedin_posts WHERE lang = $1 ORDER BY created_at DESC`,
     [lang]
   );
   return result.rows;
