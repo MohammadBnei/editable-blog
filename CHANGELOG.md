@@ -1,5 +1,21 @@
 # Changelog
 
+# [0.17.0](https://github.com/MohammadBnei/editable-blog/compare/0.16.3...0.17.0) (2025-09-26)
+
+
+### Bug Fixes
+
+* Apply DaisyUI select styling to dropdowns and input field ([a3e4935](https://github.com/MohammadBnei/editable-blog/commit/a3e493531c6117d6bdfe5514c121adc8186e8412))
+* Resolve nested anchor tag warning in LinkedIn posts list ([88c4fe1](https://github.com/MohammadBnei/editable-blog/commit/88c4fe1c735ab8e59240054850b052a0390c42af))
+* Update event handlers and component import for LinkedIn posts page ([82f4054](https://github.com/MohammadBnei/editable-blog/commit/82f4054a7966ccc6196c9a5e4890b708d55ea954))
+
+
+### Features
+
+* Add filtering and sorting to LinkedIn posts page ([5223729](https://github.com/MohammadBnei/editable-blog/commit/5223729659c6f8aae676049bb823f49023235ec2))
+* Add reset filters button to LinkedIn posts page ([0fc83a7](https://github.com/MohammadBnei/editable-blog/commit/0fc83a7c8b8b4d3da05f4c245433e9acd2df28a3))
+* Add search functionality for LinkedIn posts by article slug ([a937643](https://github.com/MohammadBnei/editable-blog/commit/a937643f6f6f97996285ce36859fb9b7d1c12cd9))
+
 ## [0.16.3](https://github.com/MohammadBnei/editable-blog/compare/0.16.2...0.16.3) (2025-09-23)
 
 ## [0.16.2](https://github.com/MohammadBnei/editable-blog/compare/0.16.1...0.16.2) (2025-09-23)
