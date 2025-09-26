@@ -124,12 +124,6 @@
   <div class="w-full flex flex-col space-y-4 p-4 sm:p-6 gap-0.5">
     <PrimaryButton on:click={toggleEdit}>Edit Post</PrimaryButton>
     <PrimaryButton type="button" on:click={deletePost}>Delete Post</PrimaryButton>
-    <PrimaryButton type="button" on:click={toggleValidationStatus}>
-      {validated ? 'Unvalidate Post' : 'Validate Post'}
-    </PrimaryButton>
-    <PrimaryButton type="button" on:click={togglePublishedStatus}>
-      {published_at ? 'Unpublish Post' : 'Publish Post'}
-    </PrimaryButton>
     <LoginMenu />
   </div>
 </WebsiteHeader>
@@ -162,29 +156,51 @@
       </div>
     </div>
   {:else}
-    <div class="prose max-w-none">
-      <p class="whitespace-pre-wrap">{post}</p>
-      <strong>Language:</strong>
-      {lang}
-      <strong>Validated:</strong>
-      {validated ? 'Yes' : 'No'}
-
-      <strong>Published At:</strong>
-      {published_at ? formatDate(published_at, true) : 'Not Published'}
-
-      {#if linkedin_url}
-        <strong>LinkedIn URL:</strong>
-        <a
-          href={linkedin_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-blue-600 hover:underline">{linkedin_url}</a
-        >
-      {/if}
-      <strong>Created At:</strong>
-      {formatDate(created_at, true)}
-      <strong>Last Updated:</strong>
-      {formatDate(updated_at, true)}
+    <div class="prose max-w-none text-sm">
+      <p class="whitespace-pre-wrap text-base">{post}</p>
+      <div class="grid grid-cols-2 gap-x-4 gap-y-1 mt-4">
+        <div class="flex items-center">
+          <strong class="mr-1">Language:</strong>
+          <span>{lang}</span>
+        </div>
+        <div class="flex items-center">
+          <strong class="mr-1">Validated:</strong>
+          <span>{validated ? 'Yes' : 'No'}</span>
+          {#if $currentUser}
+            <button on:click={toggleValidationStatus} class="ml-2 px-2 py-1 text-xs rounded-md {validated ? 'bg-yellow-200 text-yellow-800' : 'bg-green-200 text-green-800'}">
+              {validated ? 'Unvalidate' : 'Validate'}
+            </button>
+          {/if}
+        </div>
+        <div class="flex items-center">
+          <strong class="mr-1">Published At:</strong>
+          <span>{published_at ? formatDate(published_at, true) : 'Not Published'}</span>
+          {#if $currentUser}
+            <button on:click={togglePublishedStatus} class="ml-2 px-2 py-1 text-xs rounded-md {published_at ? 'bg-red-200 text-red-800' : 'bg-blue-200 text-blue-800'}">
+              {published_at ? 'Unpublish' : 'Publish'}
+            </button>
+          {/if}
+        </div>
+        {#if linkedin_url}
+          <div class="flex items-center col-span-2">
+            <strong class="mr-1">LinkedIn URL:</strong>
+            <a
+              href={linkedin_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-blue-600 hover:underline">{linkedin_url}</a
+            >
+          </div>
+        {/if}
+        <div class="flex items-center">
+          <strong class="mr-1">Created At:</strong>
+          <span>{formatDate(created_at, true)}</span>
+        </div>
+        <div class="flex items-center">
+          <strong class="mr-1">Last Updated:</strong>
+          <span>{formatDate(updated_at, true)}</span>
+        </div>
+      </div>
     </div>
   {/if}
 </div>
