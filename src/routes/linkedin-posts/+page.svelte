@@ -4,7 +4,7 @@
   import LoginMenu from '$lib/components/LoginMenu.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
-  import { formatDate } from '$lib/util';
+  import { formatDate, fetchJSON } from '$lib/util'; // Import fetchJSON
 
   let { data } = $props();
   let showUserMenu = $state(false);
@@ -12,6 +12,7 @@
   let validatedFilter = $state('all'); // 'all', 'validated', 'not_validated'
   let publishedFilter = $state('all'); // 'all', 'published', 'not_published'
   let sortBy = $state('updated_at_desc'); // 'created_at_asc', 'created_at_desc', 'updated_at_asc', 'updated_at_desc'
+  let isEditing = $state(false); // New state for editing mode
 
   function createNewPost() {
     goto('/linkedin-posts/new');
@@ -22,6 +23,22 @@
     validatedFilter = 'all';
     publishedFilter = 'all';
     sortBy = 'updated_at_desc';
+  }
+
+  function toggleEditing() {
+    isEditing = !isEditing;
+  }
+
+  async function deletePost(postId) {
+    if (!confirm('Are you sure you want to delete this LinkedIn post?')) return;
+    try {
+      await fetchJSON('POST', `/api/linkedin-posts/${postId}/delete`);
+      // Refresh the page data after deletion
+      data.linkedinPosts = data.linkedinPosts.filter(post => post.id !== postId);
+    } catch (err) {
+      console.error(err);
+      alert('Error deleting the LinkedIn post. Try again.');
+    }
   }
 
   const filteredAndSortedPosts = $derived.by(() => {
@@ -74,6 +91,9 @@
 <WebsiteHeader bind:showUserMenu>
   <div class="w-full flex flex-col space-y-4 p-4 sm:p-6">
     <PrimaryButton type="button" onclick={createNewPost}>New LinkedIn Post</PrimaryButton>
+    <PrimaryButton type="button" onclick={toggleEditing}>
+      {isEditing ? 'Done Editing' : 'Edit Posts'}
+    </PrimaryButton>
     <LoginMenu />
   </div>
 </WebsiteHeader>
@@ -84,7 +104,7 @@
     <div class="mt-4 flex flex-wrap gap-2">
       <input
         type="text"
-        placeholder="Search by article slug..."
+        placeholder="Search by article slug or content..."
         class="input input-bordered w-full"
         bind:value={searchQuery}
       />
@@ -116,13 +136,13 @@
       <div class="mt-4 grid gap-4">
         {#each filteredAndSortedPosts as post}
           <div
-            onclick={() => goto(`/linkedin-posts/${post.id}`)}
+            onclick={() => !isEditing && goto(`/linkedin-posts/${post.id}`)}
             onkeydown={e => {
-              if (e.key === 'Enter') goto(`/linkedin-posts/${post.id}`);
+              if (!isEditing && e.key === 'Enter') goto(`/linkedin-posts/${post.id}`);
             }}
             role="link"
             tabindex="0"
-            class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow {isEditing ? '' : 'cursor-pointer'}"
           >
             <h3 class="text-lg font-semibold">{post.article_slug}</h3>
             <p class="text-gray-700 line-clamp-2 my-2">{post.post}</p>
@@ -139,11 +159,22 @@
                     href={post.linkedin_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-blue-600 hover:underline">{post.linkedin_url}</a
+                    class="text-blue-600 hover:underline"
+                    onclick|stopPropagation
+                    onkeydown|stopPropagation
+                    >{post.linkedin_url}</a
                   >
                 </p>
               {/if}
             </div>
+            {#if isEditing}
+              <button
+                onclick|stopPropagation={() => deletePost(post.id)}
+                class="btn btn-error btn-sm mt-2"
+              >
+                Delete
+              </button>
+            {/if}
           </div>
         {/each}
       </div>
