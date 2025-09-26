@@ -124,12 +124,12 @@
 
   <div class="prose">
     <PlainText bind:content={post} />
-    <div class="grid grid-cols-2 gap-x-4 gap-y-1 mt-4">
-      <div class="flex items-center">
+    <div class="flex flex-wrap gap-x-4 gap-y-1 mt-4">
+      <div class="flex items-center w-full sm:w-auto">
         <strong class="mr-1">Language:</strong>
         <span>{lang}</span>
       </div>
-      <div class="flex items-center">
+      <div class="flex items-center w-full sm:w-auto">
         <strong class="mr-1">Validated:</strong>
         <span>{validated ? 'Yes' : 'No'}</span>
         {#if $isEditing}
@@ -143,7 +143,7 @@
           </button>
         {/if}
       </div>
-      <div class="flex items-center">
+      <div class="flex items-center w-full sm:w-auto">
         <strong class="mr-1">Published At:</strong>
         <span>{published_at ? formatDate(published_at, true) : 'Not Published'}</span>
         {#if $isEditing}
@@ -158,7 +158,7 @@
         {/if}
       </div>
       {#if linkedin_url}
-        <div class="flex items-center col-span-2">
+        <div class="flex items-center w-full">
           <strong class="mr-1">LinkedIn URL:</strong>
           <a
             href={linkedin_url}
@@ -168,11 +168,11 @@
           >
         </div>
       {/if}
-      <div class="flex items-center">
+      <div class="flex items-center w-full sm:w-auto">
         <strong class="mr-1">Created At:</strong>
         <span>{formatDate(created_at, true)}</span>
       </div>
-      <div class="flex items-center">
+      <div class="flex items-center w-full sm:w-auto">
         <strong class="mr-1">Last Updated:</strong>
         <span>{formatDate(updated_at, true)}</span>
       </div>
