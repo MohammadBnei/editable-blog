@@ -2,7 +2,7 @@
   import { goto } from '$app/navigation';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
   import LoginMenu from '$lib/components/LoginMenu.svelte';
-  import Footer from '$lib/components/Footer';
+  import Footer from '$lib/components/Footer.svelte';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
   import { formatDate } from '$lib/util';
 
@@ -72,7 +72,7 @@
 
 <WebsiteHeader bind:showUserMenu>
   <div class="w-full flex flex-col space-y-4 p-4 sm:p-6">
-    <PrimaryButton type="button" on:click={createNewPost}>New LinkedIn Post</PrimaryButton>
+    <PrimaryButton type="button" onclick={createNewPost}>New LinkedIn Post</PrimaryButton>
     <LoginMenu />
   </div>
 </WebsiteHeader>
@@ -107,7 +107,7 @@
         <option value="created_at_asc">Created (Oldest First)</option>
       </select>
     </div>
-    <button on:click={resetFilters} class="mt-4 px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
+    <button onclick={resetFilters} class="btn bg-gray-200 rounded-md hover:bg-gray-300">
       Reset Filters
     </button>
 
@@ -117,8 +117,8 @@
       <div class="mt-4 grid gap-4">
         {#each filteredAndSortedPosts as post}
           <div
-            on:click={() => goto(`/linkedin-posts/${post.id}`)}
-            on:keydown={(e) => { if (e.key === 'Enter') goto(`/linkedin-posts/${post.id}`); }}
+            onclick={() => goto(`/linkedin-posts/${post.id}`)}
+            onkeydown={(e) => { if (e.key === 'Enter') goto(`/linkedin-posts/${post.id}`); }}
             role="link"
             tabindex="0"
             class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
@@ -139,8 +139,6 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     class="text-blue-600 hover:underline"
-                    on:click|stopPropagation
-                    on:keydown|stopPropagation
                     >{post.linkedin_url}</a
                   >
                 </p>
