@@ -1,4 +1,4 @@
-import { getLinkedInPostById } from '$lib/api';
+import { getLinkedInPostById, getNextLinkedInPost, getPreviousLinkedInPost } from '$lib/api';
 import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ params, locals }) {
@@ -13,8 +13,13 @@ export async function load({ params, locals }) {
     throw error(404, 'LinkedIn Post not found');
   }
 
+  const nextLinkedInPost = await getNextLinkedInPost(linkedinPost.id, locals.lang);
+  const previousLinkedInPost = await getPreviousLinkedInPost(linkedinPost.id, locals.lang);
+
   return {
     currentUser,
-    linkedinPost
+    linkedinPost,
+    nextLinkedInPost,
+    previousLinkedInPost
   };
 }

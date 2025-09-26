@@ -9,6 +9,7 @@
   import { goto } from '$app/navigation';
   import Footer from '$lib/components/Footer.svelte';
   import { isEditing } from '$lib/stores';
+  import LinkedInPostTeaser from '$lib/components/LinkedInPostTeaser.svelte';
 
   let { data } = $props();
 
@@ -179,6 +180,25 @@
     </li>
   </ul>
 </div>
+
+{#if data.nextLinkedInPost || data.previousLinkedInPost}
+  <NotEditable>
+    <div class="border-t-2 border-gray-100">
+      <div class="max-w-(--breakpoint-lg) mx-auto px-6 pt-8 sm:pt-12">
+        <div class="font-bold text-sm">READ MORE LINKEDIN POSTS</div>
+      </div>
+      {#if data.nextLinkedInPost}
+        <LinkedInPostTeaser linkedinPost={data.nextLinkedInPost} firstEntry={true} />
+      {/if}
+      {#if data.previousLinkedInPost}
+        <LinkedInPostTeaser
+          linkedinPost={data.previousLinkedInPost}
+          firstEntry={!data.nextLinkedInPost}
+        />
+      {/if}
+    </div>
+  </NotEditable>
+{/if}
 
 <NotEditable>
   <EditableWebsiteTeaser />
