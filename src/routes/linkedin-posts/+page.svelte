@@ -93,9 +93,7 @@
 <WebsiteHeader bind:showUserMenu>
   <div class="w-full flex flex-col space-y-4 p-4 sm:p-6">
     <PrimaryButton type="button" on:click={createNewPost}>New LinkedIn Post</PrimaryButton>
-    <PrimaryButton type="button" on:click={toggleEdit}>
-      {$isEditing ? 'Done Editing' : 'Edit Posts'}
-    </PrimaryButton>
+    <PrimaryButton type="button" on:click={toggleEdit}>Edit Posts</PrimaryButton>
     <LoginMenu />
   </div>
 </WebsiteHeader>
@@ -138,13 +136,13 @@
       <div class="mt-4 grid gap-4">
         {#each filteredAndSortedPosts as post}
           <div
-            on:click={() => !isEditing && goto(`/linkedin-posts/${post.id}`)}
+            on:click={() => !$isEditing && goto(`/linkedin-posts/${post.id}`)}
             on:keydown={e => {
               if (!$isEditing && e.key === 'Enter') goto(`/linkedin-posts/${post.id}`);
             }}
             role="link"
             tabindex="0"
-            class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow {isEditing
+            class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow {$isEditing
               ? ''
               : 'cursor-pointer'}"
           >
