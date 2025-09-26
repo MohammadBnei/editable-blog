@@ -3,7 +3,7 @@
   import { onDestroy } from 'svelte';
   import PrimaryButton from '../PrimaryButton.svelte';
   import SecondaryButton from '../SecondaryButton.svelte';
-  
+
   let editorView = $state();
   let editorState = $state();
 

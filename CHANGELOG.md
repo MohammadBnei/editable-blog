@@ -2,41 +2,36 @@
 
 # [0.19.0](https://github.com/MohammadBnei/editable-blog/compare/0.18.1...0.19.0) (2025-09-26)
 
-
 ### Features
 
-* Add PostgreSQL and n8n environment variables to example ([0b459c7](https://github.com/MohammadBnei/editable-blog/commit/0b459c7f64c2a886dfde400874fe1b02e06d8cdb))
+- Add PostgreSQL and n8n environment variables to example ([0b459c7](https://github.com/MohammadBnei/editable-blog/commit/0b459c7f64c2a886dfde400874fe1b02e06d8cdb))
 
 ## [0.18.1](https://github.com/MohammadBnei/editable-blog/compare/0.18.0...0.18.1) (2025-09-26)
 
-
 ### Bug Fixes
 
-* **linkedin posts:** remove alert when removing a posts ([c74bc55](https://github.com/MohammadBnei/editable-blog/commit/c74bc559d1b2714d55f1e5ac75284c65e82b45d6))
+- **linkedin posts:** remove alert when removing a posts ([c74bc55](https://github.com/MohammadBnei/editable-blog/commit/c74bc559d1b2714d55f1e5ac75284c65e82b45d6))
 
 # [0.18.0](https://github.com/MohammadBnei/editable-blog/compare/0.17.0...0.18.0) (2025-09-26)
 
-
 ### Features
 
-* Add delete button to LinkedIn posts list in edit mode ([87057e6](https://github.com/MohammadBnei/editable-blog/commit/87057e6d63da9a4adf0fd2ed4f8543140c8529b4))
-* **linkedin posts:** delete option on the linkedin posts page ([df5ebe4](https://github.com/MohammadBnei/editable-blog/commit/df5ebe4714ccb5416f053f988d2bb153545327ff))
+- Add delete button to LinkedIn posts list in edit mode ([87057e6](https://github.com/MohammadBnei/editable-blog/commit/87057e6d63da9a4adf0fd2ed4f8543140c8529b4))
+- **linkedin posts:** delete option on the linkedin posts page ([df5ebe4](https://github.com/MohammadBnei/editable-blog/commit/df5ebe4714ccb5416f053f988d2bb153545327ff))
 
 # [0.17.0](https://github.com/MohammadBnei/editable-blog/compare/0.16.3...0.17.0) (2025-09-26)
 
-
 ### Bug Fixes
 
-* Apply DaisyUI select styling to dropdowns and input field ([a3e4935](https://github.com/MohammadBnei/editable-blog/commit/a3e493531c6117d6bdfe5514c121adc8186e8412))
-* Resolve nested anchor tag warning in LinkedIn posts list ([88c4fe1](https://github.com/MohammadBnei/editable-blog/commit/88c4fe1c735ab8e59240054850b052a0390c42af))
-* Update event handlers and component import for LinkedIn posts page ([82f4054](https://github.com/MohammadBnei/editable-blog/commit/82f4054a7966ccc6196c9a5e4890b708d55ea954))
-
+- Apply DaisyUI select styling to dropdowns and input field ([a3e4935](https://github.com/MohammadBnei/editable-blog/commit/a3e493531c6117d6bdfe5514c121adc8186e8412))
+- Resolve nested anchor tag warning in LinkedIn posts list ([88c4fe1](https://github.com/MohammadBnei/editable-blog/commit/88c4fe1c735ab8e59240054850b052a0390c42af))
+- Update event handlers and component import for LinkedIn posts page ([82f4054](https://github.com/MohammadBnei/editable-blog/commit/82f4054a7966ccc6196c9a5e4890b708d55ea954))
 
 ### Features
 
-* Add filtering and sorting to LinkedIn posts page ([5223729](https://github.com/MohammadBnei/editable-blog/commit/5223729659c6f8aae676049bb823f49023235ec2))
-* Add reset filters button to LinkedIn posts page ([0fc83a7](https://github.com/MohammadBnei/editable-blog/commit/0fc83a7c8b8b4d3da05f4c245433e9acd2df28a3))
-* Add search functionality for LinkedIn posts by article slug ([a937643](https://github.com/MohammadBnei/editable-blog/commit/a937643f6f6f97996285ce36859fb9b7d1c12cd9))
+- Add filtering and sorting to LinkedIn posts page ([5223729](https://github.com/MohammadBnei/editable-blog/commit/5223729659c6f8aae676049bb823f49023235ec2))
+- Add reset filters button to LinkedIn posts page ([0fc83a7](https://github.com/MohammadBnei/editable-blog/commit/0fc83a7c8b8b4d3da05f4c245433e9acd2df28a3))
+- Add search functionality for LinkedIn posts by article slug ([a937643](https://github.com/MohammadBnei/editable-blog/commit/a937643f6f6f97996285ce36859fb9b7d1c12cd9))
 
 ## [0.16.3](https://github.com/MohammadBnei/editable-blog/compare/0.16.2...0.16.3) (2025-09-23)
 

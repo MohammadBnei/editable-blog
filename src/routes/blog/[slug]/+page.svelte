@@ -131,12 +131,12 @@
   <div class="w-full flex flex-col space-y-4 p-4 sm:p-6 gap-0.5">
     <PrimaryButton on:click={toggleEdit}>Edit post</PrimaryButton>
     <PrimaryButton type="button" on:click={deleteArticle}>Delete post</PrimaryButton>
-      <PrimaryButton type="button" on:click={togglePublishedStatus}>
-        {published_at ? 'Unpublish post' : 'Publish post'}
-      </PrimaryButton>
-      <PrimaryButton type="button" on:click={triggerN8nWebhook}>
-        Trigger N8N LinkedIn Post
-      </PrimaryButton>
+    <PrimaryButton type="button" on:click={togglePublishedStatus}>
+      {published_at ? 'Unpublish post' : 'Publish post'}
+    </PrimaryButton>
+    <PrimaryButton type="button" on:click={triggerN8nWebhook}>
+      Trigger N8N LinkedIn Post
+    </PrimaryButton>
     <LoginMenu />
   </div>
 </WebsiteHeader>

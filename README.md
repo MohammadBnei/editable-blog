@@ -3,12 +3,13 @@
 A SvelteKit template for coding **completely custom websites**, while allowing non-technical people to **make edits** to the content by simply logging in with a secure admin password. This particular instance is set up for my personal blog, utilizing PostgreSQL for the database and n8n for translation and LinkedIn post creation. It also uses `carta` to render and edit markdown.
 
 This blog supports:
-*   **Multi-language content** for articles and pages.
-*   **Article management**: Create, edit, publish, unpublish, and delete blog posts.
-*   **Page management**: Edit static page content (e.g., "About", "Contact").
-*   **Asset management**: Upload and manage images directly within the editor.
-*   **LinkedIn Integration**: Create, validate, publish, and manage LinkedIn posts directly from articles, leveraging n8n for automated posting and translation workflows.
-*   **Basic analytics**: Simple page view counters.
+
+- **Multi-language content** for articles and pages.
+- **Article management**: Create, edit, publish, unpublish, and delete blog posts.
+- **Page management**: Edit static page content (e.g., "About", "Contact").
+- **Asset management**: Upload and manage images directly within the editor.
+- **LinkedIn Integration**: Create, validate, publish, and manage LinkedIn posts directly from articles, leveraging n8n for automated posting and translation workflows.
+- **Basic analytics**: Simple page view counters.
 
 Check out the blog at [blog.bnei.dev](https://blog.bnei.dev).
 
@@ -164,33 +165,33 @@ Fly will let you know when the app is deployed. Visit the URL shown in your term
 For PostgreSQL, you'll typically use `pg_dump` for backups.
 
 1.  **Create a backup remotely:**
-    -   `fly ssh console`
-    -   `pg_dump -Fc -d your_database_name -U your_db_user > /tmp/backup.dump` (This creates a custom format archive)
-    -   Exit the remote console (CTRL+D)
+    - `fly ssh console`
+    - `pg_dump -Fc -d your_database_name -U your_db_user > /tmp/backup.dump` (This creates a custom format archive)
+    - Exit the remote console (CTRL+D)
 2.  **Download the backup:**
-    -   `fly sftp get /tmp/backup.dump ./backup.dump`
+    - `fly sftp get /tmp/backup.dump ./backup.dump`
 3.  **Restore locally (for testing or development):**
-    -   `pg_restore -d your_local_database_name -U your_local_db_user ./backup.dump`
+    - `pg_restore -d your_local_database_name -U your_local_db_user ./backup.dump`
 
 To restore a backup in production, you need to be a bit careful and follow these steps (your site could be down for a few minutes during the restore).
 
 1.  **Make sure nobody writes to the app.**
 2.  **Make a backup remotely (in case something goes wrong):**
-    -   `fly ssh console`
-    -   `pg_dump -Fc -d your_database_name -U your_db_user > /tmp/backup_before_restore.dump`
-    -   Exit the remote console (CTRL+D)
+    - `fly ssh console`
+    - `pg_dump -Fc -d your_database_name -U your_db_user > /tmp/backup_before_restore.dump`
+    - Exit the remote console (CTRL+D)
 3.  **Upload your local backup and restore:**
-    -   `fly sftp shell`
-    -   `cd /tmp`
-    -   `put ./your_local_backup.dump`
-    -   Exit SFTP client (CTRL+D)
-    -   `fly ssh console`
-    -   `dropdb your_database_name -U your_db_user` (Be very careful with this step!)
-    -   `createdb your_database_name -U your_db_user`
-    -   `pg_restore -d your_database_name -U your_db_user /tmp/your_local_backup.dump`
-    -   Exit the remote console (CTRL+D)
+    - `fly sftp shell`
+    - `cd /tmp`
+    - `put ./your_local_backup.dump`
+    - Exit SFTP client (CTRL+D)
+    - `fly ssh console`
+    - `dropdb your_database_name -U your_db_user` (Be very careful with this step!)
+    - `createdb your_database_name -U your_db_user`
+    - `pg_restore -d your_database_name -U your_db_user /tmp/your_local_backup.dump`
+    - Exit the remote console (CTRL+D)
 4.  **Restart the app** (so that the new DB connection gets picked up):
-    -   `fly apps restart`
+    - `fly apps restart`
 
 ## Get in touch
 

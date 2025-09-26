@@ -12,6 +12,8 @@
 
   let { data } = $props();
 
+  console.log({ data });
+
   let {
     showUserMenu,
     id,
@@ -185,9 +187,7 @@
     <div class="border-t-2 border-gray-100 py-8 sm:py-12">
       <div class="max-w-(--breakpoint-lg) mx-auto px-6 flex justify-between">
         {#if data.previousLinkedInPost}
-          <a
-            href="/linkedin-posts/{data.previousLinkedInPost.id}"
-            class="btn btn-outline"
+          <a href="/linkedin-posts/{data.previousLinkedInPost.id}" class="btn btn-outline"
             >← Previous Post</a
           >
         {:else}

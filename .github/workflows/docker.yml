@@ -48,7 +48,7 @@ jobs:
           tags: ${{ env.IMAGE_NAME }}:${{ steps.info.outputs.version }}, ${{ env.IMAGE_NAME }}:latest
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:latest
           cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:latest,mode=max
-      
+
       - name: Scan Docker image
         uses: aquasecurity/trivy-action@master
         with:

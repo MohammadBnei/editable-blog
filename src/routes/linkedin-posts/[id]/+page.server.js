@@ -8,14 +8,15 @@ export async function load({ params, locals }) {
   }
 
   const linkedinPost = await getLinkedInPostById(params.id, currentUser);
+  
+  const [nextLinkedInPost, previousLinkedInPost] = await Promise.all([
+    getNextLinkedInPost(linkedinPost.id, locals.lang),
+    getPreviousLinkedInPost(linkedinPost.id, locals.lang)
+  ]);
 
   if (!linkedinPost) {
     throw error(404, 'LinkedIn Post not found');
   }
-
-  // Fetch next and previous LinkedIn posts based on the current post's created_at and lang
-  const nextLinkedInPost = await getNextLinkedInPost(linkedinPost.id, locals.lang);
-  const previousLinkedInPost = await getPreviousLinkedInPost(linkedinPost.id, locals.lang);
 
   return {
     currentUser,
