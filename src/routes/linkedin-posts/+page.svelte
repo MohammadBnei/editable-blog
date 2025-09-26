@@ -39,7 +39,7 @@
             class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
           >
             <h3 class="text-lg font-semibold">{post.article_slug}</h3>
-            <p class="text-gray-700 line-clamp-2">{post.post}</p>
+            <p class="text-gray-700 line-clamp-2 my-2">{post.post}</p>
             <div class="text-sm text-gray-500 mt-2">
               <p>Status: {post.validated ? 'Validated' : 'Not Validated'}</p>
               {#if post.published_at}
