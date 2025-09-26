@@ -1,5 +1,13 @@
 # Changelog
 
+# [0.18.0](https://github.com/MohammadBnei/editable-blog/compare/0.17.0...0.18.0) (2025-09-26)
+
+
+### Features
+
+* Add delete button to LinkedIn posts list in edit mode ([87057e6](https://github.com/MohammadBnei/editable-blog/commit/87057e6d63da9a4adf0fd2ed4f8543140c8529b4))
+* **linkedin posts:** delete option on the linkedin posts page ([df5ebe4](https://github.com/MohammadBnei/editable-blog/commit/df5ebe4714ccb5416f053f988d2bb153545327ff))
+
 # [0.17.0](https://github.com/MohammadBnei/editable-blog/compare/0.16.3...0.17.0) (2025-09-26)
 
 
