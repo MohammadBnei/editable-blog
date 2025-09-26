@@ -126,7 +126,7 @@
     <PlainText bind:content={post} />
     <div class="flex flex-wrap gap-x-4 gap-y-1 mt-4">
       <div class="flex items-center w-full sm:w-auto">
-        <strong class="mr-1">Language:</strong>
+        <strong class="mr-1">Lang:</strong>
         <span>{lang}</span>
       </div>
       <div class="flex items-center w-full sm:w-auto">
