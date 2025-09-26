@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.18.1](https://github.com/MohammadBnei/editable-blog/compare/0.18.0...0.18.1) (2025-09-26)
+
+
+### Bug Fixes
+
+* **linkedin posts:** remove alert when removing a posts ([c74bc55](https://github.com/MohammadBnei/editable-blog/commit/c74bc559d1b2714d55f1e5ac75284c65e82b45d6))
+
 # [0.18.0](https://github.com/MohammadBnei/editable-blog/compare/0.17.0...0.18.0) (2025-09-26)
 
 
