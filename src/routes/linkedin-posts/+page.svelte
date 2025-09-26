@@ -8,10 +8,17 @@
 
   let { data } = $props();
   let showUserMenu = $state(false);
+  let searchQuery = $state('');
 
   function createNewPost() {
     goto('/linkedin-posts/new');
   }
+
+  const filteredPosts = $derived(
+    data.linkedinPosts.filter(post =>
+      post.article_slug.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
 </script>
 
 <WebsiteHeader bind:showUserMenu>
@@ -24,11 +31,17 @@
 <div class="pb-8">
   <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24">
     <div class="font-bold text-sm">Linkedin Posts</div>
-    {#if data.linkedinPosts.length === 0}
-      <div class="md:text-xl py-4">No LinkedIn posts have been created so far.</div>
+    <input
+      type="text"
+      placeholder="Search by article slug..."
+      class="mt-4 p-2 border rounded-md w-full"
+      bind:value={searchQuery}
+    />
+    {#if filteredPosts.length === 0}
+      <div class="md:text-xl py-4">No LinkedIn posts found matching your search.</div>
     {:else}
       <div class="mt-4 grid gap-4">
-        {#each data.linkedinPosts as post}
+        {#each filteredPosts as post}
           <a
             href="/linkedin-posts/{post.id}"
             class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
