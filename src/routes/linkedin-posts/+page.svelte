@@ -84,30 +84,30 @@
       <input
         type="text"
         placeholder="Search by article slug..."
-        class="p-2 border rounded-md w-full"
+        class="input input-bordered w-full"
         bind:value={searchQuery}
       />
 
-      <select bind:value={validatedFilter} class="p-2 border rounded-md w-full">
+      <select bind:value={validatedFilter} class="select select-bordered w-full">
         <option value="all">All Validated Statuses</option>
         <option value="validated">Validated</option>
         <option value="not_validated">Not Validated</option>
       </select>
 
-      <select bind:value={publishedFilter} class="p-2 border rounded-md w-full">
+      <select bind:value={publishedFilter} class="select select-bordered w-full">
         <option value="all">All Published Statuses</option>
         <option value="published">Published</option>
         <option value="not_published">Not Published</option>
       </select>
 
-      <select bind:value={sortBy} class="p-2 border rounded-md w-full">
+      <select bind:value={sortBy} class="select select-bordered w-full">
         <option value="updated_at_desc">Last Updated (Newest First)</option>
         <option value="updated_at_asc">Last Updated (Oldest First)</option>
         <option value="created_at_desc">Created (Newest First)</option>
         <option value="created_at_asc">Created (Oldest First)</option>
       </select>
     </div>
-    <button onclick={resetFilters} class="btn bg-gray-200 rounded-md hover:bg-gray-300">
+    <button onclick={resetFilters} class="btn mt-4">
       Reset Filters
     </button>
 
