@@ -9,7 +9,6 @@
   import { goto } from '$app/navigation';
   import Footer from '$lib/components/Footer.svelte';
   import { isEditing } from '$lib/stores';
-  import LinkedInPostTeaser from '$lib/components/LinkedInPostTeaser.svelte';
 
   let { data } = $props();
 
@@ -183,19 +182,23 @@
 
 {#if data.nextLinkedInPost || data.previousLinkedInPost}
   <NotEditable>
-    <div class="border-t-2 border-gray-100">
-      <div class="max-w-(--breakpoint-lg) mx-auto px-6 pt-8 sm:pt-12">
-        <div class="font-bold text-sm">READ MORE LINKEDIN POSTS</div>
+    <div class="border-t-2 border-gray-100 py-8 sm:py-12">
+      <div class="max-w-(--breakpoint-lg) mx-auto px-6 flex justify-between">
+        {#if data.previousLinkedInPost}
+          <a
+            href="/linkedin-posts/{data.previousLinkedInPost.id}"
+            class="btn btn-outline"
+            >← Previous Post</a
+          >
+        {:else}
+          <div />
+        {/if}
+        {#if data.nextLinkedInPost}
+          <a href="/linkedin-posts/{data.nextLinkedInPost.id}" class="btn btn-outline"
+            >Next Post →</a
+          >
+        {/if}
       </div>
-      {#if data.nextLinkedInPost}
-        <LinkedInPostTeaser linkedinPost={data.nextLinkedInPost} firstEntry={true} />
-      {/if}
-      {#if data.previousLinkedInPost}
-        <LinkedInPostTeaser
-          linkedinPost={data.previousLinkedInPost}
-          firstEntry={!data.nextLinkedInPost}
-        />
-      {/if}
     </div>
   </NotEditable>
 {/if}
