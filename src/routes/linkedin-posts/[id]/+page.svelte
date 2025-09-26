@@ -119,30 +119,22 @@
   const postUrl = $derived(`https://blog.bnei.dev/linkedin-posts/${id}`);
 </script>
 
-<svelte:head>
-  <title>LinkedIn Post {id}</title>
-  <meta name="description" content={post.substring(0, 160)} />
-  <link rel="canonical" href={postUrl} />
-</svelte:head>
-
 <EditorToolbar cancel={initOrReset} save={savePost} />
 <WebsiteHeader bind:showUserMenu>
   <div class="w-full flex flex-col space-y-4 p-4 sm:p-6 gap-0.5">
     <PrimaryButton on:click={toggleEdit}>Edit Post</PrimaryButton>
     <PrimaryButton type="button" on:click={deletePost}>Delete Post</PrimaryButton>
-    {#if $currentUser}
-      <PrimaryButton type="button" on:click={toggleValidationStatus}>
-        {validated ? 'Unvalidate Post' : 'Validate Post'}
-      </PrimaryButton>
-      <PrimaryButton type="button" on:click={togglePublishedStatus}>
-        {published_at ? 'Unpublish Post' : 'Publish Post'}
-      </PrimaryButton>
-    {/if}
+    <PrimaryButton type="button" on:click={toggleValidationStatus}>
+      {validated ? 'Unvalidate Post' : 'Validate Post'}
+    </PrimaryButton>
+    <PrimaryButton type="button" on:click={togglePublishedStatus}>
+      {published_at ? 'Unpublish Post' : 'Publish Post'}
+    </PrimaryButton>
     <LoginMenu />
   </div>
 </WebsiteHeader>
 <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24 pb-8">
-  <h1 class="text-3xl font-bold mb-4">LinkedIn Post #{id}</h1>
+  <h1 class="text-3xl font-bold mb-4">Article slug: {article_slug}</h1>
 
   {#if $isEditing}
     <div class="space-y-4">
@@ -172,26 +164,27 @@
   {:else}
     <div class="prose max-w-none">
       <p class="whitespace-pre-wrap">{post}</p>
-      <p><strong>Article Slug:</strong> {article_slug}</p>
-      <p><strong>Language:</strong> {lang}</p>
-      <p><strong>Validated:</strong> {validated ? 'Yes' : 'No'}</p>
-      <p>
-        <strong>Published At:</strong>
-        {published_at ? formatDate(published_at, true) : 'Not Published'}
-      </p>
+      <strong>Language:</strong>
+      {lang}
+      <strong>Validated:</strong>
+      {validated ? 'Yes' : 'No'}
+
+      <strong>Published At:</strong>
+      {published_at ? formatDate(published_at, true) : 'Not Published'}
+
       {#if linkedin_url}
-        <p>
-          <strong>LinkedIn URL:</strong>
-          <a
-            href={linkedin_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-blue-600 hover:underline">{linkedin_url}</a
-          >
-        </p>
+        <strong>LinkedIn URL:</strong>
+        <a
+          href={linkedin_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-blue-600 hover:underline">{linkedin_url}</a
+        >
       {/if}
-      <p><strong>Created At:</strong> {formatDate(created_at, true)}</p>
-      <p><strong>Last Updated:</strong> {formatDate(updated_at, true)}</p>
+      <strong>Created At:</strong>
+      {formatDate(created_at, true)}
+      <strong>Last Updated:</strong>
+      {formatDate(updated_at, true)}
     </div>
   {/if}
 </div>
