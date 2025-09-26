@@ -10,7 +10,7 @@ This blog supports:
 *   **LinkedIn Integration**: Create, validate, publish, and manage LinkedIn posts directly from articles, leveraging n8n for automated posting and translation workflows.
 *   **Basic analytics**: Simple page view counters.
 
-Check out the demo at [editable.website](https://editable.website).
+Check out the blog at [blog.bnei.dev](https://blog.bnei.dev).
 
 See it out in the wild at [sonjastojanovic.com](https://sonjastojanovic.com), [nisse.tech](https://nisse.tech), [michaelaufreiter.com](https://michaelaufreiter.com), [postowl.com](https://postowl.com), and [trails-shop.at](https://trails-shop.at).
 
