@@ -8,7 +8,8 @@
     "preview": "vite preview",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
     "format": "prettier --plugin-search-dir . --write .",
-    "release": "release-it"
+    "release": "release-it",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^6.0.2",
@@ -24,7 +25,8 @@
     "shiki": "^3.9.2",
     "svelte": "^5.38.1",
     "svelte-adapter-bun": "^0.5.2",
-    "vite": "7.1.1"
+    "vite": "7.1.1",
+    "husky": "^9.0.11"
   },
   "type": "module",
   "dependencies": {
@@ -79,6 +81,11 @@
         },
         "infile": "CHANGELOG.md"
       }
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run format"
     }
   }
 }
