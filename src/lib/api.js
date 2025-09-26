@@ -561,6 +561,36 @@ export async function deleteLinkedInPost(id, currentUser) {
 }
 
 /**
+ * Given a current post ID, determine the next LinkedIn post.
+ */
+export async function getNextLinkedInPost(currentPostId, lang) {
+  const queryText = `
+    SELECT id, article_slug, post, created_at
+    FROM linkedin_posts
+    WHERE lang = $2 AND created_at > (SELECT created_at FROM linkedin_posts WHERE id = $1)
+    ORDER BY created_at ASC
+    LIMIT 1;
+  `;
+  const result = await query(queryText, [currentPostId, lang]);
+  return result.rows[0] || null;
+}
+
+/**
+ * Given a current post ID, determine the previous LinkedIn post.
+ */
+export async function getPreviousLinkedInPost(currentPostId, lang) {
+  const queryText = `
+    SELECT id, article_slug, post, created_at
+    FROM linkedin_posts
+    WHERE lang = $2 AND created_at < (SELECT created_at FROM linkedin_posts WHERE id = $1)
+    ORDER BY created_at DESC
+    LIMIT 1;
+  `;
+  const result = await query(queryText, [currentPostId, lang]);
+  return result.rows[0] || null;
+}
+
+/**
  * Helpers
  */
 function __getDateTimeMinutesAfter(minutes) {

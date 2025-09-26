@@ -13,6 +13,7 @@ export async function load({ params, locals }) {
     throw error(404, 'LinkedIn Post not found');
   }
 
+  // Fetch next and previous LinkedIn posts based on the current post's created_at and lang
   const nextLinkedInPost = await getNextLinkedInPost(linkedinPost.id, locals.lang);
   const previousLinkedInPost = await getPreviousLinkedInPost(linkedinPost.id, locals.lang);
 
