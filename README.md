@@ -2,6 +2,14 @@
 
 A SvelteKit template for coding **completely custom websites**, while allowing non-technical people to **make edits** to the content by simply logging in with a secure admin password. This particular instance is set up for my personal blog, utilizing PostgreSQL for the database and n8n for translation and LinkedIn post creation. It also uses `carta` to render and edit markdown.
 
+This blog supports:
+*   **Multi-language content** for articles and pages.
+*   **Article management**: Create, edit, publish, unpublish, and delete blog posts.
+*   **Page management**: Edit static page content (e.g., "About", "Contact").
+*   **Asset management**: Upload and manage images directly within the editor.
+*   **LinkedIn Integration**: Create, validate, publish, and manage LinkedIn posts directly from articles, leveraging n8n for automated posting and translation workflows.
+*   **Basic analytics**: Simple page view counters.
+
 Check out the demo at [editable.website](https://editable.website).
 
 See it out in the wild at [sonjastojanovic.com](https://sonjastojanovic.com), [nisse.tech](https://nisse.tech), [michaelaufreiter.com](https://michaelaufreiter.com), [postowl.com](https://postowl.com), and [trails-shop.at](https://trails-shop.at).
