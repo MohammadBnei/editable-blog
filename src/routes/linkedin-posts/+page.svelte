@@ -5,14 +5,15 @@
   import Footer from '$lib/components/Footer.svelte';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
   import { formatDate, fetchJSON } from '$lib/util'; // Import fetchJSON
+  import { isEditing } from '$lib/stores';
 
   let { data } = $props();
+  let linkedinPosts = $derived(data.linkedinPosts);
   let showUserMenu = $state(false);
   let searchQuery = $state('');
   let validatedFilter = $state('all'); // 'all', 'validated', 'not_validated'
   let publishedFilter = $state('all'); // 'all', 'published', 'not_published'
   let sortBy = $state('updated_at_desc'); // 'created_at_asc', 'created_at_desc', 'updated_at_asc', 'updated_at_desc'
-  let isEditing = $state(false); // New state for editing mode
 
   function createNewPost() {
     goto('/linkedin-posts/new');
@@ -25,8 +26,9 @@
     sortBy = 'updated_at_desc';
   }
 
-  function toggleEditing() {
-    isEditing = !isEditing;
+  function toggleEdit() {
+    $isEditing = true;
+    showUserMenu = false;
   }
 
   async function deletePost(postId) {
@@ -34,7 +36,7 @@
     try {
       await fetchJSON('POST', `/api/linkedin-posts/${postId}/delete`);
       // Refresh the page data after deletion
-      data.linkedinPosts = data.linkedinPosts.filter(post => post.id !== postId);
+      linkedinPosts = linkedinPosts.filter(post => post.id !== postId);
     } catch (err) {
       console.error(err);
       alert('Error deleting the LinkedIn post. Try again.');
@@ -42,13 +44,14 @@
   }
 
   const filteredAndSortedPosts = $derived.by(() => {
-    let posts = data.linkedinPosts;
+    let posts = linkedinPosts;
 
     // Apply search filter
     if (searchQuery) {
-      posts = posts.filter(post =>
-        post.article_slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.post.toLowerCase().includes(searchQuery.toLowerCase())
+      posts = posts.filter(
+        post =>
+          post.article_slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          post.post.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -90,9 +93,9 @@
 
 <WebsiteHeader bind:showUserMenu>
   <div class="w-full flex flex-col space-y-4 p-4 sm:p-6">
-    <PrimaryButton type="button" onclick={createNewPost}>New LinkedIn Post</PrimaryButton>
-    <PrimaryButton type="button" onclick={toggleEditing}>
-      {isEditing ? 'Done Editing' : 'Edit Posts'}
+    <PrimaryButton type="button" on:click={createNewPost}>New LinkedIn Post</PrimaryButton>
+    <PrimaryButton type="button" on:click={toggleEdit}>
+      {$isEditing ? 'Done Editing' : 'Edit Posts'}
     </PrimaryButton>
     <LoginMenu />
   </div>
@@ -128,7 +131,7 @@
         <option value="created_at_asc">Created (Oldest First)</option>
       </select>
     </div>
-    <button onclick={resetFilters} class="btn mt-4"> Reset Filters </button>
+    <button on:click={resetFilters} class="btn mt-4"> Reset Filters </button>
 
     {#if filteredAndSortedPosts.length === 0}
       <div class="md:text-xl py-4">No LinkedIn posts found matching your criteria.</div>
@@ -136,13 +139,15 @@
       <div class="mt-4 grid gap-4">
         {#each filteredAndSortedPosts as post}
           <div
-            onclick={() => !isEditing && goto(`/linkedin-posts/${post.id}`)}
-            onkeydown={e => {
-              if (!isEditing && e.key === 'Enter') goto(`/linkedin-posts/${post.id}`);
+            on:click={() => !isEditing && goto(`/linkedin-posts/${post.id}`)}
+            on:keydown={e => {
+              if (!$isEditing && e.key === 'Enter') goto(`/linkedin-posts/${post.id}`);
             }}
             role="link"
             tabindex="0"
-            class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow {isEditing ? '' : 'cursor-pointer'}"
+            class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow {isEditing
+              ? ''
+              : 'cursor-pointer'}"
           >
             <h3 class="text-lg font-semibold">{post.article_slug}</h3>
             <p class="text-gray-700 line-clamp-2 my-2">{post.post}</p>
@@ -153,25 +158,9 @@
               {:else}
                 <p>Not Published</p>
               {/if}
-              {#if post.linkedin_url}
-                <p>
-                  LinkedIn URL: <a
-                    href={post.linkedin_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-blue-600 hover:underline"
-                    onclick|stopPropagation
-                    onkeydown|stopPropagation
-                    >{post.linkedin_url}</a
-                  >
-                </p>
-              {/if}
             </div>
-            {#if isEditing}
-              <button
-                onclick|stopPropagation={() => deletePost(post.id)}
-                class="btn btn-error btn-sm mt-2"
-              >
+            {#if $isEditing}
+              <button on:click={() => deletePost(post.id)} class="btn btn-error btn-sm mt-2">
                 Delete
               </button>
             {/if}
