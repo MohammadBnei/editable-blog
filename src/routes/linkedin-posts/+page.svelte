@@ -116,9 +116,12 @@
     {:else}
       <div class="mt-4 grid gap-4">
         {#each filteredAndSortedPosts as post}
-          <a
-            href="/linkedin-posts/{post.id}"
-            class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+          <div
+            on:click={() => goto(`/linkedin-posts/${post.id}`)}
+            on:keydown={(e) => { if (e.key === 'Enter') goto(`/linkedin-posts/${post.id}`); }}
+            role="link"
+            tabindex="0"
+            class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
           >
             <h3 class="text-lg font-semibold">{post.article_slug}</h3>
             <p class="text-gray-700 line-clamp-2 my-2">{post.post}</p>
@@ -135,12 +138,15 @@
                     href={post.linkedin_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-blue-600 hover:underline">{post.linkedin_url}</a
+                    class="text-blue-600 hover:underline"
+                    on:click|stopPropagation
+                    on:keydown|stopPropagation
+                    >{post.linkedin_url}</a
                   >
                 </p>
               {/if}
             </div>
-          </a>
+          </div>
         {/each}
       </div>
     {/if}
