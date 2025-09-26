@@ -1,6 +1,6 @@
-# editable-blog
+# My Personal Editable Blog
 
-A SvelteKit template for coding **completely custom websites**, while allowing non-technical people to **make edits** to the content by simply logging in with a secure admin password.
+A SvelteKit template for coding **completely custom websites**, while allowing non-technical people to **make edits** to the content by simply logging in with a secure admin password. This particular instance is set up for my personal blog, utilizing PostgreSQL for the database and n8n for translation and LinkedIn post creation.
 
 Check out the demo at [editable.website](https://editable.website).
 
@@ -17,9 +17,9 @@ It's a dynamic website but light as a feather compared to building on top of a C
 ## Step 0 - Requirements
 
 - Node.js 18+
-- SQLite3
+- PostgreSQL
 
-These are needed to run the example as is, but you can choose any other database and file storage solution.
+These are needed to run this personal blog.
 
 ## Step 1 - Development setup
 
@@ -41,15 +41,18 @@ npm install
 Copy the contents of `.env.example` into `.env` and adjust to your needs.
 
 ```bash
-DB_PATH=./data/db.sqlite3
+DATABASE_URL="postgresql://user:password@host:port/database"
 ADMIN_PASSWORD=xxxxxxxxxxxx
 ORIGIN=http://localhost:5173
+N8N_USERNAME=your_n8n_username
+N8N_PASSWORD=your_n8n_password
 ```
 
 Seed the database:
 
 ```bash
-sqlite3 data/db.sqlite3 < sql/schema.sql
+# Assuming you have psql installed and configured
+psql -d your_database_name -f sql/schema.sql
 ```
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
@@ -128,9 +131,11 @@ This repo contains the files you need to deploy your site to [fly.io](https://fl
 
 ```
 fly deploy \
-    --build-secret DB_PATH="./data/db.sqlite3" \
+    --build-secret DATABASE_URL="postgresql://user:password@host:port/database" \
     --build-secret ADMIN_PASSWORD="your-super-secret-admin-password" \
-    --build-secret ORIGIN="https://myapp.fly.dev"
+    --build-secret ORIGIN="https://myapp.fly.dev" \
+    --build-secret N8N_USERNAME="your_n8n_username" \
+    --build-secret N8N_PASSWORD="your_n8n_password"
 ```
 
 The `-a` option in `fly deploy` lets you override the app name specified in `fly.toml`.
@@ -144,38 +149,38 @@ Fly will let you know when the app is deployed. Visit the URL shown in your term
 - Run `fly certs create -a myapp myapp.com`
 - Run `fly certs show -a myapp myapp.com` to watch your certificates being issued.
 
-## Fly.io Backups
+## Fly.io Backups (PostgreSQL)
 
-You can pull a backup locally and run it to check if it is valid. That's also quite useful for developing/testing against the latest production data. For the best experience, keep your database small. ;)
+For PostgreSQL, you'll typically use `pg_dump` for backups.
 
-1. Make a snapshot remotely
-   - `fly ssh console`
-   - `sqlite3 data/db.sqlite3 ".backup data/backup-db.sqlite3"`
-   - `sqlite3 data/backup-db.sqlite3 "PRAGMA integrity_check;"` (optional integrity check)
-   - Exit the remote console (CTRL+D)
-1. Download the database and test it with your local instance
-   - `rm -rf data/db.*` (careful, this wipe the database files locally)
-   - `fly sftp get data/backup-db.sqlite3 data/db.sqlite3` (and puts the downloaded backup in place)
+1.  **Create a backup remotely:**
+    -   `fly ssh console`
+    -   `pg_dump -Fc -d your_database_name -U your_db_user > /tmp/backup.dump` (This creates a custom format archive)
+    -   Exit the remote console (CTRL+D)
+2.  **Download the backup:**
+    -   `fly sftp get /tmp/backup.dump ./backup.dump`
+3.  **Restore locally (for testing or development):**
+    -   `pg_restore -d your_local_database_name -U your_local_db_user ./backup.dump`
 
 To restore a backup in production, you need to be a bit careful and follow these steps (your site could be down for a few minutes during the restore).
 
-1. Make sure nobody writes to the app
-1. Make a backup remotely (in case something goes wrong)
-   - `fly ssh console`
-   - `sqlite3 data/db.sqlite3 ".backup data/backup-db.sqlite3"`
-   - `sqlite3 data/backup-db.sqlite3 "PRAGMA integrity_check;"` (optional integrity check)
-   - `rm -rf data/db.*` (this removes the current database files, not the backup)
-   - Exit the remote console (CTRL+D)
-1. Copy your local db.sqlite3 file to production using SFTP
-   - `sqlite3 data/db.sqlite3 ".backup data/backup-db.sqlite3"`
-   - `rm -rf data/db*`
-   - `mv data/backup-db.sqlite3 data/db.sqlite3` (the first 3 commands make sure db.sqlite3 has the very latest state)
-   - `fly sftp shell`
-   - `cd app/data`
-   - `put data/db.sqlite3`
-   - Exit SFTP client (CTRL+D)
-1. Restart the app (so that the new DB gets picked up)
-   - `fly apps restart`
+1.  **Make sure nobody writes to the app.**
+2.  **Make a backup remotely (in case something goes wrong):**
+    -   `fly ssh console`
+    -   `pg_dump -Fc -d your_database_name -U your_db_user > /tmp/backup_before_restore.dump`
+    -   Exit the remote console (CTRL+D)
+3.  **Upload your local backup and restore:**
+    -   `fly sftp shell`
+    -   `cd /tmp`
+    -   `put ./your_local_backup.dump`
+    -   Exit SFTP client (CTRL+D)
+    -   `fly ssh console`
+    -   `dropdb your_database_name -U your_db_user` (Be very careful with this step!)
+    -   `createdb your_database_name -U your_db_user`
+    -   `pg_restore -d your_database_name -U your_db_user /tmp/your_local_backup.dump`
+    -   Exit the remote console (CTRL+D)
+4.  **Restart the app** (so that the new DB connection gets picked up):
+    -   `fly apps restart`
 
 ## Get in touch
 
