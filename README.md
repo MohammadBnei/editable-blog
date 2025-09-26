@@ -1,6 +1,6 @@
 # My Personal Editable Blog
 
-A SvelteKit template for coding **completely custom websites**, while allowing non-technical people to **make edits** to the content by simply logging in with a secure admin password. This particular instance is set up for my personal blog, utilizing PostgreSQL for the database and n8n for translation and LinkedIn post creation.
+A SvelteKit template for coding **completely custom websites**, while allowing non-technical people to **make edits** to the content by simply logging in with a secure admin password. This particular instance is set up for my personal blog, utilizing PostgreSQL for the database and n8n for translation and LinkedIn post creation. It also uses `carta` to render and edit markdown.
 
 Check out the demo at [editable.website](https://editable.website).
 
