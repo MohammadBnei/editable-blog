@@ -14,11 +14,6 @@
   }
 </script>
 
-<svelte:head>
-  <title>LinkedIn Posts</title>
-  <meta name="description" content="Manage your LinkedIn posts." />
-</svelte:head>
-
 <WebsiteHeader bind:showUserMenu>
   <div class="w-full flex flex-col space-y-4 p-4 sm:p-6">
     <PrimaryButton type="button" on:click={createNewPost}>New LinkedIn Post</PrimaryButton>
@@ -28,7 +23,7 @@
 
 <div class="pb-8">
   <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24">
-    <div class="font-bold text-sm">LINKEDIN POSTS</div>
+    <div class="font-bold text-sm">Linkedin Posts</div>
     {#if data.linkedinPosts.length === 0}
       <div class="md:text-xl py-4">No LinkedIn posts have been created so far.</div>
     {:else}
@@ -41,7 +36,7 @@
             <h3 class="text-lg font-semibold">{post.article_slug}</h3>
             <p class="text-gray-700 line-clamp-2 my-2">{post.post}</p>
             <div class="text-sm text-gray-500 mt-2">
-              <p>Status: {post.validated ? 'Validated' : 'Not Validated'}</p>
+              <p>{post.validated ? 'Validated' : 'Not Validated'}</p>
               {#if post.published_at}
                 <p>Published: {formatDate(post.published_at, true)}</p>
               {:else}
