@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.19.0](https://github.com/MohammadBnei/editable-blog/compare/0.18.1...0.19.0) (2025-09-26)
+
+
+### Features
+
+* Add PostgreSQL and n8n environment variables to example ([0b459c7](https://github.com/MohammadBnei/editable-blog/commit/0b459c7f64c2a886dfde400874fe1b02e06d8cdb))
+
 ## [0.18.1](https://github.com/MohammadBnei/editable-blog/compare/0.18.0...0.18.1) (2025-09-26)
 
 
