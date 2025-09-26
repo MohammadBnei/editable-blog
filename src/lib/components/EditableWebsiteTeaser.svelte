@@ -13,7 +13,7 @@
 
 <div class={classNames('py-12 sm:py-24 border-t-2 border-gray-100')}>
   <div
-    class="max-w-(--breakpoint-md) mx-auto px-6 flex flex-col sm:flex-row space-y-6 sm:space-x-8 sm:space-y-0"
+    class="max-w-(--breakpoint-lg) mx-auto px-6 flex flex-col sm:flex-row space-y-6 sm:space-x-8 sm:space-y-0"
   >
     <img
       class="shrink-0 w-24 h-24 rounded-full"

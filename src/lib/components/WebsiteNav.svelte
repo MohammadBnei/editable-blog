@@ -21,7 +21,6 @@
     // Turn on editing
     if (e.key === 'e' && e.metaKey) {
       $isEditing = true;
-      console.log('Editing enabled');
     }
   }
 

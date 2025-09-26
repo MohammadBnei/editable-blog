@@ -24,13 +24,14 @@
     sortBy = 'updated_at_desc';
   }
 
-  const filteredAndSortedPosts = $derived(() => {
+  const filteredAndSortedPosts = $derived.by(() => {
     let posts = data.linkedinPosts;
 
     // Apply search filter
     if (searchQuery) {
       posts = posts.filter(post =>
-        post.article_slug.toLowerCase().includes(searchQuery.toLowerCase())
+        post.article_slug.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.post.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -78,9 +79,9 @@
 </WebsiteHeader>
 
 <div class="pb-8">
-  <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24">
+  <div class="max-w-(--breakpoint-lg) mx-auto px-6 pt-12 sm:pt-24">
     <div class="font-bold text-sm">Linkedin Posts</div>
-    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="mt-4 flex flex-wrap gap-2">
       <input
         type="text"
         placeholder="Search by article slug..."
@@ -88,28 +89,26 @@
         bind:value={searchQuery}
       />
 
-      <select bind:value={validatedFilter} class="select select-bordered w-full">
+      <select bind:value={validatedFilter} class="select w-fit bg-base-100">
         <option value="all">All Validated Statuses</option>
         <option value="validated">Validated</option>
         <option value="not_validated">Not Validated</option>
       </select>
 
-      <select bind:value={publishedFilter} class="select select-bordered w-full">
+      <select bind:value={publishedFilter} class="select w-fit">
         <option value="all">All Published Statuses</option>
         <option value="published">Published</option>
         <option value="not_published">Not Published</option>
       </select>
 
-      <select bind:value={sortBy} class="select select-bordered w-full">
+      <select bind:value={sortBy} class="select w-fit">
         <option value="updated_at_desc">Last Updated (Newest First)</option>
         <option value="updated_at_asc">Last Updated (Oldest First)</option>
         <option value="created_at_desc">Created (Newest First)</option>
         <option value="created_at_asc">Created (Oldest First)</option>
       </select>
     </div>
-    <button onclick={resetFilters} class="btn mt-4">
-      Reset Filters
-    </button>
+    <button onclick={resetFilters} class="btn mt-4"> Reset Filters </button>
 
     {#if filteredAndSortedPosts.length === 0}
       <div class="md:text-xl py-4">No LinkedIn posts found matching your criteria.</div>
@@ -118,7 +117,9 @@
         {#each filteredAndSortedPosts as post}
           <div
             onclick={() => goto(`/linkedin-posts/${post.id}`)}
-            onkeydown={(e) => { if (e.key === 'Enter') goto(`/linkedin-posts/${post.id}`); }}
+            onkeydown={e => {
+              if (e.key === 'Enter') goto(`/linkedin-posts/${post.id}`);
+            }}
             role="link"
             tabindex="0"
             class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
@@ -138,8 +139,7 @@
                     href={post.linkedin_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-blue-600 hover:underline"
-                    >{post.linkedin_url}</a
+                    class="text-blue-600 hover:underline">{post.linkedin_url}</a
                   >
                 </p>
               {/if}

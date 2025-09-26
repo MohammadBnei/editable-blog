@@ -24,7 +24,7 @@
 </WebsiteHeader>
 
 <div class="pb-8">
-  <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24">
+  <div class="max-w-(--breakpoint-lg) mx-auto px-6 pt-12 sm:pt-24">
     <div class="font-bold text-sm">LATEST ARTICLES</div>
     {#if data.articles.length === 0}
       <div class="md:text-xl py-4">No blog posts have been published so far.</div>

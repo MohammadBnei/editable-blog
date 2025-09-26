@@ -6,10 +6,11 @@
 
   import '../app.css';
 
-  import { currentLang } from '$lib/stores';
+  import { currentLang, currentUser } from '$lib/stores';
   let { data, children } = $props();
 
   currentLang.set(data.lang);
+  currentUser.set(data.currentUser);
 </script>
 
 <svelte:head>

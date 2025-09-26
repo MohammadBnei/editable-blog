@@ -119,65 +119,65 @@
     <LoginMenu />
   </div>
 </WebsiteHeader>
-<div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24 pb-8">
-  <h1 class="text-xl font-bold mb-4">Article slug: {article_slug}</h1>
+<div class="max-w-(--breakpoint-lg) mx-auto px-6 pt-12 sm:pt-24 pb-8">
+  <h1 class="text-xl font-bold mb-4">{article_slug}</h1>
 
-  <div class="prose">
+  <div class="my-6">
     <PlainText bind:content={post} />
-    <ul class="list bg-base-100 rounded-box shadow-md mt-4">
-      <li class="list-row flex items-center justify-between p-4">
-        <strong class="mr-1">Lang:</strong>
-        <span>{lang}</span>
-      </li>
-      <li class="list-row flex items-center justify-between p-4">
-        <strong class="mr-1">Validated:</strong>
-        <span>{validated ? 'Yes' : 'No'}</span>
-        {#if $isEditing}
-          <button
-            on:click={toggleValidationStatus}
-            class="ml-2 px-2 py-1 text-xs rounded-md {validated
-              ? 'bg-yellow-200 text-yellow-800'
-              : 'bg-green-200 text-green-800'}"
-          >
-            {validated ? 'Unvalidate' : 'Validate'}
-          </button>
-        {/if}
-      </li>
-      <li class="list-row flex items-center justify-between p-4">
-        <strong class="mr-1">Published At:</strong>
-        <span>{published_at ? formatDate(published_at, true) : 'Not Published'}</span>
-        {#if $isEditing}
-          <button
-            on:click={togglePublishedStatus}
-            class="ml-2 px-2 py-1 text-xs rounded-md {published_at
-              ? 'bg-red-200 text-red-800'
-              : 'bg-blue-200 text-blue-800'}"
-          >
-            {published_at ? 'Unpublish' : 'Publish'}
-          </button>
-        {/if}
-      </li>
-      {#if linkedin_url}
-        <li class="list-row flex items-center justify-between p-4">
-          <strong class="mr-1">LinkedIn URL:</strong>
-          <a
-            href={linkedin_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-blue-600 hover:underline">{linkedin_url}</a
-          >
-        </li>
-      {/if}
-      <li class="list-row flex items-center justify-between p-4">
-        <strong class="mr-1">Created At:</strong>
-        <span>{formatDate(created_at, true)}</span>
-      </li>
-      <li class="list-row flex items-center justify-between p-4">
-        <strong class="mr-1">Last Updated:</strong>
-        <span>{formatDate(updated_at, true)}</span>
-      </li>
-    </ul>
   </div>
+  <ul class="list rounded-box shadow-md mt-4">
+    <li class="list-row flex items-center justify-between p-4">
+      <strong class="mr-1">Lang:</strong>
+      <span>{lang}</span>
+    </li>
+    <li class="list-row flex items-center justify-between p-4">
+      <strong class="mr-1">Validated:</strong>
+      <span>{validated ? 'Yes' : 'No'}</span>
+      {#if $isEditing}
+        <button
+          on:click={toggleValidationStatus}
+          class="btn rounded-sm {validated
+            ? 'bg-yellow-200 text-yellow-800'
+            : 'bg-green-200 text-green-800'}"
+        >
+          {validated ? 'Unvalidate' : 'Validate'}
+        </button>
+      {/if}
+    </li>
+    <li class="list-row flex items-center justify-between p-4">
+      <strong class="mr-1">Published At:</strong>
+      <span>{published_at ? formatDate(published_at, true) : 'Not Published'}</span>
+      {#if $isEditing}
+        <button
+          on:click={togglePublishedStatus}
+          class="btn rounded-sm {published_at
+            ? 'bg-red-200 text-red-800'
+            : 'bg-blue-200 text-blue-800'}"
+        >
+          {published_at ? 'Unpublish' : 'Publish'}
+        </button>
+      {/if}
+    </li>
+    {#if linkedin_url}
+      <li class="list-row flex items-center justify-between p-4">
+        <strong class="mr-1">LinkedIn URL:</strong>
+        <a
+          href={linkedin_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-blue-600 hover:underline">{linkedin_url}</a
+        >
+      </li>
+    {/if}
+    <li class="list-row flex items-center justify-between p-4">
+      <strong class="mr-1">Created At:</strong>
+      <span>{formatDate(created_at, true)}</span>
+    </li>
+    <li class="list-row flex items-center justify-between p-4">
+      <strong class="mr-1">Last Updated:</strong>
+      <span>{formatDate(updated_at, true)}</span>
+    </li>
+  </ul>
 </div>
 
 <NotEditable>

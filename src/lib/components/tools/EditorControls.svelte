@@ -1,16 +1,9 @@
 <script>
   import { activeEditorView } from '$lib/stores.js';
   import { onDestroy } from 'svelte';
-  import ToggleMark from './ToggleMark.svelte';
-  import ToggleBulletList from './ToggleBulletList.svelte';
-  import ToggleBlockquote from './ToggleBlockquote.svelte';
-  import ToggleOrderedList from './ToggleOrderedList.svelte';
   import PrimaryButton from '../PrimaryButton.svelte';
   import SecondaryButton from '../SecondaryButton.svelte';
-  import ToggleHeading from './ToggleHeading.svelte';
-  import InsertImage from './InsertImage.svelte';
-  import CreateLink from './CreateLink.svelte';
-
+  
   let editorView = $state();
   let editorState = $state();
 
@@ -38,7 +31,7 @@
     class="max-w-(--breakpoint-lg) mx-auto px-2 backdrop-blur-xs bg-white bg-opacity-95 border-b border-t sm:border sm:rounded-full border-gray-100 shadow-sm"
   >
     <div>
-      <div class="flex items-center overflow-x-auto py-3 px-1">
+      <div class="flex items-center justify-center py-3 px-1">
         <div class="flex-1 h-8"></div>
         <SecondaryButton type="button" on:click={cancel}>Cancel</SecondaryButton>
         <div class="w-2 sm:w-4"></div>

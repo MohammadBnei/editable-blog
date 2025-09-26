@@ -63,7 +63,7 @@
 
 <WebsiteHeader bind:showUserMenu cancel={discardDraft} save={createLinkedInPost} />
 
-<div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24 pb-8">
+<div class="max-w-(--breakpoint-lg) mx-auto px-6 pt-12 sm:pt-24 pb-8">
   <h1 class="text-3xl font-bold mb-4">Create New LinkedIn Post</h1>
 
   <div class="space-y-4">

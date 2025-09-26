@@ -87,7 +87,7 @@
 </WebsiteHeader>
 
 <div class="py-12 sm:py-24">
-  <div class="max-w-(--breakpoint-md) mx-auto px-6 md:text-xl">
+  <div class="max-w-(--breakpoint-lg) mx-auto px-6 md:text-xl">
     <h1 class="pb-8 text-4xl font-bold md:text-7xl">
       <PlainText bind:content={title} />
     </h1>

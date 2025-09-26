@@ -13,7 +13,7 @@
 </script>
 
 <div class={classNames(firstEntry ? 'pt-2 pb-8 sm:pb-12' : 'py-8 sm:py-12')}>
-  <div class="max-w-(--breakpoint-md) mx-auto px-6 flex space-x-6 sm:space-x-8 relative">
+  <div class="max-w-(--breakpoint-lg) mx-auto px-6 flex space-x-6 sm:space-x-8 relative">
     <div class="shrink-0 w-14 h-14 sm:w-20 sm:h-20 overflow-hidden relative rounded-full">
       <Image
         class="rounded-full"

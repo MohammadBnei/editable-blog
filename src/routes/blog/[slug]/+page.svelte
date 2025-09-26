@@ -9,7 +9,6 @@
   import EditableWebsiteTeaser from '$lib/components/EditableWebsiteTeaser.svelte';
   import Article from '$lib/components/Article.svelte';
   import NotEditable from '$lib/components/NotEditable.svelte';
-  import EditorToolbar from '$lib/components/tools/EditorToolbar.svelte';
   import { currentUser, isEditing } from '$lib/stores';
 
   let { data } = $props();
@@ -43,7 +42,6 @@
   }
 
   async function deleteArticle() {
-    if (!$currentUser) return alert('Sorry, you are not authorized.');
     try {
       fetchJSON('POST', '/api/delete-article', {
         slug: data.slug
@@ -57,7 +55,6 @@
   }
 
   async function saveArticle() {
-    if (!$currentUser) return alert('Sorry, you are not authorized.');
     const teaser = extractTeaser(content);
     try {
       const result = await fetchJSON('POST', '/api/update-article', {
@@ -77,7 +74,6 @@
   }
 
   async function togglePublishedStatus() {
-    if (!$currentUser) return alert('Sorry, you are not authorized.');
     try {
       const publish = !published_at; // If published_at exists, we want to unpublish, otherwise publish
       const result = await fetchJSON('POST', '/api/set-published-at', {
@@ -93,7 +89,6 @@
   }
 
   async function triggerN8nWebhook() {
-    if (!$currentUser) return alert('Sorry, you are not authorized.');
     try {
       await fetchJSON('POST', '/api/linkedin-posts/trigger-n8n', {
         slug: data.slug
@@ -132,19 +127,16 @@
   <meta name="twitter:image" content="https://blog.bnei.dev{ogImage}" />
 </svelte:head>
 
-<EditorToolbar cancel={initOrReset} save={saveArticle} />
-<WebsiteHeader bind:showUserMenu>
+<WebsiteHeader bind:showUserMenu cancel={initOrReset} save={saveArticle}>
   <div class="w-full flex flex-col space-y-4 p-4 sm:p-6 gap-0.5">
     <PrimaryButton on:click={toggleEdit}>Edit post</PrimaryButton>
     <PrimaryButton type="button" on:click={deleteArticle}>Delete post</PrimaryButton>
-    {#if $currentUser}
       <PrimaryButton type="button" on:click={togglePublishedStatus}>
         {published_at ? 'Unpublish post' : 'Publish post'}
       </PrimaryButton>
       <PrimaryButton type="button" on:click={triggerN8nWebhook}>
         Trigger N8N LinkedIn Post
       </PrimaryButton>
-    {/if}
     <LoginMenu />
   </div>
 </WebsiteHeader>
@@ -154,7 +146,7 @@
 {#if data.articles.length > 0}
   <NotEditable>
     <div class="border-t-2 border-gray-100">
-      <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-8 sm:pt-12">
+      <div class="max-w-(--breakpoint-lg) mx-auto px-6 pt-8 sm:pt-12">
         <div class="font-bold text-sm">READ NEXT</div>
       </div>
       {#each data.articles as article, i}

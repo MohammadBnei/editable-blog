@@ -211,7 +211,7 @@
 </WebsiteHeader>
 
 <div>
-  <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24">
+  <div class="max-w-(--breakpoint-lg) mx-auto px-6 pt-12 sm:pt-24">
     <NotEditable>
       <img
         class="pb-8 w-40 sm:w-56 mx-auto"
@@ -227,7 +227,7 @@
 </div>
 
 <div class="pt-12 md:pt-24 border-gray-100 border-b-2">
-  <div class="max-w-(--breakpoint-md) mx-auto px-6">
+  <div class="max-w-(--breakpoint-lg) mx-auto px-6">
     <div class="relative">
       <div class="w-1 bg-gray-900 absolute inset-0 -top-8 bottom-12 mx-auto z-0">
         <div class="w-4 h-4 rounded-full bg-gray-900 absolute -top-1 -left-[6px]"></div>
@@ -259,7 +259,7 @@
 </div>
 
 <div class="bg-white pb-6 sm:pb-12">
-  <div class="max-w-(--breakpoint-md) mx-auto px-6">
+  <div class="max-w-(--breakpoint-lg) mx-auto px-6">
     <div class="font-bold text-sm sm:text-base py-12 sm:pt-24 pb-8">WHAT PEOPLE SAY</div>
   </div>
   {#each testimonials as _, i}
@@ -283,7 +283,7 @@
 {#if data.articles?.length > 0}
   <NotEditable>
     <div class="bg-white border-t-2 border-gray-100 pb-10 sm:pb-16">
-      <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24">
+      <div class="max-w-(--breakpoint-lg) mx-auto px-6 pt-12 sm:pt-24">
         <div class="font-bold text-sm sm:text-base">FROM THE BLOG</div>
       </div>
       {#each data.articles as article, i}
@@ -295,7 +295,7 @@
 
 <!-- Bio -->
 <div id="contact" class="bg-white border-t-2 border-b-2 border-gray-100 pb-12 sm:pb-24">
-  <div class="max-w-(--breakpoint-md) mx-auto px-6">
+  <div class="max-w-(--breakpoint-lg) mx-auto px-6">
     <div class="pt-12 sm:pt-24 pb-12 text-center">
       <div class="w-48 h-48 md:w-72 md:h-72 mx-auto overflow-hidden relative rounded-full">
         <Image
@@ -327,7 +327,7 @@
 
 <!-- FAQs -->
 <div class="bg-white">
-  <div class="max-w-(--breakpoint-md) mx-auto px-6">
+  <div class="max-w-(--breakpoint-lg) mx-auto px-6">
     <div class="font-bold text-sm sm:text-base pt-12 sm:pt-24 -mb-6 md:-mb-12">FAQs</div>
     <div class="prose md:prose-xl pb-12 sm:pb-24">
       <RichText multiLine bind:content={faqs} />
