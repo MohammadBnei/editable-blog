@@ -32,14 +32,13 @@
   }
 
   async function deletePost(postId) {
-    if (!confirm('Are you sure you want to delete this LinkedIn post?')) return;
     try {
       await fetchJSON('POST', `/api/linkedin-posts/${postId}/delete`);
       // Refresh the page data after deletion
       linkedinPosts = linkedinPosts.filter(post => post.id !== postId);
     } catch (err) {
       console.error(err);
-      alert('Error deleting the LinkedIn post. Try again.');
+      alert('Error deleting the LinkedIn post.');
     }
   }
 
