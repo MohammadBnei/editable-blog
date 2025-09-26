@@ -9,16 +9,58 @@
   let { data } = $props();
   let showUserMenu = $state(false);
   let searchQuery = $state('');
+  let validatedFilter = $state('all'); // 'all', 'validated', 'not_validated'
+  let publishedFilter = $state('all'); // 'all', 'published', 'not_published'
+  let sortBy = $state('updated_at_desc'); // 'created_at_asc', 'created_at_desc', 'updated_at_asc', 'updated_at_desc'
 
   function createNewPost() {
     goto('/linkedin-posts/new');
   }
 
-  const filteredPosts = $derived(
-    data.linkedinPosts.filter(post =>
-      post.article_slug.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
+  const filteredAndSortedPosts = $derived(() => {
+    let posts = data.linkedinPosts;
+
+    // Apply search filter
+    if (searchQuery) {
+      posts = posts.filter(post =>
+        post.article_slug.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Apply validated filter
+    if (validatedFilter === 'validated') {
+      posts = posts.filter(post => post.validated);
+    } else if (validatedFilter === 'not_validated') {
+      posts = posts.filter(post => !post.validated);
+    }
+
+    // Apply published filter
+    if (publishedFilter === 'published') {
+      posts = posts.filter(post => post.published_at);
+    } else if (publishedFilter === 'not_published') {
+      posts = posts.filter(post => !post.published_at);
+    }
+
+    // Apply sort
+    posts.sort((a, b) => {
+      let dateA, dateB;
+      if (sortBy.startsWith('created_at')) {
+        dateA = new Date(a.created_at);
+        dateB = new Date(b.created_at);
+      } else {
+        dateA = new Date(a.updated_at);
+        dateB = new Date(b.updated_at);
+      }
+
+      if (sortBy.endsWith('_asc')) {
+        return dateA.getTime() - dateB.getTime();
+      } else {
+        return dateB.getTime() - dateA.getTime();
+      }
+    });
+
+    return posts;
+  });
 </script>
 
 <WebsiteHeader bind:showUserMenu>
@@ -31,17 +73,39 @@
 <div class="pb-8">
   <div class="max-w-(--breakpoint-md) mx-auto px-6 pt-12 sm:pt-24">
     <div class="font-bold text-sm">Linkedin Posts</div>
-    <input
-      type="text"
-      placeholder="Search by article slug..."
-      class="mt-4 p-2 border rounded-md w-full"
-      bind:value={searchQuery}
-    />
-    {#if filteredPosts.length === 0}
-      <div class="md:text-xl py-4">No LinkedIn posts found matching your search.</div>
+    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <input
+        type="text"
+        placeholder="Search by article slug..."
+        class="p-2 border rounded-md w-full"
+        bind:value={searchQuery}
+      />
+
+      <select bind:value={validatedFilter} class="p-2 border rounded-md w-full">
+        <option value="all">All Validated Statuses</option>
+        <option value="validated">Validated</option>
+        <option value="not_validated">Not Validated</option>
+      </select>
+
+      <select bind:value={publishedFilter} class="p-2 border rounded-md w-full">
+        <option value="all">All Published Statuses</option>
+        <option value="published">Published</option>
+        <option value="not_published">Not Published</option>
+      </select>
+
+      <select bind:value={sortBy} class="p-2 border rounded-md w-full">
+        <option value="updated_at_desc">Last Updated (Newest First)</option>
+        <option value="updated_at_asc">Last Updated (Oldest First)</option>
+        <option value="created_at_desc">Created (Newest First)</option>
+        <option value="created_at_asc">Created (Oldest First)</option>
+      </select>
+    </div>
+
+    {#if filteredAndSortedPosts.length === 0}
+      <div class="md:text-xl py-4">No LinkedIn posts found matching your criteria.</div>
     {:else}
       <div class="mt-4 grid gap-4">
-        {#each filteredPosts as post}
+        {#each filteredAndSortedPosts as post}
           <a
             href="/linkedin-posts/{post.id}"
             class="block p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
