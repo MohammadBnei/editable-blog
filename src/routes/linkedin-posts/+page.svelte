@@ -2,7 +2,7 @@
   import { goto } from '$app/navigation';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
   import LoginMenu from '$lib/components/LoginMenu.svelte';
-  import Footer from '$lib/components/Footer.svelte';
+  import Footer from '$lib/components/Footer';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
   import { formatDate } from '$lib/util';
 
@@ -15,6 +15,13 @@
 
   function createNewPost() {
     goto('/linkedin-posts/new');
+  }
+
+  function resetFilters() {
+    searchQuery = '';
+    validatedFilter = 'all';
+    publishedFilter = 'all';
+    sortBy = 'updated_at_desc';
   }
 
   const filteredAndSortedPosts = $derived(() => {
@@ -100,6 +107,9 @@
         <option value="created_at_asc">Created (Oldest First)</option>
       </select>
     </div>
+    <button on:click={resetFilters} class="mt-4 px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300">
+      Reset Filters
+    </button>
 
     {#if filteredAndSortedPosts.length === 0}
       <div class="md:text-xl py-4">No LinkedIn posts found matching your criteria.</div>
