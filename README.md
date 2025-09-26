@@ -25,6 +25,7 @@ It's a dynamic website but light as a feather compared to building on top of a C
 ## Step 0 - Requirements
 
 - Node.js 18+
+- bun
 - PostgreSQL
 
 These are needed to run this personal blog.
@@ -43,7 +44,7 @@ cd editable-blog
 Install the dependencies.
 
 ```bash
-npm install
+bun install
 ```
 
 Copy the contents of `.env.example` into `.env` and adjust to your needs.
@@ -56,26 +57,27 @@ N8N_USERNAME=your_n8n_username
 N8N_PASSWORD=your_n8n_password
 ```
 
-Seed the database:
+Initialize the database schema and apply migrations:
 
 ```bash
-# Assuming you have psql installed and configured
-psql -d your_database_name -f sql/schema.sql
+# Ensure your DATABASE_URL in .env is correctly set up for a PostgreSQL database.
+# Then run the migration script:
+node src/lib/migrate.js
 ```
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Once you've created a project and installed dependencies with `bun install` , start a development server:
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 To create and test a production version of your app:
 
 ```bash
-npm run build
+bun run build
 ```
 
-You can preview the production build with `npm run preview`.
+You can preview the production build with `bun run preview`.
 
 ## Making changes to your website
 
