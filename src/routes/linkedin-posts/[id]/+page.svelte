@@ -124,12 +124,12 @@
 
   <div class="prose">
     <PlainText bind:content={post} />
-    <div class="flex flex-wrap gap-x-4 gap-y-1 mt-4">
-      <div class="flex items-center w-full sm:w-auto">
+    <ul class="list bg-base-100 rounded-box shadow-md mt-4">
+      <li class="list-row flex items-center justify-between p-4">
         <strong class="mr-1">Lang:</strong>
         <span>{lang}</span>
-      </div>
-      <div class="flex items-center w-full sm:w-auto">
+      </li>
+      <li class="list-row flex items-center justify-between p-4">
         <strong class="mr-1">Validated:</strong>
         <span>{validated ? 'Yes' : 'No'}</span>
         {#if $isEditing}
@@ -142,8 +142,8 @@
             {validated ? 'Unvalidate' : 'Validate'}
           </button>
         {/if}
-      </div>
-      <div class="flex items-center w-full sm:w-auto">
+      </li>
+      <li class="list-row flex items-center justify-between p-4">
         <strong class="mr-1">Published At:</strong>
         <span>{published_at ? formatDate(published_at, true) : 'Not Published'}</span>
         {#if $isEditing}
@@ -156,9 +156,9 @@
             {published_at ? 'Unpublish' : 'Publish'}
           </button>
         {/if}
-      </div>
+      </li>
       {#if linkedin_url}
-        <div class="flex items-center w-full">
+        <li class="list-row flex items-center justify-between p-4">
           <strong class="mr-1">LinkedIn URL:</strong>
           <a
             href={linkedin_url}
@@ -166,17 +166,17 @@
             rel="noopener noreferrer"
             class="text-blue-600 hover:underline">{linkedin_url}</a
           >
-        </div>
+        </li>
       {/if}
-      <div class="flex items-center w-full sm:w-auto">
+      <li class="list-row flex items-center justify-between p-4">
         <strong class="mr-1">Created At:</strong>
         <span>{formatDate(created_at, true)}</span>
-      </div>
-      <div class="flex items-center w-full sm:w-auto">
+      </li>
+      <li class="list-row flex items-center justify-between p-4">
         <strong class="mr-1">Last Updated:</strong>
         <span>{formatDate(updated_at, true)}</span>
-      </div>
-    </div>
+      </li>
+    </ul>
   </div>
 </div>
 
