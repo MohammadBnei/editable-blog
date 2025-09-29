@@ -4,7 +4,6 @@
   import LoginMenu from '$lib/components/LoginMenu.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
-  import FullPostDisplay from '$lib/components/FullPostDisplay.svelte'; // Import the new component
   import { formatDate, fetchJSON } from '$lib/util'; // Import fetchJSON
   import { isEditing } from '$lib/stores';
 
@@ -190,11 +189,9 @@
               : 'cursor-pointer'}"
           >
             <h3 class="text-lg font-semibold">{post.article_slug}</h3>
-            {#if showFullPost}
-              <FullPostDisplay content={post.post} />
-            {:else}
-              <p class="text-gray-700 line-clamp-2 my-2">{post.post}</p>
-            {/if}
+            <p class="text-gray-700 my-2 {showFullPost ? 'whitespace-pre-wrap' : 'line-clamp-2'}">
+              {post.post}
+            </p>
             <div class="text-sm text-gray-500 mt-2">
               <p>{post.validated ? 'Validated' : 'Not Validated'}</p>
               {#if post.published_at}
