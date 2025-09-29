@@ -23,7 +23,7 @@
 </div>
 
 <div class="max-w-(--breakpoint-lg) mx-auto px-6 pb-12 sm:pb-24">
-  <div id="article_content" class="prose sm:prose-xl">
+  <div id="article_content" class="prose sm:prose-xl max-w-full">
     <RichText multiLine bind:content />
   </div>
 </div>
