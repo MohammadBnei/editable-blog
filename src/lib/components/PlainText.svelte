@@ -7,10 +7,10 @@
 
 {#if $isEditing}
   {#await import('./PlainTextEditor.svelte')}
-    {@html content}
+    {content}
   {:then PlainTextEditor}
     <PlainTextEditor.default {multiLine} bind:content />
   {/await}
 {:else}
-  {@html content}
+  {content}
 {/if}
