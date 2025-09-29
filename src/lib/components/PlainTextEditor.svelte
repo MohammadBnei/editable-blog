@@ -1,88 +1,49 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
-  import { fromHTML } from '$lib/editor/prosemirrorUtil';
-  import {
-    singleLinePlainTextSchema,
-    multiLinePlainTextSchema
-  } from '$lib/editor/prosemirrorSchemas.js';
-  import { activeEditorView } from '$lib/stores';
-  import { EditorState, Plugin } from 'prosemirror-state';
-  import { EditorView } from 'prosemirror-view';
-  import { history } from 'prosemirror-history';
-  import { keymap } from 'prosemirror-keymap';
-  import { baseKeymap } from 'prosemirror-commands';
-  import { buildKeymap } from '$lib/editor/prosemirrorKeymap';
 
   export let content = '';
   export let multiLine = false;
 
-  let editorChange = false;
-  let prosemirrorNode;
-  let editorView;
-  let editorState;
+  let textareaNode;
 
-  $: schema = multiLine ? multiLinePlainTextSchema : singleLinePlainTextSchema;
-
-  $: {
-    const doc = fromHTML(schema, content);
-    editorState = EditorState.create({
-      doc,
-      schema,
-      plugins: [keymap(buildKeymap(schema)), keymap(baseKeymap), history(), onUpdatePlugin]
-    });
-    // Only if there is already an editorView and the content change was external
-    // update editorView with the new editorState
-    if (!editorChange) {
-      editorView?.updateState(editorState);
-    } else {
-      editorChange = false;
-    }
-  }
-
-  function dispatchTransaction(transaction) {
-    const editorState = this.state.apply(transaction);
-    this.updateState(editorState);
-    if (transaction.docChanged) {
-      content = editorState.doc.content;
-      // Leave a hint so we know the last content update came
-      // from the editor (not the parent)
-      editorChange = true;
-    }
-    this.state = editorState;
-  }
-
-  const onUpdatePlugin = new Plugin({
-    view() {
-      return {
-        update(updatedView) {
-          activeEditorView.set(updatedView);
-        }
-      };
-    }
-  });
-
+  // Focus the textarea when the component mounts
   onMount(() => {
-    editorView = new EditorView(prosemirrorNode, {
-      state: editorState,
-      dispatchTransaction
-    });
-    activeEditorView.set(editorView);
-  });
-
-  onDestroy(() => {
-    // Guard on server side
-    if (editorView) {
-      editorView.destroy();
+    if (textareaNode) {
+      textareaNode.focus();
     }
   });
+
+  // No onDestroy needed as there are no external resources to clean up
 </script>
 
-<div id="prosemirror-editor" bind:this={prosemirrorNode}></div>
+<textarea
+  bind:this={textareaNode}
+  bind:value={content}
+  class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+  class:h-8={!multiLine}
+  class:min-h-[100px]={multiLine}
+  class:resize-y={multiLine}
+  class:overflow-hidden={!multiLine}
+  rows={multiLine ? 5 : 1}
+  on:keydown={(e) => {
+    // Prevent new lines if not multiLine, but allow other key presses
+    if (!multiLine && e.key === 'Enter') {
+      e.preventDefault();
+      // Optionally, you could dispatch a custom event here for form submission
+      // textareaNode.dispatchEvent(new CustomEvent('submit', { bubbles: true }));
+    }
+  }}
+></textarea>
 
 <style>
-  :global(#prosemirror-editor .ProseMirror) {
-    outline: none;
-    white-space: pre-wrap;
-    word-wrap: break-word;
+  /* Basic styling for the textarea */
+  textarea {
+    font-family: inherit; /* Inherit font from parent */
+  }
+  /* Hide scrollbar for single line, but allow content to scroll horizontally */
+  .overflow-hidden {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap; /* Keep content on a single line */
   }
 </style>
