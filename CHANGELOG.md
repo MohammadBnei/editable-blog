@@ -1,5 +1,19 @@
 # Changelog
 
+# [0.20.0](https://github.com/MohammadBnei/editable-blog/compare/0.19.0...0.20.0) (2025-09-26)
+
+
+### Bug Fixes
+
+* **linkedin posts:** using correct syntax for store value ($) ([6b73cbd](https://github.com/MohammadBnei/editable-blog/commit/6b73cbd95443db596fc9a69a49748c146352982c))
+
+
+### Features
+
+* Add next/previous post navigation for LinkedIn posts ([accd4ef](https://github.com/MohammadBnei/editable-blog/commit/accd4efd605a35a46f28dba75d65592ac0ab1e84))
+* Add pre-commit hook to format code with Prettier ([9f0aadf](https://github.com/MohammadBnei/editable-blog/commit/9f0aadfbd55b9a9cc4a13dc7fa20e3d3ac505d63))
+* Implement next and previous LinkedIn post navigation ([0827cf2](https://github.com/MohammadBnei/editable-blog/commit/0827cf23dfa93941ac28cafe7a513b4daad28946))
+
 # [0.19.0](https://github.com/MohammadBnei/editable-blog/compare/0.18.1...0.19.0) (2025-09-26)
 
 ### Features
