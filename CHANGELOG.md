@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.2](https://github.com/MohammadBnei/editable-blog/compare/0.20.1...0.20.2) (2025-09-29)
+
+
+### Bug Fixes
+
+* **PlainText:** removed html tag from plain text component ([8d40ccd](https://github.com/MohammadBnei/editable-blog/commit/8d40ccd3d4ec7b3b31e0c6fdd740e03c04a9f9a2))
+
 ## [0.20.1](https://github.com/MohammadBnei/editable-blog/compare/0.20.0...0.20.1) (2025-09-29)
 
 
