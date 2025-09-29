@@ -15,8 +15,8 @@ export async function POST({ request, locals, params }) {
       if (!n8nResponse.ok) {
         const errorText = await n8nResponse.text();
         console.error(`Error from N8N publish webhook for post ${id}:`, errorText);
-        // Decide if you want to throw an error here or just log it and proceed with DB update
-        // For now, we'll log and proceed, but a more robust solution might halt if webhook fails.
+
+        return json({ message: errorText }, { status: n8nResponse.status });
       } else {
         console.log(`N8N publish webhook triggered successfully for post ${id}`);
       }

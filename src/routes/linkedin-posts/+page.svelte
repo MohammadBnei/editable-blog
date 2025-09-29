@@ -42,6 +42,41 @@
     }
   }
 
+  async function toggleValidationStatus(postId, currentValidatedStatus) {
+    try {
+      const result = await fetchJSON('POST', `/api/linkedin-posts/${postId}/validate`, {
+        validated: !currentValidatedStatus
+      });
+      // Update the specific post's validated status in the local array
+      linkedinPosts = linkedinPosts.map(post =>
+        post.id === postId
+          ? { ...post, validated: result.validated, updated_at: result.updated_at }
+          : post
+      );
+    } catch (err) {
+      console.error(err);
+      alert('Error updating validation status. Please try again.');
+    }
+  }
+
+  async function togglePublishedStatus(postId, currentPublishedAt) {
+    try {
+      const publish = !currentPublishedAt;
+      const result = await fetchJSON('POST', `/api/linkedin-posts/${postId}/publish`, {
+        publish: publish
+      });
+      // Update the specific post's published_at status in the local array
+      linkedinPosts = linkedinPosts.map(post =>
+        post.id === postId
+          ? { ...post, published_at: result.published_at, updated_at: result.updated_at }
+          : post
+      );
+    } catch (err) {
+      console.error(err);
+      alert('Error updating published status. Please try again.');
+    }
+  }
+
   const filteredAndSortedPosts = $derived.by(() => {
     let posts = linkedinPosts;
 
@@ -157,9 +192,23 @@
               {/if}
             </div>
             {#if $isEditing}
-              <button on:click={() => deletePost(post.id)} class="btn btn-error btn-sm mt-2">
-                Delete
-              </button>
+              <div class="flex space-x-2 mt-2">
+                <button
+                  on:click={() => toggleValidationStatus(post.id, post.validated)}
+                  class="btn btn-sm {post.validated ? 'btn-warning' : 'btn-success'}"
+                >
+                  {post.validated ? 'Unvalidate' : 'Validate'}
+                </button>
+                <button
+                  on:click={() => togglePublishedStatus(post.id, post.published_at)}
+                  class="btn btn-sm {post.published_at ? 'btn-error' : 'btn-info'}"
+                >
+                  {post.published_at ? 'Unpublish' : 'Publish'}
+                </button>
+                <button on:click={() => deletePost(post.id)} class="btn btn-error btn-sm">
+                  Delete
+                </button>
+              </div>
             {/if}
           </div>
         {/each}
