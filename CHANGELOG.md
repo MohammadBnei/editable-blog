@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.1](https://github.com/MohammadBnei/editable-blog/compare/0.20.0...0.20.1) (2025-09-29)
+
+
+### Bug Fixes
+
+* **article:** articles are now in full width ([dedf39f](https://github.com/MohammadBnei/editable-blog/commit/dedf39fd00b3b94d6c454481d0ab45674c59f58c))
+
 # [0.20.0](https://github.com/MohammadBnei/editable-blog/compare/0.19.0...0.20.0) (2025-09-26)
 
 
