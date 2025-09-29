@@ -12,8 +12,6 @@
 
   let { data } = $props();
 
-  console.log({ data });
-
   let {
     showUserMenu,
     id,
