@@ -4,6 +4,7 @@
   import LoginMenu from '$lib/components/LoginMenu.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
+  import FullPostDisplay from '$lib/components/FullPostDisplay.svelte'; // Import the new component
   import { formatDate, fetchJSON } from '$lib/util'; // Import fetchJSON
   import { isEditing } from '$lib/stores';
 
@@ -14,6 +15,7 @@
   let validatedFilter = $state('all'); // 'all', 'validated', 'not_validated'
   let publishedFilter = $state('all'); // 'all', 'published', 'not_published'
   let sortBy = $state('updated_at_desc'); // 'created_at_asc', 'created_at_desc', 'updated_at_asc', 'updated_at_desc'
+  let showFullPost = $state(false); // New state variable for toggling full post view
 
   function createNewPost() {
     goto('/linkedin-posts/new');
@@ -164,6 +166,12 @@
       </select>
     </div>
     <button on:click={resetFilters} class="btn mt-4"> Reset Filters </button>
+    <div class="form-control mt-4">
+      <label class="label cursor-pointer w-fit">
+        <span class="label-text mr-2">Show Full Post Text</span>
+        <input type="checkbox" class="toggle toggle-primary" bind:checked={showFullPost} />
+      </label>
+    </div>
 
     {#if filteredAndSortedPosts.length === 0}
       <div class="md:text-xl py-4">No LinkedIn posts found matching your criteria.</div>
@@ -182,7 +190,11 @@
               : 'cursor-pointer'}"
           >
             <h3 class="text-lg font-semibold">{post.article_slug}</h3>
-            <p class="text-gray-700 line-clamp-2 my-2">{post.post}</p>
+            {#if showFullPost}
+              <FullPostDisplay content={post.post} />
+            {:else}
+              <p class="text-gray-700 line-clamp-2 my-2">{post.post}</p>
+            {/if}
             <div class="text-sm text-gray-500 mt-2">
               <p>{post.validated ? 'Validated' : 'Not Validated'}</p>
               {#if post.published_at}
