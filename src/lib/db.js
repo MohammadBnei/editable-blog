@@ -30,13 +30,11 @@ export async function migrate() {
   }
 }
 
-// Optional: Close all connections when shutting down
-process.on('SIGINT', () => {
-  pool.end();
-  console.log('PostgreSQL connection pool closed.');
-});
-
-process.on('SIGTERM', () => {
-  pool.end();
-  console.log('PostgreSQL connection pool closed.');
+process.on('SIGTERM', async () => {
+    try {
+        await pool.end();
+        console.log('PostgreSQL connection pool closed.');
+    } catch (error) {
+        console.error('Failed to close pool:', error);
+    }
 });

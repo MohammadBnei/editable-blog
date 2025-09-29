@@ -1,6 +1,6 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
-  import { toHTML, fromHTML } from '$lib/editor/prosemirrorUtil';
+  import { fromHTML } from '$lib/editor/prosemirrorUtil';
   import {
     singleLinePlainTextSchema,
     multiLinePlainTextSchema
@@ -43,7 +43,6 @@
     const editorState = this.state.apply(transaction);
     this.updateState(editorState);
     if (transaction.docChanged) {
-      content = toHTML(editorState);
       // Leave a hint so we know the last content update came
       // from the editor (not the parent)
       editorChange = true;

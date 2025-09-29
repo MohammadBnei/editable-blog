@@ -12,5 +12,7 @@
     <PlainTextEditor.default {multiLine} bind:content />
   {/await}
 {:else}
-  {content}
+  <div class="whitespace-pre-wrap">
+    {content}
+  </div>
 {/if}
