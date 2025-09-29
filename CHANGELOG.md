@@ -1,5 +1,17 @@
 # Changelog
 
+# [0.22.0](https://github.com/MohammadBnei/editable-blog/compare/0.21.0...0.22.0) (2025-09-29)
+
+
+### Bug Fixes
+
+* Display full post text directly in page, remove FullPostDisplay component ([827a339](https://github.com/MohammadBnei/editable-blog/commit/827a3391a63dcf6da0d3d2ef7887fee305ef4d2f))
+
+
+### Features
+
+* Add toggle to display full LinkedIn post text ([7d8f975](https://github.com/MohammadBnei/editable-blog/commit/7d8f975650bde4bf43612d744ce2d30ea10a015b))
+
 # [0.21.0](https://github.com/MohammadBnei/editable-blog/compare/0.20.3...0.21.0) (2025-09-29)
 
 
