@@ -43,6 +43,7 @@
     const editorState = this.state.apply(transaction);
     this.updateState(editorState);
     if (transaction.docChanged) {
+      content = editorState.doc.content;
       // Leave a hint so we know the last content update came
       // from the editor (not the parent)
       editorChange = true;
