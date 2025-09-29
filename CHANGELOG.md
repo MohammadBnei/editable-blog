@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.21.0](https://github.com/MohammadBnei/editable-blog/compare/0.20.3...0.21.0) (2025-09-29)
+
+
+### Features
+
+* Add validate and publish buttons to LinkedIn posts list ([f2ccf08](https://github.com/MohammadBnei/editable-blog/commit/f2ccf08b1bd854d62adf7c1cc4a162a4f089afce))
+
 ## [0.20.3](https://github.com/MohammadBnei/editable-blog/compare/0.20.2...0.20.3) (2025-09-29)
 
 ## [0.20.2](https://github.com/MohammadBnei/editable-blog/compare/0.20.1...0.20.2) (2025-09-29)
