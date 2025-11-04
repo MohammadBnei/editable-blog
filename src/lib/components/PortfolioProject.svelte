@@ -22,8 +22,11 @@
     }
   }
 
-  function handleTitleInput() {
-    project.slug = generateSlug(project.title);
+  // This function will now update the project object directly,
+  // and because 'project' is a prop, Svelte will track changes to its properties.
+  function handleTitleInput(event) {
+    project.title = event.target.textContent; // Update title from PlainText
+    project.slug = generateSlug(project.title); // Update slug based on new title
   }
 </script>
 
@@ -40,6 +43,7 @@
     </div>
     <div class="mb-4">
       <label for="project-slug-{index}" class="block text-sm font-medium text-gray-700">Project Slug</label>
+      <!-- Bind directly to project.slug, which is updated by handleTitleInput -->
       <PlainText id="project-slug-{index}" bind:content={project.slug} class="mt-1 block w-full" />
     </div>
     <div class="mb-4">
