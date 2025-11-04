@@ -3,9 +3,11 @@
   import RichText from '$lib/components/RichText.svelte';
   import { currentUser } from '$lib/stores.js';
   import { extractTeaser } from '$lib/util';
+  import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
 
   let { data } = $props();
 
+  let showUserMenu = $state(false);
   let project = $derived(data.project);
 
   $currentUser = data.currentUser;
@@ -33,6 +35,12 @@
   <meta name="twitter:description" content={pageDescription} />
   <meta name="twitter:image" content="https://blog.bnei.dev/images/default-portfolio-image.jpg" />
 </svelte:head>
+
+<WebsiteHeader bind:showUserMenu save={savePage}>
+  <PrimaryButton on:click={toggleEdit}>Edit page</PrimaryButton>
+  <LoginMenu />
+</WebsiteHeader>
+
 
 <div class="navbar bg-base-100">
   <div class="navbar-start">
