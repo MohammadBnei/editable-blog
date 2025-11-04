@@ -67,9 +67,9 @@
     <!-- The expand/collapse button is now next to the title -->
   {/if}
 
-  <div class="prose mb-4">
+  <div class="prose mb-4 max-w-full">
     {#if expanded || $isEditing}
-      <RichText multiLine bind:content={project.content} />
+      <RichText multiLine bind:content={project.content}  class="w-full"/>
     {:else}
       <RichText multiLine content={extractTeaser(project.content, 100)} />
     {/if}
