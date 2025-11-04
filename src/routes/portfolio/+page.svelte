@@ -10,7 +10,6 @@
   import { extractTeaser } from '$lib/util';
   import { currentUser, isEditing } from '$lib/stores.js';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
-  import { nanoid } from '$lib/util'; // Import nanoid
 
   let { data } = $props();
 
