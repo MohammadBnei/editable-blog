@@ -5,7 +5,7 @@
   import { isEditing } from '$lib/stores.js';
   import { extractTeaser } from '$lib/util';
 
-  let { project, index, onRemove, onToggleExpand, generateSlug } = $props();
+  let { project = $bindable(), index, onRemove, onToggleExpand, generateSlug } = $props();
 
   let expanded = $state(project.expanded || false);
 
