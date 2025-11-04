@@ -20,14 +20,25 @@
 
   $currentUser = data.currentUser;
 
+  function generateSlug(inputTitle) {
+    return inputTitle.toLowerCase().replace(/\s+/g, '_');
+  }
+
   function toggleEdit() {
     $isEditing = true;
     showUserMenu = false;
   }
 
   function addProject() {
-    // Generate a unique slug for new projects
-    projects.push({ title: '', content: '', gitLink: '', liveLink: '', expanded: false, slug: nanoid(8) });
+    const newProjectTitle = 'New Project';
+    projects.push({
+      title: newProjectTitle,
+      content: '',
+      gitLink: '',
+      liveLink: '',
+      expanded: false,
+      slug: generateSlug(newProjectTitle) // Generate slug from initial title
+    });
     projects = [...projects]; // Trigger reactivity
   }
 
@@ -107,7 +118,12 @@
         {#if $isEditing}
           <div class="mb-4">
             <label for="project-title-{index}" class="block text-sm font-medium text-gray-700">Project Title</label>
-            <PlainText id="project-title-{index}" bind:content={project.title} class="mt-1 block w-full" />
+            <PlainText
+              id="project-title-{index}"
+              bind:content={project.title}
+              on:input={() => (project.slug = generateSlug(project.title))}
+              class="mt-1 block w-full"
+            />
           </div>
           <div class="mb-4">
             <label for="project-slug-{index}" class="block text-sm font-medium text-gray-700">Project Slug</label>
