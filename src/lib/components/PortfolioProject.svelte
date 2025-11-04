@@ -27,13 +27,17 @@
   function handleTitleInput(event) {
     project.title = event.target.textContent; // Update title from PlainText
     project.slug = generateSlug(project.title); // Update slug based on new title
+    project = { ...project };
+    console.log({ project });
   }
 </script>
 
 <div class="border rounded-lg p-6 shadow-md mb-6">
   {#if $isEditing}
     <div class="mb-4">
-      <label for="project-title-{index}" class="block text-sm font-medium text-gray-700">Project Title</label>
+      <label for="project-title-{index}" class="block text-sm font-medium text-gray-700"
+        >Project Title</label
+      >
       <PlainText
         id="project-title-{index}"
         bind:content={project.title}
@@ -42,17 +46,31 @@
       />
     </div>
     <div class="mb-4">
-      <label for="project-slug-{index}" class="block text-sm font-medium text-gray-700">Project Slug</label>
+      <label for="project-slug-{index}" class="block text-sm font-medium text-gray-700"
+        >Project Slug</label
+      >
       <!-- Bind directly to project.slug, which is updated by handleTitleInput -->
       <PlainText id="project-slug-{index}" bind:content={project.slug} class="mt-1 block w-full" />
     </div>
     <div class="mb-4">
-      <label for="project-git-{index}" class="block text-sm font-medium text-gray-700">GitHub Link</label>
-      <PlainText id="project-git-{index}" bind:content={project.gitLink} class="mt-1 block w-full" />
+      <label for="project-git-{index}" class="block text-sm font-medium text-gray-700"
+        >GitHub Link</label
+      >
+      <PlainText
+        id="project-git-{index}"
+        bind:content={project.gitLink}
+        class="mt-1 block w-full"
+      />
     </div>
     <div class="mb-4">
-      <label for="project-live-{index}" class="block text-sm font-medium text-gray-700">Live Demo Link</label>
-      <PlainText id="project-live-{index}" bind:content={project.liveLink} class="mt-1 block w-full" />
+      <label for="project-live-{index}" class="block text-sm font-medium text-gray-700"
+        >Live Demo Link</label
+      >
+      <PlainText
+        id="project-live-{index}"
+        bind:content={project.liveLink}
+        class="mt-1 block w-full"
+      />
     </div>
   {:else}
     <div class="flex items-center justify-between mb-2">
@@ -63,12 +81,6 @@
         {expanded ? 'Collapse' : 'Expand'}
       </SecondaryButton>
     </div>
-  {/if}
-
-  {#if $isEditing}
-    <!-- When editing, the expand/collapse button is not needed here as content is always editable -->
-  {:else}
-    <!-- The expand/collapse button is now next to the title -->
   {/if}
 
   <div class="prose mb-4 max-w-full">
