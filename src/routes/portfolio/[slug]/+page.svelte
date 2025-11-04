@@ -16,6 +16,10 @@
 
   $currentUser = data.currentUser;
 
+  function generateSlug(inputTitle) {
+    return inputTitle.toLowerCase().replace(/\s+/g, '_');
+  }
+
   // Generate a description from project content or a default
   const pageDescription = $derived(
     project.content ? extractTeaser(project.content, 160) : `Details for ${project.title} project.`
@@ -57,6 +61,10 @@
       console.error('Error: Project not found in portfolio data.');
     }
   }
+
+  function handleTitleInput() {
+    project.slug = generateSlug(project.title);
+  }
 </script>
 
 <svelte:head>
@@ -85,7 +93,7 @@
   <div class="max-w-(--breakpoint-lg) mx-auto px-6 md:text-xl">
     <h1 class="pb-8 text-4xl font-bold md:text-7xl">
       {#if $isEditing}
-        <PlainText bind:content={project.title} />
+        <PlainText bind:content={project.title} on:input={handleTitleInput} />
       {:else}
         {project.title}
       {/if}
@@ -100,10 +108,18 @@
 
     <div class="mt-8 flex gap-4">
       {#if $isEditing}
-        <label for="project-git" class="block text-sm font-medium text-gray-700">GitHub Link</label>
-        <PlainText id="project-git" bind:content={project.gitLink} class="mt-1 block w-full" />
-        <label for="project-live" class="block text-sm font-medium text-gray-700">Live Demo Link</label>
-        <PlainText id="project-live" bind:content={project.liveLink} class="mt-1 block w-full" />
+        <div class="flex flex-col w-full">
+          <label for="project-git" class="block text-sm font-medium text-gray-700">GitHub Link</label>
+          <PlainText id="project-git" bind:content={project.gitLink} class="mt-1 block w-full" />
+        </div>
+        <div class="flex flex-col w-full">
+          <label for="project-live" class="block text-sm font-medium text-gray-700">Live Demo Link</label>
+          <PlainText id="project-live" bind:content={project.liveLink} class="mt-1 block w-full" />
+        </div>
+        <div class="flex flex-col w-full">
+          <label for="project-slug" class="block text-sm font-medium text-gray-700">Project Slug</label>
+          <PlainText id="project-slug" bind:content={project.slug} class="mt-1 block w-full" />
+        </div>
       {:else}
         {#if project.gitLink}
           <a href={project.gitLink} target="_blank" rel="noopener noreferrer" class="btn btn-primary">
