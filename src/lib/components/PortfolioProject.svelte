@@ -69,7 +69,7 @@
 
   <div class="prose mb-4 max-w-full">
     {#if expanded || $isEditing}
-      <RichText multiLine bind:content={project.content}  class="w-full"/>
+      <RichText multiLine bind:content={project.content} />
     {:else}
       <RichText multiLine content={extractTeaser(project.content, 100)} />
     {/if}
