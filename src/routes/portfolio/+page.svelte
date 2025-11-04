@@ -115,7 +115,7 @@
 
     {#each projects as project, index}
       <PortfolioProject
-        {project}
+        bind:project={project} <!-- Changed here -->
         {index}
         onRemove={removeProject}
         onToggleExpand={toggleProject}

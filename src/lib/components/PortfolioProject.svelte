@@ -23,11 +23,11 @@
   }
 
   // This function will now update the project object directly,
-  // and because 'project' is a prop, Svelte will track changes to its properties.
+  // and because 'project' is bound, Svelte will track changes to its properties.
   function handleTitleInput(event) {
     project.title = event.target.textContent; // Update title from PlainText
     project.slug = generateSlug(project.title); // Update slug based on new title
-    project = { ...project };
+    // Removed: project = { ...project }; // No longer needed with bind:project
     console.log({ project });
   }
 </script>
