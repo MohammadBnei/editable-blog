@@ -22,6 +22,7 @@ export async function load({ params, locals }) {
 
   return {
     project,
-    currentUser
+    currentUser,
+    portfolioPage // Pass the entire portfolioPage for saving updates
   };
 }
