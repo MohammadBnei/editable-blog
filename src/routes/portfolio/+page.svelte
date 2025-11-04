@@ -9,6 +9,7 @@
   import { extractTeaser } from '$lib/util';
   import { currentUser, isEditing } from '$lib/stores.js';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
+  import { nanoid } from '$lib/util'; // Import nanoid
 
   let { data } = $props();
 
@@ -25,7 +26,8 @@
   }
 
   function addProject() {
-    projects.push({ title: '', content: '', gitLink: '', liveLink: '', expanded: false });
+    // Generate a unique slug for new projects
+    projects.push({ title: '', content: '', gitLink: '', liveLink: '', expanded: false, slug: nanoid(8) });
     projects = [...projects]; // Trigger reactivity
   }
 
@@ -102,9 +104,32 @@
 
     {#each projects as project, index}
       <div class="border rounded-lg p-6 shadow-md mb-6">
+        {#if $isEditing}
+          <div class="mb-4">
+            <label for="project-title-{index}" class="block text-sm font-medium text-gray-700">Project Title</label>
+            <PlainText id="project-title-{index}" bind:content={project.title} class="mt-1 block w-full" />
+          </div>
+          <div class="mb-4">
+            <label for="project-slug-{index}" class="block text-sm font-medium text-gray-700">Project Slug</label>
+            <PlainText id="project-slug-{index}" bind:content={project.slug} class="mt-1 block w-full" />
+          </div>
+          <div class="mb-4">
+            <label for="project-git-{index}" class="block text-sm font-medium text-gray-700">GitHub Link</label>
+            <PlainText id="project-git-{index}" bind:content={project.gitLink} class="mt-1 block w-full" />
+          </div>
+          <div class="mb-4">
+            <label for="project-live-{index}" class="block text-sm font-medium text-gray-700">Live Demo Link</label>
+            <PlainText id="project-live-{index}" bind:content={project.liveLink} class="mt-1 block w-full" />
+          </div>
+        {:else}
+          <h2 class="text-2xl font-semibold mb-2">
+            <a href="/portfolio/{project.slug}" class="hover:underline">{project.title}</a>
+          </h2>
+        {/if}
+
         <div class="flex justify-end align-middle">
           <SecondaryButton size="sm" on:click={() => toggleProject(index)}>
-            {project.expanded ? 'Collapse' : 'Expand'}
+            {project.expanded || $isEditing ? 'Collapse' : 'Expand'}
           </SecondaryButton>
         </div>
         <div class="prose mb-4">
