@@ -5,6 +5,7 @@
   import LoginMenu from '$lib/components/LoginMenu.svelte';
   import SecondaryButton from '$lib/components/SecondaryButton.svelte';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
+  import PortfolioProject from '$lib/components/PortfolioProject.svelte'; // Import the new component
   import { fetchJSON } from '$lib/util';
   import { extractTeaser } from '$lib/util';
   import { currentUser, isEditing } from '$lib/stores.js';
@@ -114,54 +115,13 @@
     {/if}
 
     {#each projects as project, index}
-      <div class="border rounded-lg p-6 shadow-md mb-6">
-        {#if $isEditing}
-          <div class="mb-4">
-            <label for="project-title-{index}" class="block text-sm font-medium text-gray-700">Project Title</label>
-            <PlainText
-              id="project-title-{index}"
-              bind:content={project.title}
-              on:input={() => (project.slug = generateSlug(project.title))}
-              class="mt-1 block w-full"
-            />
-          </div>
-          <div class="mb-4">
-            <label for="project-slug-{index}" class="block text-sm font-medium text-gray-700">Project Slug</label>
-            <PlainText id="project-slug-{index}" bind:content={project.slug} class="mt-1 block w-full" />
-          </div>
-          <div class="mb-4">
-            <label for="project-git-{index}" class="block text-sm font-medium text-gray-700">GitHub Link</label>
-            <PlainText id="project-git-{index}" bind:content={project.gitLink} class="mt-1 block w-full" />
-          </div>
-          <div class="mb-4">
-            <label for="project-live-{index}" class="block text-sm font-medium text-gray-700">Live Demo Link</label>
-            <PlainText id="project-live-{index}" bind:content={project.liveLink} class="mt-1 block w-full" />
-          </div>
-        {:else}
-          <h2 class="text-2xl font-semibold mb-2">
-            <a href="/portfolio/{project.slug}" class="hover:underline">{project.title}</a>
-          </h2>
-        {/if}
-
-        <div class="flex justify-end align-middle">
-          <SecondaryButton size="sm" on:click={() => toggleProject(index)}>
-            {project.expanded || $isEditing ? 'Collapse' : 'Expand'}
-          </SecondaryButton>
-        </div>
-        <div class="prose mb-4">
-          {#if project.expanded || $isEditing}
-            <RichText multiLine bind:content={project.content} />
-          {:else}
-            <RichText multiLine content={extractTeaser(project.content, 100)} />
-          {/if}
-        </div>
-
-        {#if $isEditing}
-          <SecondaryButton on:click={() => removeProject(index)} size="sm"
-            >Remove Project</SecondaryButton
-          >
-        {/if}
-      </div>
+      <PortfolioProject
+        {project}
+        {index}
+        onRemove={removeProject}
+        onToggleExpand={toggleProject}
+        {generateSlug}
+      />
     {/each}
   </div>
 </div>
