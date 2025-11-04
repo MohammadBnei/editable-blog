@@ -51,16 +51,22 @@
       <PlainText id="project-live-{index}" bind:content={project.liveLink} class="mt-1 block w-full" />
     </div>
   {:else}
-    <h2 class="text-2xl font-semibold mb-2">
-      <a href="/portfolio/{project.slug}" class="hover:underline">{project.title}</a>
-    </h2>
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="text-2xl font-semibold">
+        <a href="/portfolio/{project.slug}" class="hover:underline">{project.title}</a>
+      </h2>
+      <SecondaryButton size="sm" on:click={handleToggleExpand}>
+        {expanded ? 'Collapse' : 'Expand'}
+      </SecondaryButton>
+    </div>
   {/if}
 
-  <div class="flex justify-end align-middle">
-    <SecondaryButton size="sm" on:click={handleToggleExpand}>
-      {expanded || $isEditing ? 'Collapse' : 'Expand'}
-    </SecondaryButton>
-  </div>
+  {#if $isEditing}
+    <!-- When editing, the expand/collapse button is not needed here as content is always editable -->
+  {:else}
+    <!-- The expand/collapse button is now next to the title -->
+  {/if}
+
   <div class="prose mb-4">
     {#if expanded || $isEditing}
       <RichText multiLine bind:content={project.content} />
