@@ -28,7 +28,7 @@
   }
 
   async function saveProject() {
-    if (!$currentUser) return alert('Sorry, you are not authorized.');
+    if (!$currentUser) return; // Not authorized, do nothing
 
     // Find the index of the current project in the portfolioPage.projects array
     const projectIndex = portfolioPage.projects.findIndex(p => p.slug === project.slug);
@@ -47,13 +47,14 @@
           }
         });
         $isEditing = false;
-        alert('Project saved successfully!');
+        // Project saved successfully! (No alert)
       } catch (err) {
         console.error(err);
-        alert('There was an error saving the project. Please try again.');
+        // There was an error saving the project. Please try again. (No alert)
       }
     } else {
-      alert('Error: Project not found in portfolio data.');
+      // Error: Project not found in portfolio data. (No alert)
+      console.error('Error: Project not found in portfolio data.');
     }
   }
 </script>

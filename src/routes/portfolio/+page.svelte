@@ -53,7 +53,7 @@
   }
 
   async function savePage() {
-    if (!$currentUser) return alert('Sorry, you are not authorized.');
+    if (!$currentUser) return; // Not authorized, do nothing
     try {
       await fetchJSON('POST', '/api/save-page', {
         pageId: 'portfolio',
@@ -66,7 +66,7 @@
       $isEditing = false;
     } catch (err) {
       console.error(err);
-      alert('There was an error. Please try again.');
+      // There was an error. Please try again. (No alert)
     }
   }
 
