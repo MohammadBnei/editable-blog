@@ -27,8 +27,6 @@
   function handleTitleInput(event) {
     project.title = event.target.textContent; // Update title from PlainText
     project.slug = generateSlug(project.title); // Update slug based on new title
-    // Removed: project = { ...project }; // No longer needed with bind:project
-    console.log({ project });
   }
 </script>
 
