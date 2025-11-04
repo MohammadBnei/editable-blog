@@ -1,5 +1,28 @@
 # Changelog
 
+# [0.23.0](https://github.com/MohammadBnei/editable-blog/compare/0.22.0...0.23.0) (2025-11-04)
+
+
+### Bug Fixes
+
+* Adjust expand button placement and size in PortfolioProject ([8cc1cc6](https://github.com/MohammadBnei/editable-blog/commit/8cc1cc6b16f8b2b4b17b621d1c2e715b2615eb4c))
+* Adjust RichText component width within PortfolioProject ([19036aa](https://github.com/MohammadBnei/editable-blog/commit/19036aa7df7b61d20fcab7cb449535ff09cedb2f))
+* Correctly bind project prop for two-way data flow ([bc1cddf](https://github.com/MohammadBnei/editable-blog/commit/bc1cddf353f6e348701e2e6c64a80ddc8a482726))
+* Ensure project reactivity after title and slug updates ([c38a8a3](https://github.com/MohammadBnei/editable-blog/commit/c38a8a31838086688a727b62102ad5800d115e0f))
+* Remove alert messages for unauthorized access and save errors ([815e1c5](https://github.com/MohammadBnei/editable-blog/commit/815e1c5145fb6c083cd84aa2eb65493e00c4ce8b))
+* Update content prop on editor change ([dd9fdfb](https://github.com/MohammadBnei/editable-blog/commit/dd9fdfb01221bdbe67e659bda6cad29830240728))
+* Update project slug reactively in PortfolioProject component ([b46527a](https://github.com/MohammadBnei/editable-blog/commit/b46527a04e63d9bba9aee85639be75c19bda5689))
+* Update project title and slug reactively in PortfolioProject component ([3a4f65b](https://github.com/MohammadBnei/editable-blog/commit/3a4f65b773242f1ec765ee4884d433147f0e1ba4))
+
+
+### Features
+
+* Add dynamic portfolio project pages and editing capabilities ([e24b1b3](https://github.com/MohammadBnei/editable-blog/commit/e24b1b3efa1dd741e907eb5f6efa716fb3df8049))
+* Add WebsiteHeader and LoginMenu to portfolio page ([2fd3ac9](https://github.com/MohammadBnei/editable-blog/commit/2fd3ac9f0dcb718345a2b0ee5eeffc4644118730))
+* Auto-generate project slug from title ([56333a9](https://github.com/MohammadBnei/editable-blog/commit/56333a94d1f675d8fa673328adc54a3f04af2543))
+* Enable editing of individual portfolio projects on their slug page ([3f50f79](https://github.com/MohammadBnei/editable-blog/commit/3f50f7944664173c1156dba0b7c5ebe748a63562))
+* Make project slug reactive to title changes ([1e54793](https://github.com/MohammadBnei/editable-blog/commit/1e54793f92cf1e550bd7140fb0654e1cd11c233c))
+
 # [0.22.0](https://github.com/MohammadBnei/editable-blog/compare/0.21.0...0.22.0) (2025-09-29)
 
 
