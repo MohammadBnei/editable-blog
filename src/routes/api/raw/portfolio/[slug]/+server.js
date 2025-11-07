@@ -17,7 +17,7 @@ export async function GET({ params, url }) {
     if (project?.content) {
       return new Response(project.content, {
         headers: {
-          'Content-Type': 'text/markdown'
+          'Content-Type': 'text/markdown; charset=utf-8'
         }
       });
     }

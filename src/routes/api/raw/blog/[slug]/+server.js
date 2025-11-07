@@ -12,7 +12,7 @@ export async function GET({ params, url }) {
   if (content) {
     return new Response(content, {
       headers: {
-        'Content-Type': 'text/markdown'
+        'Content-Type': 'text/markdown; charset=utf-8'
       }
     });
   } else {

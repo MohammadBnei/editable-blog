@@ -11,7 +11,7 @@ export async function GET({ url }) {
   if (concatenatedContent) {
     return new Response(concatenatedContent, {
       headers: {
-        'Content-Type': 'text/markdown'
+        'Content-Type': 'text/markdown; charset=utf-8'
       }
     });
   } else {

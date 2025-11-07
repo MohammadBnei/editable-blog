@@ -96,7 +96,6 @@
 
 <WebsiteHeader bind:showUserMenu save={savePage}>
   <PrimaryButton on:click={toggleEdit}>Edit page</PrimaryButton>
-  <a href="/api/raw/portfolio" target="_blank" class="btn btn-secondary">View Raw Markdown</a>
   <LoginMenu />
 </WebsiteHeader>
 
@@ -123,6 +122,9 @@
         {generateSlug}
       />
     {/each}
+    <div class="mt-8">
+      <a href="/api/raw/portfolio" class="btn btn-secondary">View Raw Markdown</a>
+    </div>
   </div>
 </div>
 

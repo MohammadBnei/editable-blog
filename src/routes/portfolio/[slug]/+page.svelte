@@ -86,7 +86,6 @@
 
 <WebsiteHeader bind:showUserMenu save={saveProject}>
   <PrimaryButton on:click={toggleEdit}>Edit Project</PrimaryButton>
-  <a href="/api/raw/portfolio/{project.slug}" target="_blank" class="btn btn-secondary">View Raw Markdown</a>
   <LoginMenu />
 </WebsiteHeader>
 
@@ -123,16 +122,19 @@
         </div>
       {:else}
         {#if project.gitLink}
-          <a href={project.gitLink} target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+          <a href={project.gitLink} rel="noopener noreferrer" class="btn btn-primary">
             GitHub
           </a>
         {/if}
         {#if project.liveLink}
-          <a href={project.liveLink} target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+          <a href={project.liveLink} rel="noopener noreferrer" class="btn btn-secondary">
             Live Demo
           </a>
         {/if}
       {/if}
+    </div>
+    <div class="mt-8">
+      <a href="/api/raw/portfolio/{project.slug}" class="btn btn-secondary">View Raw Markdown</a>
     </div>
   </div>
 </div>

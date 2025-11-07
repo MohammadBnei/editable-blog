@@ -136,10 +136,13 @@
     <PrimaryButton type="button" on:click={triggerN8nWebhook}>
       Trigger N8N LinkedIn Post
     </PrimaryButton>
-    <a href="/api/raw/blog/{data.slug}" target="_blank" class="btn btn-secondary">View Raw Markdown</a>
     <LoginMenu />
   </div>
 </WebsiteHeader>
+
+<div class="max-w-(--breakpoint-lg) mx-auto px-6">
+  <a href="/api/raw/blog/{data.slug}" class="btn btn-secondary mb-4">View Raw Markdown</a>
+</div>
 
 <Article bind:title bind:content bind:published_at />
 
