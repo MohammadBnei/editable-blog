@@ -19,6 +19,7 @@
 <WebsiteHeader bind:showUserMenu>
   <div class="w-full flex flex-col space-y-4 p-4 sm:p-6">
     <PrimaryButton type="button" on:click={() => goto('/blog/new')}>New blog post</PrimaryButton>
+    <a href="/api/raw/blog" target="_blank" class="btn btn-secondary">View Raw Markdown</a>
     <LoginMenu />
   </div>
 </WebsiteHeader>

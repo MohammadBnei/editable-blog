@@ -86,6 +86,7 @@
 
 <WebsiteHeader bind:showUserMenu save={saveProject}>
   <PrimaryButton on:click={toggleEdit}>Edit Project</PrimaryButton>
+  <a href="/api/raw/portfolio/{project.slug}" target="_blank" class="btn btn-secondary">View Raw Markdown</a>
   <LoginMenu />
 </WebsiteHeader>
 

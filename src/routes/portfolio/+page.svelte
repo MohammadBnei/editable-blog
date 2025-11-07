@@ -21,7 +21,7 @@
   $currentUser = data.currentUser;
 
   function generateSlug(inputTitle) {
-    return inputTitle.toLowerCase().replace(/\s+/g, '_');
+    return inputTitle.toLowerCase().replace(/\s+/g = '_');
   }
 
   function toggleEdit() {
@@ -96,6 +96,7 @@
 
 <WebsiteHeader bind:showUserMenu save={savePage}>
   <PrimaryButton on:click={toggleEdit}>Edit page</PrimaryButton>
+  <a href="/api/raw/portfolio" target="_blank" class="btn btn-secondary">View Raw Markdown</a>
   <LoginMenu />
 </WebsiteHeader>
 

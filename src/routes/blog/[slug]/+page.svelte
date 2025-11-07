@@ -116,7 +116,6 @@
   <meta property="og:description" content={teaser} />
   <meta property="og:url" content={articleUrl} />
   <meta property="og:image" content="https://blog.bnei.dev{ogImage}" />
-  <meta property="article:published_time" content={published_at} />
   {#if updatedAt}
     <meta property="article:modified_time" content={updatedAt} />
   {/if}
@@ -137,6 +136,7 @@
     <PrimaryButton type="button" on:click={triggerN8nWebhook}>
       Trigger N8N LinkedIn Post
     </PrimaryButton>
+    <a href="/api/raw/blog/{data.slug}" target="_blank" class="btn btn-secondary">View Raw Markdown</a>
     <LoginMenu />
   </div>
 </WebsiteHeader>
