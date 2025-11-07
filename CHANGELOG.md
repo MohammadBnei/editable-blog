@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.25.2](https://github.com/MohammadBnei/editable-blog/compare/0.25.1...0.25.2) (2025-11-07)
+
+
+### Bug Fixes
+
+* **portfolio:** using derived instead of state to allow lang change updates ([7201b1a](https://github.com/MohammadBnei/editable-blog/commit/7201b1a3dab6ee8181c55fad86871b29adbe9908))
+
 ## [0.25.1](https://github.com/MohammadBnei/editable-blog/compare/0.25.0...0.25.1) (2025-11-07)
 
 # [0.25.0](https://github.com/MohammadBnei/editable-blog/compare/0.24.0...0.25.0) (2025-11-07)
