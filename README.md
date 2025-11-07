@@ -44,25 +44,26 @@ bun install
 
 Copy the contents of `.env.example` into `.env` and adjust to your needs.
 
-```bash
+```
 ADMIN_PASSWORD=xxxxxxxxxxxxxx
 ORIGIN=http://localhost:5173
 DATABASE_URL="postgresql://user:pass@localhost:5432/ad"
 
-N8N_USERNAME=your_n8n_username
-N8N_PASSWORD=your_n8n_password
-N8N_LINKEDIN_WEBHOOK_URL=your_linkedin_webhook_url
-N8N_TRANSLATION_WEBHOOK_URL=your_translation_webhook_url
-N8N_LINKEDIN_POSTER=your_linkedin_poster_workflow_url
-N8N_LINKEDIN_POST_CREATOR=your_linkedin_post_creator_workflow_url
+N8N_USERNAME=xxx
+N8N_PASSWORD=xxx
+N8N_LINKEDIN_WEBHOOK_URL=xxx
+N8N_TRANSLATION_WEBHOOK_URL=xxx
+N8N_LINKEDIN_POSTER=xxx
+N8N_LINKEDIN_POST_CREATOR=xxx
 ```
 
 Initialize the database schema and apply migrations:
 
+Migrations are automatically applied on application startup.
+
 ```bash
 # Ensure your DATABASE_URL in .env is correctly set up for a PostgreSQL database.
-# Then run the migration script:
-node src/lib/migrate.js
+# No manual migration command is needed as they are applied on startup.
 ```
 
 Once you've created a project and installed dependencies with `bun install` , start a development server:
@@ -78,6 +79,14 @@ bun run build
 ```
 
 You can preview the production build with `bun run preview`.
+
+## Deployment
+
+This project is set up for continuous deployment with a robust GitOps workflow.
+
+-   **Kubernetes Deployment**: The application is deployed to Kubernetes using Kustomize, with configuration files located in the `k8s` folder.
+-   **CI/CD**: A complete Continuous Integration/Continuous Delivery pipeline is in place to automate testing and deployment.
+-   **GitOps with Argo CD**: Argo CD is used for GitOps, ensuring that the deployed application state automatically synchronizes with the configuration defined in the Git repository.
 
 ## Making changes to your website
 
