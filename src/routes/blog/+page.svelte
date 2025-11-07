@@ -26,7 +26,15 @@
 <div class="pb-8">
   <div class="max-w-(--breakpoint-lg) mx-auto px-6 pt-12 sm:pt-24">
     <div class="mb-8">
-      <a href="/api/raw/blog" class="btn btn-secondary">View Raw Markdown</a>
+      <a href="/api/raw/blog" class="btn btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" height="1.3em" viewBox="0 0 25 25">
+          <path
+            fill="currentColor"
+            d="M18.92 6.05a.75.75 0 0 0-.598-.297L9.327 5.75a.75.75 0 1 0 0 1.5l7.19.002l-10.72 10.72a.75.75 0 0 0 1.061 1.06L17.573 8.318l.002 7.177a.75.75 0 0 0 1.5-.001l-.003-8.933a.75.75 0 0 0-.152-.51"
+          />
+        </svg>
+        markdown
+      </a>
     </div>
     <div class="font-bold text-sm">LATEST ARTICLES</div>
     {#if data.articles.length === 0}

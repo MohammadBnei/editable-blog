@@ -80,8 +80,8 @@
 
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={project.title} />
-  <meta name="twitter:description" content={pageDescription} />
-  <meta name="twitter:image" content="https://blog.bnei.dev/images/default-portfolio-image.jpg" />
+  <meta property="twitter:description" content={pageDescription} />
+  <meta property="twitter:image" content="https://blog.bnei.dev/images/default-portfolio-image.jpg" />
 </svelte:head>
 
 <WebsiteHeader bind:showUserMenu save={saveProject}>
@@ -92,7 +92,15 @@
 <div class="py-12 sm:py-24">
   <div class="max-w-(--breakpoint-lg) mx-auto px-6 md:text-xl">
     <div class="mb-8">
-      <a href="/api/raw/portfolio/{project.slug}" class="btn btn-secondary">View Raw Markdown</a>
+      <a href="/api/raw/portfolio/{project.slug}" class="btn btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" height="1.3em" viewBox="0 0 25 25">
+          <path
+            fill="currentColor"
+            d="M18.92 6.05a.75.75 0 0 0-.598-.297L9.327 5.75a.75.75 0 1 0 0 1.5l7.19.002l-10.72 10.72a.75.75 0 0 0 1.061 1.06L17.573 8.318l.002 7.177a.75.75 0 0 0 1.5-.001l-.003-8.933a.75.75 0 0 0-.152-.51"
+          />
+        </svg>
+        markdown
+      </a>
     </div>
     <h1 class="pb-8 text-4xl font-bold md:text-7xl">
       {#if $isEditing}
