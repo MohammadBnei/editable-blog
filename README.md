@@ -6,9 +6,10 @@ This blog supports:
 
 - **Multi-language content** for articles and pages.
 - **Article management**: Create, edit, publish, unpublish, and delete blog posts.
-- **Page management**: Edit static page content (e.g., "About", "Contact").
+- **Page management**: Edit static page content (e.g., "About", "Contact", "Portfolio", "Resume").
 - **Asset management**: Upload and manage images directly within the editor.
 - **LinkedIn Integration**: Create, validate, publish, and manage LinkedIn posts directly from articles, leveraging n8n for automated posting and translation workflows.
+- **Automated Translation**: New blog posts can be automatically translated into multiple languages using n8n workflows.
 - **Basic analytics**: Simple page view counters.
 
 Check out the blog at [blog.bnei.dev](https://blog.bnei.dev).
@@ -28,6 +29,7 @@ It's a dynamic website but light as a feather compared to building on top of a C
 - Node.js 18+
 - bun
 - PostgreSQL
+- n8n (for automated translations and LinkedIn posting)
 
 These are needed to run this personal blog.
 
