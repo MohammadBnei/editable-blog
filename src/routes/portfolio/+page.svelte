@@ -21,7 +21,7 @@
   $currentUser = data.currentUser;
 
   function generateSlug(inputTitle) {
-    return inputTitle.toLowerCase().replace(/\s+/g = '_');
+    return inputTitle.toLowerCase().replace(/\s+/g, '_');
   }
 
   function toggleEdit() {
