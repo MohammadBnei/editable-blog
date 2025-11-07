@@ -9,7 +9,7 @@
 
 <div>
   <div class="max-w-(--breakpoint-lg) mx-auto px-6">
-    <div class="pt-12 sm:pt-24">
+    <div class="pt-10 sm:pt-20">
       {#if !published_at}
         <div class="font-bold text-sm">DRAFT</div>
       {:else}
