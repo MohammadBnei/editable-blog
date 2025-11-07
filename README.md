@@ -4,13 +4,13 @@ This is my personal blog, utilizing PostgreSQL for the database and n8n for tran
 
 This blog supports:
 
-- **Multi-language content** for articles and pages.
-- **Article management**: Create, edit, publish, unpublish, and delete blog posts.
-- **Page management**: Edit static page content (e.g., "About", "Contact", "Portfolio", "Resume").
-- **Asset management**: Upload and manage images directly within the editor.
-- **LinkedIn Integration**: Create, validate, publish, and manage LinkedIn posts directly from articles, leveraging n8n for automated posting and translation workflows.
-- **Automated Translation**: New blog posts can be automatically translated into multiple languages using n8n workflows.
-- **Basic analytics**: Simple page view counters.
+-   **Multi-language content** for articles and pages.
+-   **Article management**: Create, edit, publish, unpublish, and delete blog posts.
+-   **Page management**: Edit static page content (e.g., "About", "Contact", "Portfolio", "Resume").
+-   **Asset management**: Upload and manage images directly within the editor.
+-   **LinkedIn Integration**: Create, validate, publish, and manage LinkedIn posts directly from articles, leveraging n8n for automated posting and translation workflows.
+-   **Automated Translation**: New blog posts can be automatically translated into multiple languages using n8n workflows.
+-   **Basic analytics**: Simple page view counters.
 
 Check out the blog at [blog.bnei.dev](https://blog.bnei.dev).
 
@@ -20,10 +20,10 @@ It's a dynamic website but light as a feather compared to building on top of a C
 
 ## Step 0 - Requirements
 
-- Node.js 18+
-- bun
-- PostgreSQL
-- n8n (for automated translations and LinkedIn posting)
+-   Node.js 18+
+-   bun
+-   PostgreSQL
+-   n8n (for automated translations and LinkedIn posting)
 
 These are needed to run this personal blog.
 
@@ -45,11 +45,16 @@ bun install
 Copy the contents of `.env.example` into `.env` and adjust to your needs.
 
 ```bash
-DATABASE_URL="postgresql://user:password@host:port/database"
-ADMIN_PASSWORD=xxxxxxxxxxxx
+ADMIN_PASSWORD=xxxxxxxxxxxxxx
 ORIGIN=http://localhost:5173
+DATABASE_URL="postgresql://user:pass@localhost:5432/ad"
+
 N8N_USERNAME=your_n8n_username
 N8N_PASSWORD=your_n8n_password
+N8N_LINKEDIN_WEBHOOK_URL=your_linkedin_webhook_url
+N8N_TRANSLATION_WEBHOOK_URL=your_translation_webhook_url
+N8N_LINKEDIN_POSTER=your_linkedin_poster_workflow_url
+N8N_LINKEDIN_POST_CREATOR=your_linkedin_post_creator_workflow_url
 ```
 
 Initialize the database schema and apply migrations:
