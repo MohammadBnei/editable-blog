@@ -25,6 +25,9 @@
 
 <div class="pb-8">
   <div class="max-w-(--breakpoint-lg) mx-auto px-6 pt-12 sm:pt-24">
+    <div class="mb-8">
+      <a href="/api/raw/blog" class="btn btn-secondary">View Raw Markdown</a>
+    </div>
     <div class="font-bold text-sm">LATEST ARTICLES</div>
     {#if data.articles.length === 0}
       <div class="md:text-xl py-4">No blog posts have been published so far.</div>
@@ -34,10 +37,6 @@
   {#each data.articles as article, i}
     <ArticleTeaser {article} firstEntry={i === 0} />
   {/each}
-
-  <div class="max-w-(--breakpoint-lg) mx-auto px-6 mt-8">
-    <a href="/api/raw/blog" class="btn btn-secondary">View Raw Markdown</a>
-  </div>
 </div>
 
 <EditableWebsiteTeaser />

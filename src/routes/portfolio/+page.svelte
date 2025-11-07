@@ -101,6 +101,9 @@
 
 <div class="py-12 sm:py-24">
   <div class="max-w-(--breakpoint-lg) mx-auto px-6 md:text-xl">
+    <div class="mb-8">
+      <a href="/api/raw/portfolio" class="btn btn-secondary">View Raw Markdown</a>
+    </div>
     <h1 class="pb-8 text-4xl font-bold md:text-7xl">
       <PlainText bind:content={title} />
     </h1>
@@ -122,9 +125,6 @@
         {generateSlug}
       />
     {/each}
-    <div class="mt-8">
-      <a href="/api/raw/portfolio" class="btn btn-secondary">View Raw Markdown</a>
-    </div>
   </div>
 </div>
 

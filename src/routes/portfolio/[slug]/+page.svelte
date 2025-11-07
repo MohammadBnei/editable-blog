@@ -91,6 +91,9 @@
 
 <div class="py-12 sm:py-24">
   <div class="max-w-(--breakpoint-lg) mx-auto px-6 md:text-xl">
+    <div class="mb-8">
+      <a href="/api/raw/portfolio/{project.slug}" class="btn btn-secondary">View Raw Markdown</a>
+    </div>
     <h1 class="pb-8 text-4xl font-bold md:text-7xl">
       {#if $isEditing}
         <PlainText bind:content={project.title} on:input={handleTitleInput} />
@@ -132,9 +135,6 @@
           </a>
         {/if}
       {/if}
-    </div>
-    <div class="mt-8">
-      <a href="/api/raw/portfolio/{project.slug}" class="btn btn-secondary">View Raw Markdown</a>
     </div>
   </div>
 </div>
