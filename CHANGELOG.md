@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.25.0](https://github.com/MohammadBnei/editable-blog/compare/0.24.0...0.25.0) (2025-11-07)
+
+
+### Features
+
+* Prepend ORIGIN to relative markdown links in raw API responses ([64fec5a](https://github.com/MohammadBnei/editable-blog/commit/64fec5a56a09ded200f4eef04769875661a740b3))
+
 # [0.24.0](https://github.com/MohammadBnei/editable-blog/compare/0.23.0...0.24.0) (2025-11-07)
 
 
