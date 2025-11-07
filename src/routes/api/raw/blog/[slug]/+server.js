@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { query } from '$lib/db';
-import { prependOriginToRelativeUrls } from '$lib/util';
+import { prependOriginToRelativeUrls } from '$lib/server/util';
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET({ params, url }) {
