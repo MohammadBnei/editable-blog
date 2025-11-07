@@ -1,5 +1,21 @@
 # Changelog
 
+# [0.24.0](https://github.com/MohammadBnei/editable-blog/compare/0.23.0...0.24.0) (2025-11-07)
+
+
+### Bug Fixes
+
+* Correct regex for slug generation in portfolio page ([5985908](https://github.com/MohammadBnei/editable-blog/commit/5985908afcd6a47677efb17d8fe001a05f2f8c42))
+* Move raw markdown links to page and set UTF-8 charset ([13be6c8](https://github.com/MohammadBnei/editable-blog/commit/13be6c81cbcdebca0346f1431c8829e5a18f2849))
+
+
+### Features
+
+* Add API endpoints for raw blog and portfolio markdown content ([2d895d0](https://github.com/MohammadBnei/editable-blog/commit/2d895d022be3042000e9aa48e35b98d365c1d040))
+* Add icon to "View Raw Markdown" button and adjust styling ([b5184db](https://github.com/MohammadBnei/editable-blog/commit/b5184dbf9f591f3230df3b7b687b8b76edfb63b7))
+* Add raw Markdown view links to blog and portfolio pages ([46f9b59](https://github.com/MohammadBnei/editable-blog/commit/46f9b59e667c15ea7ba8750e4908d17cda3b7431))
+* Update "View Raw Markdown" buttons with SVG icon and text ([cc87131](https://github.com/MohammadBnei/editable-blog/commit/cc8713191bebecef12fa9e15d11d69571b8be244))
+
 # [0.23.0](https://github.com/MohammadBnei/editable-blog/compare/0.22.0...0.23.0) (2025-11-04)
 
 
