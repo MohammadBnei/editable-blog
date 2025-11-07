@@ -3,7 +3,6 @@
   import PlainText from '$lib/components/PlainText.svelte';
   import RichText from '$lib/components/RichText.svelte';
   import LoginMenu from '$lib/components/LoginMenu.svelte';
-  import SecondaryButton from '$lib/components/SecondaryButton.svelte';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
   import PortfolioProject from '$lib/components/PortfolioProject.svelte'; // Import the new component
   import { fetchJSON } from '$lib/util';
@@ -16,7 +15,7 @@
   let showUserMenu = $state(false);
   let title = $derived(data.page?.title || 'My Portfolio');
   let introContent = $derived(data.page?.introContent || ''); // Optional intro text for the page
-  let projects = $state(data.page?.projects || []); // Array of projects, each with title, content (markdown), gitLink, liveLink
+  let projects = $derived(data.page?.projects || []); // Array of projects, each with title, content (markdown), gitLink, liveLink
 
   $currentUser = data.currentUser;
 
