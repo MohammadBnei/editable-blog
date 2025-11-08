@@ -47,7 +47,7 @@
   function addBookmark() {
     bookmarks.unshift({
       title: 'New Bookmark Title',
-      url: '',
+      url: '', // Will be updated by the input handler
       description: '',
       // Removed metadata property
     });
@@ -68,17 +68,29 @@
     bookmarks = [...bookmarks]; // Trigger reactivity
   }
 
-  // Removed fetchBookmarkMetadata function
+  // Function to ensure URL has a protocol
+  function ensureProtocol(url) {
+    if (url && !/^(https?:\/\/|mailto:)/i.test(url)) {
+      return `https://${url}`;
+    }
+    return url;
+  }
 
   async function savePage() {
     if (!$currentUser) return; // Not authorized, do nothing
     try {
+      // Apply protocol to all bookmark URLs before saving
+      const bookmarksToSave = bookmarks.map(b => ({
+        ...b,
+        url: ensureProtocol(b.url)
+      }));
+
       await fetchJSON('POST', '/api/save-page', {
         pageId: 'bookmarks',
         page: {
           title,
           introContent,
-          bookmarks
+          bookmarks: bookmarksToSave
         }
       });
       $isEditing = false;
@@ -196,7 +208,6 @@
                 />
               </div>
               <div class="flex gap-2">
-                <!-- Removed Fetch SEO button -->
                 <button on:click={() => removeBookmark(index)} class="btn btn-sm btn-error">
                   Remove
                 </button>
@@ -204,7 +215,7 @@
             {:else}
               <h2 class="text-lg font-semibold">
                 {#if bookmark.url}
-                  <a href={bookmark.url} target="_blank" rel="noopener noreferrer" class="link link-hover">
+                  <a href={ensureProtocol(bookmark.url)} target="_blank" rel="noopener noreferrer" class="link link-hover">
                     {bookmark.title || bookmark.url}
                   </a>
                 {:else}
@@ -212,15 +223,13 @@
                 {/if}
               </h2>
               {#if bookmark.url}
-                <p class="text-sm opacity-70 truncate">{bookmark.url}</p>
+                <p class="text-sm opacity-70 truncate">{ensureProtocol(bookmark.url)}</p>
               {/if}
               {#if bookmark.description}
                 <p class="text-sm text-gray-700">{bookmark.description}</p>
               {/if}
             {/if}
           </div>
-
-          <!-- Removed metadata display logic -->
         </li>
       {/each}
     </ul>
