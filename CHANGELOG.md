@@ -1,5 +1,14 @@
 # Changelog
 
+# [0.26.0](https://github.com/MohammadBnei/editable-blog/compare/0.25.2...0.26.0) (2025-11-08)
+
+
+### Features
+
+* Add new 'Bookmarks' page with dynamic content and editing ([762002d](https://github.com/MohammadBnei/editable-blog/commit/762002d0529a37637d0c32ab78b40ab54885e211))
+* Implement new project creation with modal and redirect ([3e88692](https://github.com/MohammadBnei/editable-blog/commit/3e88692566131d22b78d300b4b0e7b564d877bb8))
+* Separate header and search navigation links ([527534e](https://github.com/MohammadBnei/editable-blog/commit/527534ebcedddd80ea995a81fdf30c1d18fc8891))
+
 ## [0.25.2](https://github.com/MohammadBnei/editable-blog/compare/0.25.1...0.25.2) (2025-11-07)
 
 
