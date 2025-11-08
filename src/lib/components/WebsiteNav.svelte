@@ -5,7 +5,7 @@
   import Search from './Search.svelte';
   import { isEditing, currentUser, currentLang } from '$lib/stores'; // Import currentLang store
   import { goto, invalidateAll } from '$app/navigation';
-  import { headerLinks } from '$lib/headerLinks'; // Import headerLinks
+  import { navLinks } from '$lib/headerLinks'; // Import navLinks
 
   let { showUserMenu = $bindable(), showSearch } = $props();
 
@@ -63,7 +63,7 @@
     !$isEditing ? 'sticky top-0' : ''
   )}
 >
-  <div class="mx-auto py-4">
+  <div class="max-w-xs lg:max-w-lg mx-auto py-4">
     <NotEditable>
       <div class="flex items-center relative">
         <div class="flex-1"></div>
@@ -88,10 +88,12 @@
             />
           </svg>
         </button>
-        {#each headerLinks as link}
-          <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href={link.href}>
-            {link.name}
-          </a>
+        {#each navLinks as link}
+          {#if ['/', '/blog', '/resume'].includes(link.href)} <!-- Only show specific links in header -->
+            <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href={link.href}>
+              {link.name}
+            </a>
+          {/if}
         {/each}
         <div class="flex-1"></div>
         {#if $currentUser}
