@@ -125,15 +125,11 @@
 </svelte:head>
 
 <WebsiteHeader bind:showUserMenu save={saveProject}>
-  {#if $currentUser}
-    <PrimaryButton on:click={toggleEdit}>Edit Project</PrimaryButton>
-    {#if $isEditing}
-      <PrimaryButton
-        on:click={() => (showConfirmRemoveModal = true)}
-        class="bg-red-500 hover:bg-red-700">Remove Project</PrimaryButton
-      >
-    {/if}
-  {/if}
+  <PrimaryButton on:click={toggleEdit}>Edit Project</PrimaryButton>
+  <PrimaryButton
+    on:click={() => (showConfirmRemoveModal = true)}
+    class="bg-red-500 hover:bg-red-700">Remove Project</PrimaryButton
+  >
   <LoginMenu />
 </WebsiteHeader>
 

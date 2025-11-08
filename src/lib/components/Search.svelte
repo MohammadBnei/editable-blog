@@ -1,12 +1,12 @@
 <script>
   import { onMount } from 'svelte';
   import { debounce, classNames } from '$lib/util';
-  import { navLinks } from '$lib/headerLinks'; // Import navLinks
+  import { searchLinks } from '$lib/headerLinks'; // Import searchLinks
   import { goto } from '$app/navigation';
 
   export let showSearch;
   let value;
-  let result = navLinks; // Use navLinks as initial shortcuts
+  let result = searchLinks; // Use searchLinks as initial shortcuts
   let selectedResult = 0;
   let input;
   let resultsEl;
@@ -20,7 +20,7 @@
       const response = await fetch(`/api/search?q=${value}`);
       result = await response.json();
     } else {
-      result = navLinks; // Use navLinks as shortcuts when no search value
+      result = searchLinks; // Use searchLinks as shortcuts when no search value
     }
     selectedResult = 0;
   }

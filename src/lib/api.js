@@ -1,9 +1,9 @@
 import slugify from 'slugify';
-import { SHORTCUTS } from './constants';
 import { env } from '$env/dynamic/private';
 import { query } from '$lib/db';
 import { nanoid } from '$lib/util';
 import { Blob } from 'node:buffer';
+import { searchLinks } from './headerLinks';
 
 /**
  * Creates a new article
@@ -273,7 +273,7 @@ export async function search(q, currentUser, lang = null) {
   const results = await query(queryText, queryParams);
 
   // Also include predefined shortcuts in search
-  SHORTCUTS.forEach(shortcut => {
+  searchLinks.forEach(shortcut => {
     if (shortcut.name.toLowerCase().includes(q.toLowerCase())) {
       results.rows.push(shortcut);
     }
