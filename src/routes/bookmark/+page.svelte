@@ -26,7 +26,7 @@
       const sortable = new Sortable(bookmarkListElement, {
         animation: 150,
         handle: '.drag-handle', // Drag handle class
-        onEnd: (evt) => {
+        onEnd: evt => {
           const { oldIndex, newIndex } = evt;
           if (oldIndex !== newIndex) {
             const [movedItem] = bookmarks.splice(oldIndex, 1);
@@ -48,7 +48,7 @@
     bookmarks.unshift({
       title: 'New Bookmark Title',
       url: '', // Will be updated by the input handler
-      description: '',
+      description: ''
       // Removed metadata property
     });
     bookmarks = [...bookmarks]; // Trigger reactivity
@@ -102,7 +102,9 @@
 
   // Generate a description from introContent or a default
   const pageDescription = $derived(
-    introContent ? extractTeaser(introContent, 160) : 'A compilation of useful bookmarks and resources.'
+    introContent
+      ? extractTeaser(introContent, 160)
+      : 'A compilation of useful bookmarks and resources.'
   );
   const pageUrl = $derived(`https://blog.bnei.dev/bookmarks`);
 </script>
@@ -160,18 +162,55 @@
           {#if $isEditing}
             <div class="flex items-center gap-2">
               <button class="btn btn-ghost btn-sm drag-handle cursor-grab" title="Drag to reorder">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </button>
-              <button on:click={() => moveBookmark(index, 'up')} disabled={index === 0} class="btn btn-ghost btn-sm" title="Move up">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
+              <button
+                onclick={() => moveBookmark(index, 'up')}
+                disabled={index === 0}
+                class="btn btn-ghost btn-sm"
+                title="Move up"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </button>
-              <button on:click={() => moveBookmark(index, 'down')} disabled={index === bookmarks.length - 1} class="btn btn-ghost btn-sm" title="Move down">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              <button
+                onclick={() => moveBookmark(index, 'down')}
+                disabled={index === bookmarks.length - 1}
+                class="btn btn-ghost btn-sm"
+                title="Move down"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </button>
             </div>
@@ -208,7 +247,7 @@
                 />
               </div>
               <div class="flex gap-2">
-                <button on:click={() => removeBookmark(index)} class="btn btn-sm btn-error">
+                <button onclick={() => removeBookmark(index)} class="btn btn-sm btn-error">
                   Remove
                 </button>
               </div>
@@ -216,7 +255,12 @@
               <div class="flex flex-col sm:flex-row sm:items-baseline sm:gap-2">
                 <h2 class="text-lg font-semibold">
                   {#if bookmark.url}
-                    <a href={ensureProtocol(bookmark.url)} target="_blank" rel="noopener noreferrer" class="link link-hover">
+                    <a
+                      href={ensureProtocol(bookmark.url)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="link link-hover"
+                    >
                       {bookmark.title || bookmark.url}
                     </a>
                   {:else}
@@ -224,7 +268,9 @@
                   {/if}
                 </h2>
                 {#if bookmark.url}
-                  <p class="text-sm opacity-70 truncate sm:flex-shrink-0">({ensureProtocol(bookmark.url)})</p>
+                  <p class="text-sm opacity-70 truncate sm:flex-shrink-0">
+                    {ensureProtocol(bookmark.url)}
+                  </p>
                 {/if}
               </div>
               {#if bookmark.description}
