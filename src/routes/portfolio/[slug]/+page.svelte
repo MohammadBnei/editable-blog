@@ -14,6 +14,12 @@
   let project = $state(data.project); // Make project stateful for editing
   let portfolioPage = $state(data.portfolioPage); // Keep track of the whole portfolio page to update it
 
+  $effect(() => {
+    if (data.project) {
+      project = data.project;
+    }
+  });
+
   $currentUser = data.currentUser;
 
   function generateSlug(inputTitle) {
