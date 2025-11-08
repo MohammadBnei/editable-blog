@@ -163,7 +163,10 @@
 
     <ul class="list bg-base-100 rounded-box shadow-md" bind:this={bookmarkListElement}>
       {#each bookmarks as bookmark, index (bookmark)}
-        <li class="list-row group relative">
+        <li class="list-row items-center">
+          <div>
+            <h2 class="kbd">{index + 1}</h2>
+          </div>
           {#if $isEditing}
             <div class="flex items-center gap-2">
               <button class="btn btn-ghost btn-sm drag-handle cursor-grab" title="Drag to reorder">
@@ -221,75 +224,73 @@
             </div>
           {/if}
 
-          <div class="flex-1 min-w-0">
-            {#if $isEditing}
-              <div class="mb-2">
-                <label for="bookmark-title-{index}" class="sr-only">Title</label>
-                <PlainText
-                  id="bookmark-title-{index}"
-                  bind:content={bookmark.title}
-                  class="input input-bordered w-full input-sm"
-                  placeholder="Bookmark Title"
-                />
-              </div>
-              <div class="mb-2">
-                <label for="bookmark-url-{index}" class="sr-only">URL</label>
-                <PlainText
-                  id="bookmark-url-{index}"
-                  bind:content={bookmark.url}
-                  class="input input-bordered w-full input-sm"
-                  placeholder="https://example.com"
-                />
-              </div>
-              <div class="mb-2">
-                <label for="bookmark-description-{index}" class="sr-only">Description</label>
-                <PlainText
-                  id="bookmark-description-{index}"
-                  bind:content={bookmark.description}
-                  class="textarea textarea-bordered w-full textarea-sm"
-                  placeholder="Description (optional)"
-                  multiLine={true}
-                />
-              </div>
-              <div class="flex gap-2">
-                <button onclick={() => removeBookmark(index)} class="btn btn-sm btn-error">
-                  Remove
-                </button>
-              </div>
-            {:else}
-              <div class="flex flex-col sm:grid sm:grid-cols-[1fr_2fr] sm:gap-4">
-                <div class="mb-2 sm:mb-0">
-                  <h2 class="text-lg font-semibold">
-                    {#if bookmark.url}
-                      <a
-                        href={ensureProtocol(bookmark.url)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="link link-hover"
-                      >
-                        {bookmark.title || bookmark.url}
-                      </a>
-                    {:else}
-                      {bookmark.title || 'Untitled Bookmark'}
-                    {/if}
-                  </h2>
-                  {#if bookmark.url}
-                    <a
-                      href={ensureProtocol(bookmark.url)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-sm opacity-70 truncate link link-hover"
-                    >
-                      {ensureProtocol(bookmark.url)}
-                    </a>
-                  {/if}
-                </div>
-                {#if bookmark.description}
-                  <p class="text-sm text-gray-700 mt-1 sm:mt-0">{bookmark.description}</p>
+          {#if $isEditing}
+            <div class="mb-2">
+              <label for="bookmark-title-{index}" class="sr-only">Title</label>
+              <PlainText
+                id="bookmark-title-{index}"
+                bind:content={bookmark.title}
+                class="input input-bordered w-full input-sm"
+                placeholder="Bookmark Title"
+              />
+            </div>
+            <div class="mb-2">
+              <label for="bookmark-url-{index}" class="sr-only">URL</label>
+              <PlainText
+                id="bookmark-url-{index}"
+                bind:content={bookmark.url}
+                class="input input-bordered w-full input-sm"
+                placeholder="https://example.com"
+              />
+            </div>
+            <div class="mb-2">
+              <label for="bookmark-description-{index}" class="sr-only">Description</label>
+              <PlainText
+                id="bookmark-description-{index}"
+                bind:content={bookmark.description}
+                class="textarea textarea-bordered w-full textarea-sm"
+                placeholder="Description (optional)"
+                multiLine={true}
+              />
+            </div>
+            <div class="flex gap-2">
+              <button onclick={() => removeBookmark(index)} class="btn btn-sm btn-error">
+                Remove
+              </button>
+            </div>
+          {:else}
+            <div class="mb-2 sm:mb-0">
+              <h2 class="text-lg font-semibold">
+                {#if bookmark.url}
+                  <a
+                    href={ensureProtocol(bookmark.url)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="link link-hover"
+                  >
+                    {bookmark.title || bookmark.url}
+                  </a>
+                {:else}
+                  {bookmark.title || 'Untitled Bookmark'}
                 {/if}
-              </div>
-            {/if}
-          </div>
+              </h2>
+              {#if bookmark.description}
+                <p class="text-sm text-gray-700 mt-1 sm:mt-0">{bookmark.description}</p>
+              {/if}
+            </div>
+            <div>
+              {#if bookmark.url}
+                <a
+                  href={ensureProtocol(bookmark.url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-sm opacity-70 truncate link link-hover"
+                >
+                  {ensureProtocol(bookmark.url)}
+                </a>
+              {/if}
+            </div>
+          {/if}
         </li>
       {/each}
     </ul>
