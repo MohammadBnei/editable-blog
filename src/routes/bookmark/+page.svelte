@@ -5,7 +5,7 @@
   import LoginMenu from '$lib/components/LoginMenu.svelte';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
-  import BookmarkSeoCard from '$lib/components/BookmarkSeoCard.svelte'; // New component for SEO card
+  // Removed BookmarkSeoCard import
   import { fetchJSON, extractTeaser } from '$lib/util';
   import { currentUser, isEditing } from '$lib/stores.js';
   import Sortable from 'sortablejs'; // Import SortableJS
@@ -49,7 +49,7 @@
       title: 'New Bookmark Title',
       url: '',
       description: '',
-      metadata: null // Add metadata property
+      // Removed metadata property
     });
     bookmarks = [...bookmarks]; // Trigger reactivity
   }
@@ -68,21 +68,7 @@
     bookmarks = [...bookmarks]; // Trigger reactivity
   }
 
-  async function fetchBookmarkMetadata(bookmark) {
-    if (!bookmark.url) return;
-    try {
-      // This assumes you have an API endpoint like /api/fetch-metadata?url=...
-      // You'll need to implement this endpoint on your server to fetch and parse
-      // the Open Graph/Twitter Card data from the given URL.
-      const response = await fetchJSON('GET', `/api/fetch-metadata?url=${encodeURIComponent(bookmark.url)}`);
-      bookmark.metadata = response;
-      bookmarks = [...bookmarks]; // Trigger reactivity
-    } catch (error) {
-      console.error('Error fetching metadata:', error);
-      bookmark.metadata = { error: 'Could not fetch metadata' };
-      bookmarks = [...bookmarks]; // Trigger reactivity
-    }
-  }
+  // Removed fetchBookmarkMetadata function
 
   async function savePage() {
     if (!$currentUser) return; // Not authorized, do nothing
@@ -210,9 +196,7 @@
                 />
               </div>
               <div class="flex gap-2">
-                <button on:click={() => fetchBookmarkMetadata(bookmark)} class="btn btn-sm btn-info">
-                  Fetch SEO
-                </button>
+                <!-- Removed Fetch SEO button -->
                 <button on:click={() => removeBookmark(index)} class="btn btn-sm btn-error">
                   Remove
                 </button>
@@ -236,11 +220,7 @@
             {/if}
           </div>
 
-          {#if !$isEditing && bookmark.metadata}
-            <div class="absolute right-0 top-0 mt-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
-              <BookmarkSeoCard metadata={bookmark.metadata} />
-            </div>
-          {/if}
+          <!-- Removed metadata display logic -->
         </li>
       {/each}
     </ul>
