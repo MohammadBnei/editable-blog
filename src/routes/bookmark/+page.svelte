@@ -5,7 +5,6 @@
   import LoginMenu from '$lib/components/LoginMenu.svelte';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
-  // Removed BookmarkSeoCard import
   import { fetchJSON, extractTeaser } from '$lib/util';
   import { currentUser, isEditing } from '$lib/stores.js';
   import Sortable from 'sortablejs'; // Import SortableJS
@@ -15,7 +14,14 @@
   let showUserMenu = $state(false);
   let title = $derived(data.page?.title || 'My Bookmarks');
   let introContent = $derived(data.page?.introContent || ''); // Optional intro text for the page
-  let bookmarks = $derived(data.page?.bookmarks || []); // Array of bookmarks, each with title, url, description
+  let bookmarks = $state(data.page?.bookmarks || []); // Changed to $state
+
+  // Update bookmarks when data.page?.bookmarks changes
+  $effect(() => {
+    if (data.page?.bookmarks) {
+      bookmarks = data.page.bookmarks;
+    }
+  });
 
   $currentUser = data.currentUser;
 
@@ -47,9 +53,8 @@
   function addBookmark() {
     bookmarks.unshift({
       title: 'New Bookmark Title',
-      url: '', // Will be updated by the input handler
+      url: '',
       description: ''
-      // Removed metadata property
     });
     bookmarks = [...bookmarks]; // Trigger reactivity
   }
@@ -252,30 +257,37 @@
                 </button>
               </div>
             {:else}
-              <div class="flex flex-col sm:flex-row sm:items-baseline sm:gap-2">
-                <h2 class="text-lg font-semibold">
+              <div class="flex flex-col sm:grid sm:grid-cols-[1fr_2fr] sm:gap-4">
+                <div class="mb-2 sm:mb-0">
+                  <h2 class="text-lg font-semibold">
+                    {#if bookmark.url}
+                      <a
+                        href={ensureProtocol(bookmark.url)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="link link-hover"
+                      >
+                        {bookmark.title || bookmark.url}
+                      </a>
+                    {:else}
+                      {bookmark.title || 'Untitled Bookmark'}
+                    {/if}
+                  </h2>
                   {#if bookmark.url}
                     <a
                       href={ensureProtocol(bookmark.url)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="link link-hover"
+                      class="text-sm opacity-70 truncate link link-hover"
                     >
-                      {bookmark.title || bookmark.url}
+                      {ensureProtocol(bookmark.url)}
                     </a>
-                  {:else}
-                    {bookmark.title || 'Untitled Bookmark'}
                   {/if}
-                </h2>
-                {#if bookmark.url}
-                  <p class="text-sm opacity-70 truncate sm:flex-shrink-0">
-                    {ensureProtocol(bookmark.url)}
-                  </p>
+                </div>
+                {#if bookmark.description}
+                  <p class="text-sm text-gray-700 mt-1 sm:mt-0">{bookmark.description}</p>
                 {/if}
               </div>
-              {#if bookmark.description}
-                <p class="text-sm text-gray-700 mt-1">{bookmark.description}</p>
-              {/if}
             {/if}
           </div>
         </li>
