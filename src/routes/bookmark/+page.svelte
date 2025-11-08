@@ -5,8 +5,10 @@
   import LoginMenu from '$lib/components/LoginMenu.svelte';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
+  import BookmarkSeoCard from '$lib/components/BookmarkSeoCard.svelte'; // New component for SEO card
   import { fetchJSON, extractTeaser } from '$lib/util';
   import { currentUser, isEditing } from '$lib/stores.js';
+  import Sortable from 'sortablejs'; // Import SortableJS
 
   let { data } = $props();
 
@@ -17,16 +19,37 @@
 
   $currentUser = data.currentUser;
 
+  let bookmarkListElement; // Reference to the ul element for SortableJS
+
+  $effect(() => {
+    if (bookmarkListElement && $isEditing) {
+      const sortable = new Sortable(bookmarkListElement, {
+        animation: 150,
+        handle: '.drag-handle', // Drag handle class
+        onEnd: (evt) => {
+          const { oldIndex, newIndex } = evt;
+          if (oldIndex !== newIndex) {
+            const [movedItem] = bookmarks.splice(oldIndex, 1);
+            bookmarks.splice(newIndex, 0, movedItem);
+            bookmarks = [...bookmarks]; // Trigger reactivity
+          }
+        }
+      });
+      return () => sortable.destroy();
+    }
+  });
+
   function toggleEdit() {
     $isEditing = true;
     showUserMenu = false;
   }
 
   function addBookmark() {
-    bookmarks.push({
+    bookmarks.unshift({
       title: 'New Bookmark Title',
       url: '',
-      description: ''
+      description: '',
+      metadata: null // Add metadata property
     });
     bookmarks = [...bookmarks]; // Trigger reactivity
   }
@@ -34,6 +57,31 @@
   function removeBookmark(index) {
     bookmarks.splice(index, 1);
     bookmarks = [...bookmarks]; // Trigger reactivity
+  }
+
+  function moveBookmark(index, direction) {
+    if (direction === 'up' && index > 0) {
+      [bookmarks[index - 1], bookmarks[index]] = [bookmarks[index], bookmarks[index - 1]];
+    } else if (direction === 'down' && index < bookmarks.length - 1) {
+      [bookmarks[index + 1], bookmarks[index]] = [bookmarks[index], bookmarks[index + 1]];
+    }
+    bookmarks = [...bookmarks]; // Trigger reactivity
+  }
+
+  async function fetchBookmarkMetadata(bookmark) {
+    if (!bookmark.url) return;
+    try {
+      // This assumes you have an API endpoint like /api/fetch-metadata?url=...
+      // You'll need to implement this endpoint on your server to fetch and parse
+      // the Open Graph/Twitter Card data from the given URL.
+      const response = await fetchJSON('GET', `/api/fetch-metadata?url=${encodeURIComponent(bookmark.url)}`);
+      bookmark.metadata = response;
+      bookmarks = [...bookmarks]; // Trigger reactivity
+    } catch (error) {
+      console.error('Error fetching metadata:', error);
+      bookmark.metadata = { error: 'Could not fetch metadata' };
+      bookmarks = [...bookmarks]; // Trigger reactivity
+    }
   }
 
   async function savePage() {
@@ -44,7 +92,7 @@
         page: {
           title,
           introContent,
-          bookmarks // Changed from 'links' to 'bookmarks'
+          bookmarks
         }
       });
       $isEditing = false;
@@ -108,64 +156,94 @@
       </div>
     {/if}
 
-    <div class="space-y-8">
-      {#each bookmarks as bookmark, index}
-        <div class="border p-4 rounded-lg shadow-sm">
+    <ul class="list bg-base-100 rounded-box shadow-md" bind:this={bookmarkListElement}>
+      {#each bookmarks as bookmark, index (bookmark)}
+        <li class="list-row group relative">
           {#if $isEditing}
-            <div class="flex justify-end">
-              <button on:click={() => removeBookmark(index)} class="btn btn-sm btn-error">
-                Remove
+            <div class="flex items-center gap-2">
+              <button class="btn btn-ghost btn-sm drag-handle cursor-grab" title="Drag to reorder">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                </svg>
+              </button>
+              <button on:click={() => moveBookmark(index, 'up')} disabled={index === 0} class="btn btn-ghost btn-sm" title="Move up">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+              </button>
+              <button on:click={() => moveBookmark(index, 'down')} disabled={index === bookmarks.length - 1} class="btn btn-ghost btn-sm" title="Move down">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
               </button>
             </div>
-            <div class="mb-4">
-              <label for="bookmark-title-{index}" class="block text-sm font-medium text-gray-700"
-                >Title</label
-              >
-              <PlainText
-                id="bookmark-title-{index}"
-                bind:content={bookmark.title}
-                class="mt-1 block w-full"
-              />
-            </div>
-            <div class="mb-4">
-              <label for="bookmark-url-{index}" class="block text-sm font-medium text-gray-700"
-                >URL</label
-              >
-              <PlainText
-                id="bookmark-url-{index}"
-                bind:content={bookmark.url}
-                class="mt-1 block w-full"
-              />
-            </div>
-            <div class="mb-4">
-              <label
-                for="bookmark-description-{index}"
-                class="block text-sm font-medium text-gray-700"
-                >Description</label
-              >
-              <PlainText
-                id="bookmark-description-{index}"
-                bind:content={bookmark.description}
-                class="mt-1 block w-full"
-                multiLine={true}
-              />
-            </div>
-          {:else}
-            <h2 class="text-2xl font-semibold mb-2">{bookmark.title}</h2>
-            {#if bookmark.url}
-              <p class="mb-2">
-                <a href={bookmark.url} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
-                  {bookmark.url}
-                </a>
-              </p>
-            {/if}
-            {#if bookmark.description}
-              <p class="text-gray-700">{bookmark.description}</p>
-            {/if}
           {/if}
-        </div>
+
+          <div class="flex-1 min-w-0">
+            {#if $isEditing}
+              <div class="mb-2">
+                <label for="bookmark-title-{index}" class="sr-only">Title</label>
+                <PlainText
+                  id="bookmark-title-{index}"
+                  bind:content={bookmark.title}
+                  class="input input-bordered w-full input-sm"
+                  placeholder="Bookmark Title"
+                />
+              </div>
+              <div class="mb-2">
+                <label for="bookmark-url-{index}" class="sr-only">URL</label>
+                <PlainText
+                  id="bookmark-url-{index}"
+                  bind:content={bookmark.url}
+                  class="input input-bordered w-full input-sm"
+                  placeholder="https://example.com"
+                />
+              </div>
+              <div class="mb-2">
+                <label for="bookmark-description-{index}" class="sr-only">Description</label>
+                <PlainText
+                  id="bookmark-description-{index}"
+                  bind:content={bookmark.description}
+                  class="textarea textarea-bordered w-full textarea-sm"
+                  placeholder="Description (optional)"
+                  multiLine={true}
+                />
+              </div>
+              <div class="flex gap-2">
+                <button on:click={() => fetchBookmarkMetadata(bookmark)} class="btn btn-sm btn-info">
+                  Fetch SEO
+                </button>
+                <button on:click={() => removeBookmark(index)} class="btn btn-sm btn-error">
+                  Remove
+                </button>
+              </div>
+            {:else}
+              <h2 class="text-lg font-semibold">
+                {#if bookmark.url}
+                  <a href={bookmark.url} target="_blank" rel="noopener noreferrer" class="link link-hover">
+                    {bookmark.title || bookmark.url}
+                  </a>
+                {:else}
+                  {bookmark.title || 'Untitled Bookmark'}
+                {/if}
+              </h2>
+              {#if bookmark.url}
+                <p class="text-sm opacity-70 truncate">{bookmark.url}</p>
+              {/if}
+              {#if bookmark.description}
+                <p class="text-sm text-gray-700">{bookmark.description}</p>
+              {/if}
+            {/if}
+          </div>
+
+          {#if !$isEditing && bookmark.metadata}
+            <div class="absolute right-0 top-0 mt-2 mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+              <BookmarkSeoCard metadata={bookmark.metadata} />
+            </div>
+          {/if}
+        </li>
       {/each}
-    </div>
+    </ul>
   </div>
 </div>
 
