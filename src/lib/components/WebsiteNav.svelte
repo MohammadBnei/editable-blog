@@ -59,11 +59,11 @@
 
 <div
   class={classNames(
-    'backdrop-blur-xs bg-white bg-opacity-95 transition-colors duration-500 z-10 text-sm',
+    'backdrop-blur-xs bg-white bg-opacity-95 transition-colors duration-500 z-10 text-sm px-2',
     !$isEditing ? 'sticky top-0' : ''
   )}
 >
-  <div class="max-w-xs lg:max-w-lg mx-auto py-4">
+  <div class="max-w-dvh lg:max-w-(--breakpoint-lg) mx-auto py-4">
     <NotEditable>
       <div class="flex items-center relative">
         <div class="flex-1"></div>
@@ -89,12 +89,9 @@
           </svg>
         </button>
         {#each headerLinks as link}
-          {#if ['/', '/blog', '/resume'].includes(link.href)}
-            <!-- Only show specific links in header -->
-            <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href={link.href}>
-              {link.name}
-            </a>
-          {/if}
+          <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href={link.href}>
+            {link.name}
+          </a>
         {/each}
         <div class="flex-1"></div>
         {#if $currentUser}
