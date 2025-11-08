@@ -5,14 +5,20 @@
   import LoginMenu from '$lib/components/LoginMenu.svelte';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
   import PortfolioProject from '$lib/components/PortfolioProject.svelte'; // Import the new component
+  import NewProjectModal from '$lib/components/NewProjectModal.svelte'; // Import the new modal component
+  import ConfirmModal from '$lib/components/ConfirmModal.svelte'; // Import the ConfirmModal
   import { fetchJSON } from '$lib/util';
   import { extractTeaser } from '$lib/util';
   import { currentUser, isEditing } from '$lib/stores.js';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
+  import { goto } from '$app/navigation';
 
   let { data } = $props();
 
   let showUserMenu = $state(false);
+  let showNewProjectModal = $state(false); // State to control new project modal visibility
+  let showConfirmRemoveModal = $state(false); // State to control remove project confirmation modal visibility
+  let projectToRemoveIndex = $state(null); // Index of the project to remove
   let title = $derived(data.page?.title || 'My Portfolio');
   let introContent = $derived(data.page?.introContent || ''); // Optional intro text for the page
   let projects = $derived(data.page?.projects || []); // Array of projects, each with title, content (markdown), gitLink, liveLink
@@ -28,22 +34,69 @@
     showUserMenu = false;
   }
 
-  function addProject() {
-    const newProjectTitle = 'New Project';
-    projects.push({
-      title: newProjectTitle,
-      content: '',
-      gitLink: '',
-      liveLink: '',
+  async function handleNewProject(event) {
+    const { projectTitle } = event.detail; // Only projectTitle is received now
+    const newProjectSlug = generateSlug(projectTitle);
+
+    const newProject = {
+      title: projectTitle,
+      content: '', // Initialize with empty content
+      gitLink: '', // Initialize with empty gitLink
+      liveLink: '', // Initialize with empty liveLink
       expanded: false,
-      slug: generateSlug(newProjectTitle) // Generate slug from initial title
-    });
-    projects = [...projects]; // Trigger reactivity
+      slug: newProjectSlug
+    };
+
+    // Add the new project to the existing projects array
+    const updatedProjects = [...projects, newProject];
+
+    // Save the updated portfolio page
+    try {
+      await fetchJSON('POST', '/api/save-page', {
+        pageId: 'portfolio',
+        page: {
+          title,
+          introContent,
+          projects: updatedProjects
+        }
+      });
+      showNewProjectModal = false;
+      $isEditing = true; // Activate edit mode on the new project page
+      goto(`/portfolio/${newProjectSlug}`); // Redirect to the new project's page
+    } catch (err) {
+      console.error('Error creating new project:', err);
+      // Optionally, show an error message to the user
+    }
   }
 
   function removeProject(index) {
-    projects.splice(index, 1);
-    projects = [...projects]; // Trigger reactivity
+    projectToRemoveIndex = index;
+    showConfirmRemoveModal = true;
+  }
+
+  async function handleRemoveProjectConfirm() {
+    showConfirmRemoveModal = false;
+    if (projectToRemoveIndex !== null) {
+      projects.splice(projectToRemoveIndex, 1);
+      projects = [...projects]; // Trigger reactivity
+
+      try {
+        await fetchJSON('POST', '/api/save-page', {
+          pageId: 'portfolio',
+          page: {
+            title,
+            introContent,
+            projects
+          }
+        });
+        // Project removed successfully!
+      } catch (err) {
+        console.error('Error removing project:', err);
+        // Optionally, show an error message to the user
+      } finally {
+        projectToRemoveIndex = null;
+      }
+    }
   }
 
   function toggleProject(index) {
@@ -98,6 +151,7 @@
 
 <WebsiteHeader bind:showUserMenu save={savePage}>
   <PrimaryButton on:click={toggleEdit}>Edit page</PrimaryButton>
+  <PrimaryButton on:click={() => (showNewProjectModal = true)}>New Project</PrimaryButton>
   <LoginMenu />
 </WebsiteHeader>
 
@@ -118,11 +172,6 @@
     <div class="pb-12 prose md:prose-xl">
       <RichText multiLine bind:content={introContent} />
     </div>
-    {#if $isEditing}
-      <div class="mb-8">
-        <PrimaryButton on:click={addProject}>Add Project</PrimaryButton>
-      </div>
-    {/if}
 
     {#each projects as project, index}
       <PortfolioProject
@@ -137,3 +186,18 @@
 </div>
 
 <Footer counter="/portfolio" />
+
+{#if showNewProjectModal}
+  <NewProjectModal on:close={() => (showNewProjectModal = false)} on:create={handleNewProject} />
+{/if}
+
+{#if showConfirmRemoveModal}
+  <ConfirmModal
+    message={`Are you sure you want to remove the project "${projects[projectToRemoveIndex]?.title}"? This action cannot be undone.`}
+    on:confirm={handleRemoveProjectConfirm}
+    on:cancel={() => {
+      showConfirmRemoveModal = false;
+      projectToRemoveIndex = null;
+    }}
+  />
+{/if}

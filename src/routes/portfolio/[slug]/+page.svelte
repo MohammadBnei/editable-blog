@@ -5,14 +5,17 @@
   import LoginMenu from '$lib/components/LoginMenu.svelte';
   import PrimaryButton from '$lib/components/PrimaryButton.svelte';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
+  import ConfirmModal from '$lib/components/ConfirmModal.svelte'; // Import the new ConfirmModal
   import { currentUser, isEditing } from '$lib/stores.js';
   import { extractTeaser, fetchJSON } from '$lib/util';
+  import { goto } from '$app/navigation';
 
   let { data } = $props();
 
   let showUserMenu = $state(false);
   let project = $state(data.project); // Make project stateful for editing
   let portfolioPage = $state(data.portfolioPage); // Keep track of the whole portfolio page to update it
+  let showConfirmRemoveModal = $state(false); // State to control confirmation modal visibility
 
   $effect(() => {
     if (data.project) {
@@ -68,8 +71,36 @@
     }
   }
 
-  function handleTitleInput() {
-    project.slug = generateSlug(project.title);
+  async function handleRemoveProjectConfirm() {
+    showConfirmRemoveModal = false; // Close the modal
+    if (!$currentUser) return; // Not authorized, do nothing
+
+    const projectIndex = portfolioPage.projects.findIndex(p => p.slug === project.slug);
+
+    if (projectIndex !== -1) {
+      portfolioPage.projects.splice(projectIndex, 1); // Remove the project
+
+      try {
+        await fetchJSON('POST', '/api/save-page', {
+          pageId: 'portfolio',
+          page: {
+            title: portfolioPage.title,
+            introContent: portfolioPage.introContent,
+            projects: portfolioPage.projects
+          }
+        });
+        $isEditing = false;
+        goto('/portfolio'); // Redirect to the main portfolio page
+      } catch (err) {
+        console.error('Error removing project:', err);
+        // Optionally, show an error message to the user
+      }
+    }
+  }
+
+  function handleTitleInput(event) {
+    project.title = event.detail.content; // Update the title from PlainText component
+    project.slug = generateSlug(project.title); // Regenerate slug based on new title
   }
 </script>
 
@@ -94,7 +125,15 @@
 </svelte:head>
 
 <WebsiteHeader bind:showUserMenu save={saveProject}>
-  <PrimaryButton on:click={toggleEdit}>Edit Project</PrimaryButton>
+  {#if $currentUser}
+    <PrimaryButton on:click={toggleEdit}>Edit Project</PrimaryButton>
+    {#if $isEditing}
+      <PrimaryButton
+        on:click={() => (showConfirmRemoveModal = true)}
+        class="bg-red-500 hover:bg-red-700">Remove Project</PrimaryButton
+      >
+    {/if}
+  {/if}
   <LoginMenu />
 </WebsiteHeader>
 
@@ -109,23 +148,9 @@
       </svg>
       markdown
     </a>
-    <h1 class="pb-8 text-4xl font-bold md:text-7xl">
-      {#if $isEditing}
-        <PlainText bind:content={project.title} on:input={handleTitleInput} />
-      {:else}
-        {project.title}
-      {/if}
-    </h1>
-    <div class="prose md:prose-xl">
-      {#if $isEditing}
-        <RichText multiLine bind:content={project.content} />
-      {:else}
-        <RichText multiLine content={project.content} />
-      {/if}
-    </div>
 
-    <div class="mt-8 flex gap-4">
-      {#if $isEditing}
+    {#if $isEditing}
+      <div class="mt-8 flex flex-col gap-4 mb-8">
         <div class="flex flex-col w-full">
           <label for="project-git" class="block text-sm font-medium text-gray-700"
             >GitHub Link</label
@@ -144,7 +169,26 @@
           >
           <PlainText id="project-slug" bind:content={project.slug} class="mt-1 block w-full" />
         </div>
+      </div>
+    {/if}
+
+    <h1 class="pb-8 text-4xl font-bold md:text-7xl">
+      {#if $isEditing}
+        <PlainText bind:content={project.title} on:input={handleTitleInput} />
       {:else}
+        {project.title}
+      {/if}
+    </h1>
+    <div class="prose md:prose-xl">
+      {#if $isEditing}
+        <RichText multiLine bind:content={project.content} />
+      {:else}
+        <RichText multiLine content={project.content} />
+      {/if}
+    </div>
+
+    {#if !$isEditing}
+      <div class="mt-8 flex gap-4">
         {#if project.gitLink}
           <a href={project.gitLink} rel="noopener noreferrer" class="btn btn-primary"> GitHub </a>
         {/if}
@@ -153,9 +197,17 @@
             Live Demo
           </a>
         {/if}
-      {/if}
-    </div>
+      </div>
+    {/if}
   </div>
 </div>
 
 <Footer />
+
+{#if showConfirmRemoveModal}
+  <ConfirmModal
+    message={`Are you sure you want to remove the project "${project.title}"? This action cannot be undone.`}
+    on:confirm={handleRemoveProjectConfirm}
+    on:cancel={() => (showConfirmRemoveModal = false)}
+  />
+{/if}

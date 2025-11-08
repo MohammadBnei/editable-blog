@@ -1,9 +1,1 @@
-export const SHORTCUTS = [
-  { name: 'About', url: '/' },
-  { name: 'Blog', url: '/blog' },
-  { name: 'Resume', url: '/resume' },
-  { name: 'Contact', url: '/#contact' },
-  { name: 'Portfolio', url: '/portfolio' },
-  { name: 'Linkedin Posts', url: '/linkedin-posts' },
-  { name: 'Login', url: '/login' }
-];
+export const SHORTCUTS = []; // This will now be empty as navLinks will be used instead

@@ -5,6 +5,7 @@
   import Search from './Search.svelte';
   import { isEditing, currentUser, currentLang } from '$lib/stores'; // Import currentLang store
   import { goto, invalidateAll } from '$app/navigation';
+  import { navLinks } from '$lib/headerLinks'; // Import navLinks
 
   let { showUserMenu = $bindable(), showSearch } = $props();
 
@@ -87,9 +88,13 @@
             />
           </svg>
         </button>
-        <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href="/"> About </a>
-        <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href="/blog"> Blog </a>
-        <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href="/resume"> Resume</a>
+        {#each navLinks as link}
+          {#if ['/', '/blog', '/resume'].includes(link.href)} <!-- Only show specific links in header -->
+            <a class="mr-4 font-medium px-2 py-1 rounded-md hover:text-black" href={link.href}>
+              {link.name}
+            </a>
+          {/if}
+        {/each}
         <div class="flex-1"></div>
         {#if $currentUser}
           <button
