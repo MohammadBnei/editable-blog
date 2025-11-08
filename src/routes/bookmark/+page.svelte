@@ -213,20 +213,22 @@
                 </button>
               </div>
             {:else}
-              <h2 class="text-lg font-semibold">
+              <div class="flex flex-col sm:flex-row sm:items-baseline sm:gap-2">
+                <h2 class="text-lg font-semibold">
+                  {#if bookmark.url}
+                    <a href={ensureProtocol(bookmark.url)} target="_blank" rel="noopener noreferrer" class="link link-hover">
+                      {bookmark.title || bookmark.url}
+                    </a>
+                  {:else}
+                    {bookmark.title || 'Untitled Bookmark'}
+                  {/if}
+                </h2>
                 {#if bookmark.url}
-                  <a href={ensureProtocol(bookmark.url)} target="_blank" rel="noopener noreferrer" class="link link-hover">
-                    {bookmark.title || bookmark.url}
-                  </a>
-                {:else}
-                  {bookmark.title || 'Untitled Bookmark'}
+                  <p class="text-sm opacity-70 truncate sm:flex-shrink-0">({ensureProtocol(bookmark.url)})</p>
                 {/if}
-              </h2>
-              {#if bookmark.url}
-                <p class="text-sm opacity-70 truncate">{ensureProtocol(bookmark.url)}</p>
-              {/if}
+              </div>
               {#if bookmark.description}
-                <p class="text-sm text-gray-700">{bookmark.description}</p>
+                <p class="text-sm text-gray-700 mt-1">{bookmark.description}</p>
               {/if}
             {/if}
           </div>
