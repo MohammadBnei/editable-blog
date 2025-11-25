@@ -246,14 +246,15 @@
         ></div>
       </div>
     </div>
-    <div class="text-center mb-32">
+    <div class="text-center mb-32 flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
       <PrimaryButton
         size="lg"
         type="button"
         on:click={() =>
           document.getElementById('contact').scrollIntoView({ behavior: 'smooth', block: 'start' })}
-        >Explore my work</PrimaryButton
+        >View Case Studies</PrimaryButton
       >
+      <PrimaryButton size="lg" href={`mailto:${EMAIL}`}>DM me</PrimaryButton>
     </div>
   </div>
 </div>
