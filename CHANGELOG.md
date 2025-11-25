@@ -1,5 +1,20 @@
 # Changelog
 
+# [0.27.0](https://github.com/MohammadBnei/editable-blog/compare/0.26.1...0.27.0) (2025-11-08)
+
+
+### Bug Fixes
+
+* Make bookmarks state reactive and improve URL display and clickability ([ea7f499](https://github.com/MohammadBnei/editable-blog/commit/ea7f4992ff95d86b9d338d77d540a37a41dd4fca))
+
+
+### Features
+
+* Add API endpoint to fetch URL metadata ([c1e329a](https://github.com/MohammadBnei/editable-blog/commit/c1e329aec59781d3344a51077f7f5a9d890d3514))
+* Adjust bookmark display for desktop and mobile views ([60b2ec4](https://github.com/MohammadBnei/editable-blog/commit/60b2ec4f4579cb770435aa70ed0c6c7024ce6550))
+* Automatically add HTTPS protocol to bookmark URLs ([0165de8](https://github.com/MohammadBnei/editable-blog/commit/0165de8b212909ed58786e0c4660b86cb5962348))
+* Implement DaisyUI list, sorting, and SEO card for bookmarks ([a356a37](https://github.com/MohammadBnei/editable-blog/commit/a356a370f93b016f0b0f7f09c3195abd228aebc2))
+
 ## [0.26.1](https://github.com/MohammadBnei/editable-blog/compare/0.26.0...0.26.1) (2025-11-08)
 
 # [0.26.0](https://github.com/MohammadBnei/editable-blog/compare/0.25.2...0.26.0) (2025-11-08)
