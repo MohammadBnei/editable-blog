@@ -262,6 +262,39 @@
   </div>
 </div>
 
+<!-- Bio -->
+<div id="contact" class="bg-white border-t-2 border-b-2 border-gray-100 pb-12 sm:pb-24">
+  <div class="max-w-(--breakpoint-lg) mx-auto px-6">
+    <div class="pt-12 sm:pt-24 pb-12 text-center">
+      <div class="w-48 h-48 md:w-72 md:h-72 mx-auto overflow-hidden relative rounded-full">
+        <Image
+          class="block w-48 h-48 md:w-72 md:h-72 rounded-full"
+          maxWidth="384"
+          maxHeight="384"
+          bind:src={bioPicture}
+          alt="Mohammad-Amine BANAEI"
+        />
+      </div>
+    </div>
+    <div class="">
+      <h1 class="text-3xl md:text-5xl font-bold">
+        <PlainText bind:content={bioTitle} />
+      </h1>
+    </div>
+    <div class="pb-6">
+      <RichText multiLine bind:content={bio} />
+    </div>
+
+    <NotEditable>
+      <div class="flex flex-col sm:flex-row sm:space-x-6 md:space-x-8 space-y-4 sm:space-y-0">
+        <PrimaryButton size="lg" href={`mailto:${EMAIL}`}>Email</PrimaryButton>
+        <!-- Removed WhatsApp button as phone number is no longer present -->
+      </div>
+    </NotEditable>
+  </div>
+</div>
+
+
 <div class="pt-12 md:pt-24 border-gray-100 border-b-2">
   <div class="max-w-(--breakpoint-lg) mx-auto px-6">
     <div class="relative">
@@ -315,37 +348,6 @@
   </NotEditable>
 {/if}
 
-<!-- Bio -->
-<div id="contact" class="bg-white border-t-2 border-b-2 border-gray-100 pb-12 sm:pb-24">
-  <div class="max-w-(--breakpoint-lg) mx-auto px-6">
-    <div class="pt-12 sm:pt-24 pb-12 text-center">
-      <div class="w-48 h-48 md:w-72 md:h-72 mx-auto overflow-hidden relative rounded-full">
-        <Image
-          class="block w-48 h-48 md:w-72 md:h-72 rounded-full"
-          maxWidth="384"
-          maxHeight="384"
-          bind:src={bioPicture}
-          alt="Mohammad-Amine BANAEI"
-        />
-      </div>
-    </div>
-    <div class="">
-      <h1 class="text-3xl md:text-5xl font-bold">
-        <PlainText bind:content={bioTitle} />
-      </h1>
-    </div>
-    <div class="pb-6">
-      <RichText multiLine bind:content={bio} />
-    </div>
-
-    <NotEditable>
-      <div class="flex flex-col sm:flex-row sm:space-x-6 md:space-x-8 space-y-4 sm:space-y-0">
-        <PrimaryButton size="lg" href={`mailto:${EMAIL}`}>Email</PrimaryButton>
-        <!-- Removed WhatsApp button as phone number is no longer present -->
-      </div>
-    </NotEditable>
-  </div>
-</div>
 
 <!-- FAQs -->
 <div class="bg-white">
