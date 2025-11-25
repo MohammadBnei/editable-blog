@@ -7,7 +7,7 @@
 </script>
 
 <!-- svelte-ignore a11y_missing_attribute -->
-<div class="bg-white border border-gray-200 rounded-lg p-6 mb-2">
+<div class="bg-white border border-gray-200 rounded-lg px-6 mb-2">
   <RichText multiLine bind:content />
   {#if $isEditing}
     <div class="flex gap-2">
