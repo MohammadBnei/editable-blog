@@ -42,6 +42,30 @@
     }
   ];
 
+  const TRUST_PLACEHOLDER = [
+    {
+      title: 'The "Deployment Anxiety" Fix',
+      pain: 'We dread deployments because they break production.',
+      architecture: '3-Node HA Kubernetes Cluster + GitOps (ArgoCD)',
+      impact: `90% Faster Releases: Cut deployment time from 2 hours to <10 minutes.
+Stability: Reduced deployment failure rate from 40% to <5%.`
+    },
+    {
+      title: 'The "Data Stagnation" Fix',
+      pain: 'Our analytics are useless because the data is hours old.',
+      architecture: 'Parallelized Query Execution & MongoDB Aggregation',
+      impact: `7x Velocity Increase: Reduced CSV export time from 15 minutes to <2 minutes for 100k+ records.
+Efficiency: Eliminated blocking processes, allowing marketing teams instant access to data.`
+    },
+    {
+      title: 'The "Latency" Fix',
+      pain: 'The app crashes or lags when user traffic spikes.',
+      architecture: 'Real-time Redis ecosystem + High-Performance Webhooks',
+      impact: `<100ms Latency: Maintained sub-100ms response times for thousands of concurrent participants during live contests.
+Scale: Zero message loss during "thundering herd" events via optimized Node.js/Go logic.`
+    }
+  ];
+
   let {
     title,
     testimonials,
@@ -106,7 +130,7 @@
     bioPicture = data.page?.bioPicture || '/images/person-placeholder.jpg';
     bioTitle = data.page?.bioTitle || "Hi, I'm Mohammad-Amine BANAEI — Welcome to my blog!";
     bio = data.page?.bio || BIO_PLACEHOLDER;
-    trustCards = data.page?.trustCards || [];
+    trustCards = data.page?.trustCards || TRUST_PLACEHOLDER;
     $isEditing = false;
   }
 
@@ -255,7 +279,9 @@
         size="lg"
         type="button"
         on:click={() =>
-          document.getElementById('trust-section').scrollIntoView({ behavior: 'smooth', block: 'start' })}
+          document
+            .getElementById('trust-section')
+            .scrollIntoView({ behavior: 'smooth', block: 'start' })}
         >View Case Studies</PrimaryButton
       >
       <PrimaryButton size="lg" href={`mailto:${EMAIL}`}>DM me</PrimaryButton>
