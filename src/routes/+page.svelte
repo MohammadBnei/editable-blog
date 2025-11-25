@@ -226,14 +226,14 @@
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://blog.bnei.dev" />
-  <meta property="og:title" content={pageTitle} />
+  <meta property="og:title" content={title} />
   <meta property="og:description" content={bio} />
   <meta property="og:image" content="https://blog.bnei.dev{bioPicture}" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://blog.bnei.dev" />
-  <meta property="twitter:title" content={pageTitle} />
+  <meta property="twitter:title" content={title} />
   <meta property="twitter:description" content={bio} />
   <meta property="twitter:image" content="https://blog.bnei.dev{bioPicture}" />
 </svelte:head>
