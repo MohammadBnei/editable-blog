@@ -13,6 +13,7 @@
   import NotEditable from '$lib/components/NotEditable.svelte';
   import { currentUser, isEditing } from '$lib/stores.js';
   import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
+  import TrustSection from '$lib/components/TrustSection.svelte';
 
   let { data } = $props();
 
@@ -52,7 +53,8 @@
     bioTitle,
     bioPicture,
     bio,
-    showUserMenu
+    showUserMenu,
+    trustCards
   } = $state({});
 
   function initOrReset() {
@@ -104,6 +106,7 @@
     bioPicture = data.page?.bioPicture || '/images/person-placeholder.jpg';
     bioTitle = data.page?.bioTitle || "Hi, I'm Mohammad-Amine BANAEI — Welcome to my blog!";
     bio = data.page?.bio || BIO_PLACEHOLDER;
+    trustCards = data.page?.trustCards || [];
     $isEditing = false;
   }
 
@@ -162,7 +165,8 @@
             introStep4,
             bioPicture,
             bioTitle,
-            bio
+            bio,
+            trustCards
           }
         });
       }
@@ -251,7 +255,7 @@
         size="lg"
         type="button"
         on:click={() =>
-          document.getElementById('testimonials').scrollIntoView({ behavior: 'smooth', block: 'start' })}
+          document.getElementById('trust-section').scrollIntoView({ behavior: 'smooth', block: 'start' })}
         >View Case Studies</PrimaryButton
       >
       <PrimaryButton size="lg" href={`mailto:${EMAIL}`}>DM me</PrimaryButton>
@@ -259,27 +263,8 @@
   </div>
 </div>
 
-<div class="bg-white pb-6 sm:pb-12" id="testimonials">
-  <div class="max-w-(--breakpoint-lg) mx-auto px-6">
-    <div class="font-bold text-sm sm:text-base py-12 sm:pt-24 pb-8">WHAT PEOPLE SAY</div>
-  </div>
-  {#each testimonials as _, i}
-    <Testimonial
-      bind:testimonial={testimonials[i]}
-      firstEntry={i === 0}
-      lastEntry={i === testimonials?.length - 1}
-      on:delete={() => deleteTestimonial(i)}
-      on:up={() => moveTestimonial(i, 'up')}
-      on:down={() => moveTestimonial(i, 'down')}
-    />
-  {/each}
-
-  {#if $isEditing}
-    <div class="text-center pb-12 border-b border-gray-100">
-      <SecondaryButton on:click={addTestimonial}>Add Testimonial</SecondaryButton>
-    </div>
-  {/if}
-</div>
+<!-- Trust Section - Replaces Testimonials -->
+<TrustSection bind:trustCards />
 
 {#if data.articles?.length > 0}
   <NotEditable>
