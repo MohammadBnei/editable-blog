@@ -135,8 +135,8 @@
         }
       )
     );
-    bioPicture = data.page?.bioPicture || '/images/person-placeholder.jpg';
-    bioTitle = data.page?.bioTitle || "Hi, I'm Mohammad-Amine BANAEI — Welcome to my blog!";
+    bioPicture = data.page?.bioPicture;
+    bioTitle = data.page?.bioTitle;
     bio = data.page?.bio || BIO_PLACEHOLDER;
     trustCards = data.page?.trustCards || TRUST_PLACEHOLDER;
     $isEditing = false;
@@ -215,14 +215,11 @@
     initOrReset();
   });
 
-  // Clean up HTML tags from bio for meta description
-  const cleanedBio = $derived(bio.replace(/<[^>]*>/g, ''));
-  const pageTitle = $derived(title.replace(/<br>/g, ' ')); // Replace <br> for cleaner title in meta
 </script>
 
 <svelte:head>
-  <title>{pageTitle}</title>
-  <meta name="description" content={cleanedBio} />
+  <title>{title}</title>
+  <meta name="description" content={bio} />
   <link rel="alternate" hreflang="en" href="https://blog.bnei.dev" />
   <link rel="canonical" href="https://blog.bnei.dev" />
 
@@ -230,14 +227,14 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://blog.bnei.dev" />
   <meta property="og:title" content={pageTitle} />
-  <meta property="og:description" content={cleanedBio} />
+  <meta property="og:description" content={bio} />
   <meta property="og:image" content="https://blog.bnei.dev{bioPicture}" />
 
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content="https://blog.bnei.dev" />
   <meta property="twitter:title" content={pageTitle} />
-  <meta property="twitter:description" content={cleanedBio} />
+  <meta property="twitter:description" content={bio} />
   <meta property="twitter:image" content="https://blog.bnei.dev{bioPicture}" />
 </svelte:head>
 
