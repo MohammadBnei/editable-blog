@@ -251,7 +251,7 @@
         size="lg"
         type="button"
         on:click={() =>
-          document.getElementById('contact').scrollIntoView({ behavior: 'smooth', block: 'start' })}
+          document.getElementById('testimonials').scrollIntoView({ behavior: 'smooth', block: 'start' })}
         >View Case Studies</PrimaryButton
       >
       <PrimaryButton size="lg" href={`mailto:${EMAIL}`}>DM me</PrimaryButton>
@@ -259,7 +259,7 @@
   </div>
 </div>
 
-<div class="bg-white pb-6 sm:pb-12">
+<div class="bg-white pb-6 sm:pb-12" id="testimonials">
   <div class="max-w-(--breakpoint-lg) mx-auto px-6">
     <div class="font-bold text-sm sm:text-base py-12 sm:pt-24 pb-8">WHAT PEOPLE SAY</div>
   </div>
