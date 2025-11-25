@@ -1,5 +1,21 @@
 # Changelog
 
+# [0.28.0](/compare/0.27.0...0.28.0) (2025-11-25)
+
+
+### Bug Fixes
+
+* correct button scroll target from contact to testimonials 23fe072
+
+
+### Features
+
+* add isEditing store import to TrustSection 78109c4
+* add Trust section with cards replacing testimonials 00b9289
+* **k8s/service.yml:** add support for serving the application on 'bnei.dev' domain alongside 'blog.bnei.dev' to improve accessibility and user experience 64b306d
+* replace single CTA with "View Case Studies" and "DM me" buttons 343e3f5
+* simplify trust section with single rich text per item 7892b40
+
 # [0.27.0](https://github.com/MohammadBnei/editable-blog/compare/0.26.1...0.27.0) (2025-11-08)
 
 
