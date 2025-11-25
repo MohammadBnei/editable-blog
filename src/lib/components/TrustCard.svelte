@@ -6,19 +6,24 @@
   let { content = $bindable(''), index, onDelete, onMoveUp, onMoveDown } = $props();
 </script>
 
-<div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-  {#if $isEditing}
-    <div class="mb-4">
-      <RichText multiLine bind:content />
-    </div>
-    <div class="flex gap-2">
-      <SecondaryButton on:click={onMoveUp}>↑</SecondaryButton>
-      <SecondaryButton on:click={onMoveDown}>↓</SecondaryButton>
-      <SecondaryButton on:click={onDelete}>Delete</SecondaryButton>
-    </div>
-  {:else}
-    <div class="prose md:prose-lg">
-      <RichText multiLine bind:content />
-    </div>
-  {/if}
-</div>
+<a class="hover-3d my-12 mx-2 cursor-pointer w-full">
+  <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+    <RichText multiLine bind:content />
+    {#if $isEditing}
+      <div class="flex gap-2">
+        <SecondaryButton on:click={onMoveUp}>↑</SecondaryButton>
+        <SecondaryButton on:click={onMoveDown}>↓</SecondaryButton>
+        <SecondaryButton on:click={onDelete}>Delete</SecondaryButton>
+      </div>
+    {/if}
+  </div>
+
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+</a>

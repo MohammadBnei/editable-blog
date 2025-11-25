@@ -1,5 +1,6 @@
 <script>
   import TrustCard from './TrustCard.svelte';
+  import SecondaryButton from './SecondaryButton.svelte';
   import { isEditing } from '$lib/stores.js';
 
   let { trustCards = $bindable([]) } = $props();

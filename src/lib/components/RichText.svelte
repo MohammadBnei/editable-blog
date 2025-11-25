@@ -11,12 +11,14 @@
 </script>
 
 {#if $isEditing}
-  <div class="[all:initial] not-prose">
-    <MarkdownEditor {carta} bind:value={content} />
+  <div class="[all:initial] not-prose-[all]">
+    <MarkdownEditor {carta} bind:value={content} mode="tabs" />
   </div>
 {:else}
   {#key content}
-    <Markdown {carta} value={content} />
+    <div class="prose md:prose-xl w-full">
+      <Markdown {carta} value={content} />
+    </div>
   {/key}
 {/if}
 

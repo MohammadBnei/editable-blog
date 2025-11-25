@@ -334,7 +334,7 @@
         <PlainText bind:content={bioTitle} />
       </h1>
     </div>
-    <div class="prose md:prose-xl pb-6">
+    <div class="pb-6">
       <RichText multiLine bind:content={bio} />
     </div>
 
