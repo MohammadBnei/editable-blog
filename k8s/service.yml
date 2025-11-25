@@ -20,6 +20,7 @@ spec:
   secretName: blog-certificate-secret
   dnsNames:
     - 'blog.bnei.dev'
+    - 'bnei.dev'
   issuerRef:
     kind: ClusterIssuer
     name: letsencrypt-prod
@@ -35,7 +36,7 @@ spec:
     - web
   routes:
     - kind: Rule
-      match: Host(`blog.bnei.dev`)
+      match: Host(`blog.bnei.dev`) || Host(`bnei.dev`)
       middlewares:
         - name: compress
       services:
