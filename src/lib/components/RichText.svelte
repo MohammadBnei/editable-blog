@@ -15,7 +15,7 @@
     <MarkdownEditor {carta} bind:value={content} mode="tabs" />
   </div>
 {:else}
-  <div class="prose md:prose-xl w-full">
+  <div class="prose md:prose-xl w-full max-w-full">
     {#key content}
       <Markdown {carta} value={content} />
     {/key}
