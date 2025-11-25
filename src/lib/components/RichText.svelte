@@ -15,11 +15,11 @@
     <MarkdownEditor {carta} bind:value={content} mode="tabs" />
   </div>
 {:else}
-  {#key content}
-    <div class="prose md:prose-xl w-full">
-      <Markdown {carta} value={content || ''} />
-    </div>
-  {/key}
+  <div class="prose md:prose-xl w-full">
+    {#key content}
+      <Markdown {carta} value={content} />
+    {/key}
+  </div>
 {/if}
 
 <style>
