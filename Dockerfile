@@ -1,4 +1,4 @@
-FROM node:slim AS builder
+FROM node:22-slim AS builder
 
 # Install Bun as package manager
 RUN npm install -g bun
@@ -16,13 +16,9 @@ RUN npx playwright install --with-deps chromium
 
 # Copy source and build
 COPY . .
-RUN --mount=type=secret,id=ADMIN_PASSWORD \
-    --mount=type=secret,id=ORIGIN \
-    ADMIN_PASSWORD="$(cat /run/secrets/ADMIN_PASSWORD)" \
-    ORIGIN="$(cat /run/secrets/ORIGIN)" \
-    bun run build
+RUN bun run build
 
-FROM node:slim AS runner
+FROM node:22-slim AS runner
 
 RUN npm install -g bun
 

@@ -12,9 +12,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      secrets:
-        - ADMIN_PASSWORD
-        - ORIGIN
     ports:
       - '3000:3000'
     environment:
