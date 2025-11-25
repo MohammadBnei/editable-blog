@@ -1,26 +1,24 @@
 <script>
-  let { title, pain, architecture, impact } = $props();
+  import RichText from './RichText.svelte';
+  import SecondaryButton from './SecondaryButton.svelte';
+  import { isEditing } from '$lib/stores.js';
+
+  let { content = $bindable(''), index, onDelete, onMoveUp, onMoveDown } = $props();
 </script>
 
-<div class="card bg-base-100 card-md shadow-sm">
-  <div class="card-body">
-    <h2 class="card-title">{title}</h2>
-    
-    <div class="space-y-4">
-      <div>
-        <h3 class="font-semibold text-xs text-gray-600 uppercase tracking-wide">Pain</h3>
-        <p class="">{pain}</p>
-      </div>
-      
-      <div>
-        <h3 class="font-semibold text-xs text-gray-600 uppercase tracking-wide">Architecture</h3>
-        <p class="">{architecture}</p>
-      </div>
-      
-      <div>
-        <h3 class="font-semibold text-xs text-gray-600 uppercase tracking-wide">Impact</h3>
-        <p class="">{impact}</p>
-      </div>
+<div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+  {#if $isEditing}
+    <div class="mb-4">
+      <RichText multiLine bind:content />
     </div>
-  </div>
+    <div class="flex gap-2">
+      <SecondaryButton on:click={onMoveUp}>↑</SecondaryButton>
+      <SecondaryButton on:click={onMoveDown}>↓</SecondaryButton>
+      <SecondaryButton on:click={onDelete}>Delete</SecondaryButton>
+    </div>
+  {:else}
+    <div class="prose md:prose-lg">
+      <RichText multiLine bind:content />
+    </div>
+  {/if}
 </div>
