@@ -17,7 +17,7 @@
 {:else}
   {#key content}
     <div class="prose md:prose-xl w-full">
-      <Markdown {carta} value={content} />
+      <Markdown {carta} value={content || ''} />
     </div>
   {/key}
 {/if}

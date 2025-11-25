@@ -6,6 +6,7 @@
   let { content = $bindable(''), index, onDelete, onMoveUp, onMoveDown } = $props();
 </script>
 
+<!-- svelte-ignore a11y_missing_attribute -->
 <a class="hover-3d my-12 mx-2 cursor-pointer w-full">
   <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
     <RichText multiLine bind:content />
