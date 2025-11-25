@@ -68,8 +68,10 @@
 </svelte:head>
 
 <WebsiteHeader bind:showUserMenu save={savePage}>
-  <PrimaryButton on:click={toggleEdit}>Edit page</PrimaryButton>
-  <LoginMenu />
+  <div class="flex flex-col gap-1">
+    <PrimaryButton on:click={toggleEdit}>Edit page</PrimaryButton>
+    <LoginMenu />
+  </div>
 </WebsiteHeader>
 
 <div class="py-12 sm:py-24">

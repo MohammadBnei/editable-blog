@@ -25,6 +25,7 @@
       "devDependencies": {
         "@cartamd/plugin-attachment": "^4.2.0",
         "@cartamd/plugin-code": "^4.2.0",
+        "@cartamd/plugin-component": "^1.1.1",
         "@sveltejs/adapter-auto": "^7.0.0",
         "@sveltejs/kit": "^2.49.0",
         "@sveltejs/vite-plugin-svelte": "^6.2.1",
@@ -65,6 +66,8 @@
     "@cartamd/plugin-attachment": ["@cartamd/plugin-attachment@4.2.0", "", { "peerDependencies": { "carta-md": "^4.0.0" } }, "sha512-KdQBfcFdBlr7WVrZoCkf6KinIpb2ZsFP5TqZa+K4fNPEVMgLngbODs9l83zmgqEdI8YdDcsTEONMaHUa/qH3Og=="],
 
     "@cartamd/plugin-code": ["@cartamd/plugin-code@4.2.0", "", { "dependencies": { "@shikijs/rehype": "^3.4.0", "unified": "^11.0.5" }, "peerDependencies": { "carta-md": "^4.9.0" } }, "sha512-rqv/Ol0kZQ4Z3+RmvT9l+CqkdYCDaDBO4ExpYu8+KmP3pgKWSFaJ2Cv1maZFZLGqUF6rWFPd1AcjeCxwY5nCWQ=="],
+
+    "@cartamd/plugin-component": ["@cartamd/plugin-component@1.1.1", "", { "dependencies": { "esm-env": "^1.0.0", "rehype-parse": "^9.0.0", "unist-util-visit": "^5.0.0" }, "peerDependencies": { "carta-md": "^4.0.0", "unified": "^11.0.0" } }, "sha512-eQaBCdHUppCMt42QSJTR2Jo7wS/ywENLJ5op6Rt5lHwxNYc7+BDXKSSE2RyXc/PWuvgWzpVR7db1Eh19lRzxBg=="],
 
     "@chevrotain/cst-dts-gen": ["@chevrotain/cst-dts-gen@11.0.3", "", { "dependencies": { "@chevrotain/gast": "11.0.3", "@chevrotain/types": "11.0.3", "lodash-es": "4.17.21" } }, "sha512-BvIKpRLeS/8UbfxXxgC33xOumsacaeCKAjAeLyOn7Pcp95HiRbrpl14S+9vaZLolnbssPIUuiUd8IvgkRyt6NQ=="],
 

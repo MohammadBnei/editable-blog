@@ -2,10 +2,13 @@ import { Carta, UnifiedTransformer } from 'carta-md';
 import DOMPurify from 'isomorphic-dompurify';
 import { code } from '@cartamd/plugin-code';
 import { attachment } from '@cartamd/plugin-attachment';
+import { component } from '@cartamd/plugin-component';
+import { svelte, initializeComponents } from '@cartamd/plugin-component/svelte';
 import uploadAsset from '$lib/uploadAsset';
 import { nanoid, is_safari } from '$lib/util';
 import rehypeMermaid from 'rehype-mermaid';
 import mermaid from 'mermaid';
+import SecondaryButton from '$lib/components/SecondaryButton.svelte';
 
 mermaid.initialize({ startOnLoad: true });
 
@@ -17,6 +20,8 @@ const transformer: UnifiedTransformer<'async'> = {
   }
 };
 
+const mapped = [svelte('a', SecondaryButton) /* other components ... */];
+
 // Create a reusable Carta instance
 export const carta = new Carta({
   sanitizer: DOMPurify.sanitize,
@@ -25,6 +30,7 @@ export const carta = new Carta({
       transformers: [transformer]
     },
     code(),
+    component(mapped, initializeComponents),
     attachment({
       upload: async file => {
         try {

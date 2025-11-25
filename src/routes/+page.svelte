@@ -214,7 +214,6 @@
   $effect(() => {
     initOrReset();
   });
-
 </script>
 
 <svelte:head>
@@ -239,8 +238,10 @@
 </svelte:head>
 
 <WebsiteHeader bind:showUserMenu cancel={initOrReset} save={savePage}>
-  <PrimaryButton on:click={toggleEdit}>Edit Page</PrimaryButton>
-  <LoginMenu />
+  <div class="flex flex-col">
+    <PrimaryButton on:click={toggleEdit}>Edit Page</PrimaryButton>
+    <LoginMenu />
+  </div>
 </WebsiteHeader>
 
 <div>
@@ -290,7 +291,6 @@
     </NotEditable>
   </div>
 </div>
-
 
 <div class="pt-12 md:pt-24 border-gray-100 border-b-2">
   <div class="max-w-(--breakpoint-lg) mx-auto px-6">
@@ -344,7 +344,6 @@
     </div>
   </NotEditable>
 {/if}
-
 
 <!-- FAQs -->
 <div class="bg-white">
