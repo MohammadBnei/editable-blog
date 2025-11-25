@@ -43,26 +43,35 @@
   ];
 
   const TRUST_PLACEHOLDER = [
-    `<h2>The "Deployment Anxiety" Fix</h2>
-<p><strong>The Pain:</strong> "We dread deployments because they break production."</p>
-<p><strong>The Architecture:</strong> 3-Node HA Kubernetes Cluster + GitOps (ArgoCD)</p>
-<p><strong>The Impact:</strong><br>
-90% Faster Releases: Cut deployment time from 2 hours to &lt;10 minutes.<br>
-Stability: Reduced deployment failure rate from 40% to &lt;5%.</p>`,
-    
-    `<h2>The "Data Stagnation" Fix</h2>
-<p><strong>The Pain:</strong> "Our analytics are useless because the data is hours old."</p>
-<p><strong>The Architecture:</strong> Parallelized Query Execution & MongoDB Aggregation</p>
-<p><strong>The Impact:</strong><br>
-7x Velocity Increase: Reduced CSV export time from 15 minutes to &lt;2 minutes for 100k+ records.<br>
-Efficiency: Eliminated blocking processes, allowing marketing teams instant access to data.</p>`,
-    
-    `<h2>The "Latency" Fix</h2>
-<p><strong>The Pain:</strong> "The app crashes or lags when user traffic spikes."</p>
-<p><strong>The Architecture:</strong> Real-time Redis ecosystem + High-Performance Webhooks</p>
-<p><strong>The Impact:</strong><br>
-&lt;100ms Latency: Maintained sub-100ms response times for thousands of concurrent participants during live contests.<br>
-Scale: Zero message loss during "thundering herd" events via optimized Node.js/Go logic.</p>`
+    `## The "Deployment Anxiety" Fix
+
+**The Pain:** "We dread deployments because they break production."
+
+**The Architecture:** 3-Node HA Kubernetes Cluster + GitOps (ArgoCD)
+
+**The Impact:**
+- 90% Faster Releases: Cut deployment time from 2 hours to <10 minutes
+- Stability: Reduced deployment failure rate from 40% to <5%`,
+
+    `## The "Data Stagnation" Fix
+
+**The Pain:** "Our analytics are useless because the data is hours old."
+
+**The Architecture:** Parallelized Query Execution & MongoDB Aggregation
+
+**The Impact:**
+- 7x Velocity Increase: Reduced CSV export time from 15 minutes to <2 minutes for 100k+ records
+- Efficiency: Eliminated blocking processes, allowing marketing teams instant access to data`,
+
+    `## The "Latency" Fix
+
+**The Pain:** "The app crashes or lags when user traffic spikes."
+
+**The Architecture:** Real-time Redis ecosystem + High-Performance Webhooks
+
+**The Impact:**
+- <100ms Latency: Maintained sub-100ms response times for thousands of concurrent participants during live contests
+- Scale: Zero message loss during "thundering herd" events via optimized Node.js/Go logic`
   ];
 
   let {
