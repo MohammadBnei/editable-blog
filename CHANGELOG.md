@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.30.0](/compare/0.29.0...0.30.0) (2025-11-26)
+
+
+### Features
+
+* Apply card system to blog article teasers da9fec2
+
 # [0.29.0](/compare/0.28.10...0.29.0) (2025-11-26)
 
 
