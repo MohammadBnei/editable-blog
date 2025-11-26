@@ -261,7 +261,7 @@
 </div>
 
 <!-- Bio -->
-<div id="contact" class="bg-white border-t-2 border-b-2 border-gray-100 pb-12 sm:pb-24">
+<div id="contact" class=" border-gray-100 pb-12 sm:pb-24">
   <div class="max-w-(--breakpoint-lg) mx-auto px-6">
     <div class="pt-12 sm:pt-24 pb-12 text-center">
       <div class="w-48 h-48 md:w-72 md:h-72 mx-auto overflow-hidden relative rounded-full">
