@@ -1,20 +1,12 @@
 <script>
   import { activeEditorView } from '$lib/stores';
   import { onDestroy } from 'svelte';
-  import ToggleMark from './tools/ToggleMark.svelte';
-  import ToggleBulletList from './tools/tools/ToggleBulletList.svelte';
-  import ToggleBlockquote from './tools/ToggleBlockquote.svelte';
-  import ToggleOrderedList from './tools/ToggleOrderedList.svelte';
   import PrimaryButton from './PrimaryButton.svelte';
   import SecondaryButton from './SecondaryButton.svelte';
-  import ToggleHeading from './tools/ToggleHeading.svelte';
-  import InsertImage from './tools/InsertImage.svelte';
-  import CreateLink from './tools/CreateLink.svelte';
-  import { uploadAsset } from '$lib/uploadAsset.js';
-  import { nanoid } from '$lib/util.js';
-  import { is_safari } from '$lib/util.js';
+  import { uploadAsset } from '$lib/uploadAsset';
+  import { nanoid, is_safari } from '$lib/util';
 
-  let { currentUser, cancel, save } = $props();
+  let { cancel, save } = $props();
 
   let editorView = null;
   let editorState = null;
