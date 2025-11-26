@@ -1,8 +1,8 @@
-FROM node:22-slim AS builder
+FROM node:22-alpine AS builder
 
-RUN apt update -qq && apt install -y python-is-python3 pkg-config build-essential
+RUN apk update -qq && apk install -y python-is-python3 pkg-config build-essential
 
-RUN apt update -qq && apt install -y bash curl unzip
+RUN apk update -qq && apk install -y bash curl unzip
 
 RUN curl -fsSl -o install https://bun.sh/install && chmod +x ./install && BUN_INSTALL="/usr/local" ./install
 
@@ -17,7 +17,7 @@ RUN npx playwright install --with-deps chromium
 COPY . .
 RUN bun run build
 
-FROM node:22-slim AS runner
+FROM node:22-alpine AS runner
 
 COPY --from=builder /usr/local/bin/bun /usr/local/bin/bun
 
