@@ -1,6 +1,5 @@
 <script>
   import BaseButton from '$lib/components/BaseButton.svelte';
-  import { Slot } from '@cartamd/plugin-component/svelte';
 
   export let disabled = undefined;
   export let type = 'button';
@@ -17,5 +16,4 @@
   on:click
 >
   <slot />
-  <Slot />
 </BaseButton>

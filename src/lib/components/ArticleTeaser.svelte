@@ -1,7 +1,7 @@
 <script>
-  import { carta } from '$lib/carta';
+  import { goto } from '$app/navigation';
   import { classNames } from '$lib/util';
-  import { Markdown } from 'carta-md';
+  import { Streamdown } from 'svelte-streamdown';
   import SecondaryButton from './SecondaryButton.svelte';
 
   const { article, firstEntry } = $props();
@@ -24,12 +24,10 @@
         </a>
       </div>
       <div class="pt-2 pb-4">
-        <div class="line-clamp-4">
-          <a href={`/blog/${article.slug}`}>
-            {#key article}
-              <Markdown {carta} value={article.teaser} />
-            {/key}
-          </a>
+        <div class="line-clamp-4 cursor-pointer" onclick={() => goto(`/blog/${article.slug}`)}>
+          {#key article}
+            <Streamdown animation={{ enabled: false }} content={article.teaser} />
+          {/key}
         </div>
       </div>
     </div>
