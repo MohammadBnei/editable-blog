@@ -23,7 +23,7 @@
   </div>
 </WebsiteHeader>
 
-<div class="pb-8">
+<div class="pb-8 max-w-(--breakpoint-lg) mx-auto">
   <div class="mx-auto px-6 pt-12 sm:pt-24">
     <a href="/api/raw/blog" class="btn btn-sm">
       <svg xmlns="http://www.w3.org/2000/svg" height="1.3em" viewBox="0 0 25 25">
@@ -41,7 +41,7 @@
   </div>
 
   {#each data.articles as article, i}
-    <div class="card bg-base-100 shadow-xl mb-6 mx-auto max-w-[var(--breakpoint-lg)]">
+    <div class="card bg-base-100 shadow-xl mb-6 mx-auto">
       <div class="card-body">
         <ArticleTeaser {article} firstEntry={i === 0} />
       </div>

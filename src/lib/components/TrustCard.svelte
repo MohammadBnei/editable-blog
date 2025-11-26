@@ -7,7 +7,7 @@
 </script>
 
 <div class="card bg-base-100 shadow-xl mb-6">
-  <div class="card-body">
+  <div class="card-body pt-0">
     <RichText multiLine bind:content />
     {#if $isEditing}
       <div class="card-actions justify-end mt-4">

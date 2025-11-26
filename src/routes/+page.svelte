@@ -292,7 +292,7 @@
   </div>
 </div>
 
-<div class="pt-12 md:pt-24 border-gray-100 border-b-2">
+<div class="border-gray-100 border-b-2">
   <div class="max-w-(--breakpoint-lg) mx-auto px-6">
     <div class="relative">
       <div class="w-1 bg-gray-900 absolute inset-0 -top-8 bottom-12 mx-auto z-0">
@@ -348,7 +348,7 @@
 <!-- FAQs -->
 <div class="bg-white">
   <div class="max-w-(--breakpoint-lg) mx-auto px-6">
-    <div class="font-bold text-sm sm:text-base pt-12 sm:pt-24 -mb-6 md:-mb-12">FAQs</div>
+    <div class="font-bold text-sm sm:text-base">FAQs</div>
     <div class="prose md:prose-xl pb-12 sm:pb-24">
       <RichText multiLine bind:content={faqs} />
     </div>
