@@ -3,7 +3,7 @@
   import { onDestroy } from 'svelte';
   import PrimaryButton from './PrimaryButton.svelte';
   import SecondaryButton from './SecondaryButton.svelte';
-  import { uploadAsset } from '$lib/uploadAsset';
+  import uploadAsset from '$lib/uploadAsset';
   import { nanoid, is_safari } from '$lib/util';
 
   let { cancel, save } = $props();
@@ -61,10 +61,9 @@
         // We convert all image uploads to the WEBP image format
         extension = is_safari() ? 'jpg' : 'webp';
       }
-      const path = [
-        [extension === 'pdf' ? 'files' : 'images', nanoid()].join('/'),
-        extension
-      ].join('.');
+      const path = [[extension === 'pdf' ? 'files' : 'images', nanoid()].join('/'), extension].join(
+        '.'
+      );
 
       // Upload the file using your existing uploadAsset function
       await uploadAsset(file, path, p => {
@@ -97,20 +96,28 @@
   >
     <div>
       <div class="flex items-center overflow-x-auto py-3 px-1">
-        <div class="flex-1 h-8" />
-        
         <!-- Upload Button -->
-        <button
-          type="button"
-          on:click={triggerFileInput}
-          class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-2"
-          title="Upload file"
-        >
-          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-          </svg>
-          Upload
-        </button>
+        <SecondaryButton type="button" on:click={triggerFileInput} title="Upload file">
+          <div class="flex items-center gap-1">
+            <svg
+              class="w-4 h-4 mr-1.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
+            </svg>
+            Upload
+          </div>
+        </SecondaryButton>
+
+        <div class="flex-1 h-8" />
 
         <SecondaryButton type="button" on:click={handleCancel}>Cancel</SecondaryButton>
         <div class="shrink-0 w-2 sm:w-4" />
