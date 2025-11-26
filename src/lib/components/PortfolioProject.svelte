@@ -3,6 +3,8 @@
   import RichText from '$lib/components/RichText.svelte';
   import { isEditing } from '$lib/stores.js';
   import { extractTeaser } from '$lib/util';
+  import PrimaryButton from '$lib/components/PrimaryButton.svelte';
+  import SecondaryButton from '$lib/components/SecondaryButton.svelte';
 
   let { project = $bindable(), index, onRemove, onToggleExpand, generateSlug } = $props();
 
@@ -85,9 +87,9 @@
         <h2 class="card-title">
           <a href="/portfolio/{project.slug}" class="hover:underline">{project.title}</a>
         </h2>
-        <button class="btn btn-sm btn-secondary" on:click={handleToggleExpand}>
+        <SecondaryButton on:click={handleToggleExpand}>
           {expanded ? 'Collapse' : 'Expand'}
-        </button>
+        </SecondaryButton>
       </div>
     {/if}
 
@@ -101,7 +103,7 @@
 
     {#if $isEditing}
       <div class="card-actions justify-end">
-        <button class="btn btn-sm btn-error" on:click={handleRemove}>Remove Project</button>
+        <PrimaryButton on:click={handleRemove} danger>Remove Project</PrimaryButton>
       </div>
     {/if}
   </div>
