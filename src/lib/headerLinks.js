@@ -3,6 +3,7 @@ export const headerLinks = [
   { name: 'Blog', href: '/blog' },
   { name: 'Portfolio', href: '/portfolio' },
   { name: 'Bookmark', href: '/bookmark' },
+  { name: 'Resume', href: '/resume' },
 ];
 
 export const searchLinks = [

@@ -10,7 +10,7 @@
 </script>
 
 {#if $isEditing}
-  {#await import('$lib/components/tools/EditorControls.svelte') then EditorToolbar}
+  {#await import('$lib/components/EditorControls.svelte') then EditorToolbar}
     <EditorToolbar.default {cancel} {save} />
   {/await}
 {/if}

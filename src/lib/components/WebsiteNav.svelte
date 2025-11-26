@@ -66,8 +66,36 @@
   <div class="max-w-dvh lg:max-w-(--breakpoint-lg) mx-auto py-4">
     <NotEditable>
       <div class="flex items-center relative">
-        <div class="flex-1"></div>
-        
+        <!-- Mobile Burger Button (visible only on small screens) -->
+        <button
+          class="btn btn-square btn-ghost lg:hidden ml-2"
+          popovertarget="mobile-menu-popover"
+          style="anchor-name:--mobile-menu-anchor"
+          aria-label="Open menu"
+        >
+          <!-- Burger SVG Placeholder -->
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            ></path>
+          </svg>
+        </button>
+
+        <!-- Mobile Dropdown Menu (visible only on small screens) -->
+        <ul
+          class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm lg:hidden"
+          popover
+          id="mobile-menu-popover"
+          style="position-anchor:--mobile-menu-anchor"
+        >
+          {#each headerLinks as link}
+            <li><a href={link.href}>{link.name}</a></li>
+          {/each}
+        </ul>
+
         <!-- Desktop Navigation (hidden on small screens) -->
         <div class="hidden lg:flex lg:items-center lg:space-x-6">
           {#each headerLinks as link}
@@ -78,7 +106,7 @@
         </div>
 
         <div class="flex-1"></div>
-        
+
         <!-- Search Button -->
         <button
           title="Search"
@@ -106,7 +134,7 @@
         {#if $currentUser}
           <button
             onclick={() => (showUserMenu = !showUserMenu)}
-            class="hidden lg:block ml-0 hover:text-black cursor-pointer"
+            class="ml-0 hover:text-black cursor-pointer"
             title={$currentUser.name}
             aria-label="User Menu"
           >
@@ -133,42 +161,6 @@
           class={`ml-4 uppercase hover:underline cursor-pointer`}
           aria-label="Toggle Language">{$currentLang}</button
         >
-
-        <!-- Mobile Burger Button (visible only on small screens) -->
-        <button 
-          class="btn btn-square btn-ghost lg:hidden ml-2" 
-          popovertarget="mobile-menu-popover" 
-          style="anchor-name:--mobile-menu-anchor"
-          aria-label="Open menu"
-        >
-          <!-- Burger SVG Placeholder -->
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
-        </button>
-
-        <!-- Mobile Dropdown Menu (visible only on small screens) -->
-        <ul 
-          class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm lg:hidden"
-          popover 
-          id="mobile-menu-popover" 
-          style="position-anchor:--mobile-menu-anchor"
-        >
-          {#each headerLinks as link}
-            <li><a href={link.href}>{link.name}</a></li>
-          {/each}
-          
-          {#if $currentUser}
-            <li class="menu-title">
-              <span>{$currentUser.name}</span>
-            </li>
-            <li><a>Profile</a></li>
-            <li><a>Settings</a></li>
-            <li><a>Logout</a></li>
-          {:else}
-            <li><a>Login</a></li>
-          {/if}
-        </ul>
       </div>
     </NotEditable>
   </div>

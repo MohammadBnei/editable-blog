@@ -22,7 +22,7 @@
       <Streamdown {content} animation={{ enabled: false }}>
         {#snippet link({ children, token })}
           <SecondaryButton>
-            <a href={token.href}>
+            <a class="no-underline" href={token.href}>
               {@render children()}
             </a>
           </SecondaryButton>
