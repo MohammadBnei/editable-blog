@@ -17,7 +17,7 @@
     />
   </div>
 {:else}
-  <div class="prose md:prose-lg w-full max-w-full">
+  <div class="prose md:text-xl w-full max-w-full">
     {#key content}
       <Streamdown {content} animation={{ enabled: false }}>
         {#snippet link({ children, token })}
