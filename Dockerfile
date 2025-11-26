@@ -1,6 +1,6 @@
 FROM node:22-alpine AS builder
 
-RUN apk update -qq && apk install -y python-is-python3 pkg-config build-essential
+RUN apk update -qq && apk install -y python-is-python3 pkg-config build-base
 
 RUN apk update -qq && apk install -y bash curl unzip
 
