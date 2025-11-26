@@ -35,8 +35,24 @@
     }
   }
 
+  // Hidden file input
+  let fileInput;
+
+  // Handle file selection
+  function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+      uploadFile(file);
+    }
+  }
+
+  // Trigger file input click
+  function triggerFileInput() {
+    fileInput?.click();
+  }
+
   // Upload function for handling file uploads
-  async function upload(file) {
+  async function uploadFile(file) {
     try {
       let extension;
       if (file.type === 'application/pdf') {
@@ -82,6 +98,20 @@
     <div>
       <div class="flex items-center overflow-x-auto py-3 px-1">
         <div class="flex-1 h-8" />
+        
+        <!-- Upload Button -->
+        <button
+          type="button"
+          on:click={triggerFileInput}
+          class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-2"
+          title="Upload file"
+        >
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+          </svg>
+          Upload
+        </button>
+
         <SecondaryButton type="button" on:click={handleCancel}>Cancel</SecondaryButton>
         <div class="shrink-0 w-2 sm:w-4" />
         <PrimaryButton type="button" on:click={handleSave}>Save</PrimaryButton>
@@ -90,4 +120,13 @@
   </div>
 </div>
 
-<svelte:window onkeydown={onKeyDown} />
+<!-- Hidden file input -->
+<input
+  bind:this={fileInput}
+  type="file"
+  accept={supportedMimeTypes.join(',')}
+  on:change={handleFileSelect}
+  class="hidden"
+/>
+
+<svelte:window on:keydown={onKeyDown} />
