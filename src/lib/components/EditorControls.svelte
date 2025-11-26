@@ -2,7 +2,7 @@
   import { activeEditorView } from '$lib/stores';
   import { onDestroy } from 'svelte';
   import ToggleMark from './tools/ToggleMark.svelte';
-  import ToggleBulletList from './tools/ToggleBulletList.svelte';
+  import ToggleBulletList from './tools/tools/ToggleBulletList.svelte';
   import ToggleBlockquote from './tools/ToggleBlockquote.svelte';
   import ToggleOrderedList from './tools/ToggleOrderedList.svelte';
   import PrimaryButton from './PrimaryButton.svelte';
@@ -10,6 +10,9 @@
   import ToggleHeading from './tools/ToggleHeading.svelte';
   import InsertImage from './tools/InsertImage.svelte';
   import CreateLink from './tools/CreateLink.svelte';
+  import { uploadAsset } from '$lib/uploadAsset.js';
+  import { nanoid } from '$lib/util.js';
+  import { is_safari } from '$lib/util.js';
 
   let { currentUser, cancel, save } = $props();
 
@@ -39,6 +42,45 @@
       e.stopPropagation();
     }
   }
+
+  // Upload function for handling file uploads
+  async function upload(file) {
+    try {
+      let extension;
+      if (file.type === 'application/pdf') {
+        extension = 'pdf';
+      } else {
+        // We convert all image uploads to the WEBP image format
+        extension = is_safari() ? 'jpg' : 'webp';
+      }
+      const path = [
+        [extension === 'pdf' ? 'files' : 'images', nanoid()].join('/'),
+        extension
+      ].join('.');
+
+      // Upload the file using your existing uploadAsset function
+      await uploadAsset(file, path, p => {
+        // Progress callback
+        console.log(`Upload progress: ${p}%`);
+      });
+
+      // Return the URL to the uploaded asset
+      return `/assets/${path}`;
+    } catch (err) {
+      console.error('Error uploading file:', err);
+      return null;
+    }
+  }
+
+  // Support common image formats and PDF
+  const supportedMimeTypes = [
+    'image/png',
+    'image/jpeg',
+    'image/gif',
+    'image/webp',
+    'image/svg+xml',
+    'application/pdf'
+  ];
 </script>
 
 <div class="sticky top-0 z-10 sm:py-4 sm:px-4">
