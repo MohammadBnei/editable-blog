@@ -1,5 +1,21 @@
 # Changelog
 
+# [0.29.0](/compare/0.28.10...0.29.0) (2025-11-26)
+
+
+### Bug Fixes
+
+* correct apk install to apk add in Alpine Linux Dockerfile ddbcdb8
+* replace build-essential with build-base for Alpine Linux compatibility efa9b80
+
+
+### Features
+
+* add file upload button to EditorControls c7da9a7
+* Add responsive navigation with mobile burger dropdown 47558b6
+* add upload success modal with asset URL and copy functionality 54b57d2
+* re-add upload function with supported file types and Safari compatibility 62f7a22
+
 ## [0.28.10](/compare/0.28.9...0.28.10) (2025-11-26)
 
 ## [0.28.9](/compare/0.28.8...0.28.9) (2025-11-25)
