@@ -4,13 +4,12 @@
   import { Streamdown } from 'svelte-streamdown';
 
   let { content = $bindable<string>() } = $props();
-  let textareaElement: HTMLTextAreaElement;
 </script>
 
 {#if $isEditing}
   <div class="w-full">
+    <!-- svelte-ignore element_invalid_self_closing_tag -->
     <textarea
-      bind:this={textareaElement}
       bind:value={content}
       class="w-full h-64 p-4 border border-gray-300 rounded-md resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm textarea"
       placeholder="Write your markdown here..."
@@ -19,7 +18,11 @@
 {:else}
   <div class="prose md:text-xl w-full max-w-full">
     {#key content}
-      <Streamdown {content} animation={{ enabled: false }}>
+      <Streamdown
+        {content}
+        animation={{ enabled: false }}
+        allowedLinkPrefixes={['mailto:', 'http://', 'https://']}
+      >
         {#snippet link({ children, token })}
           <SecondaryButton>
             <a class="no-underline" href={token.href}>
