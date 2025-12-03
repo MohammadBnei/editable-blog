@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.30.2](/compare/0.30.1...0.30.2) (2025-12-03)
+
+
+### Bug Fixes
+
+* **richText:** allowing mailto links 28d4cf4
+
 ## [0.30.1](/compare/0.30.0...0.30.1) (2025-11-26)
 
 # [0.30.0](/compare/0.29.0...0.30.0) (2025-11-26)
