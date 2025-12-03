@@ -1,12 +1,12 @@
 services:
-  db:
+  postgres:
     image: postgres:16-alpine
     environment:
       POSTGRES_DB: ad
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
     ports:
-      - '5432:5432'
+      - '5433:5432'
 
   app:
     build:
@@ -15,19 +15,19 @@ services:
     ports:
       - '3000:3000'
     environment:
-      DATABASE_URL: postgres://user:pass@db:5432/ad?schema=public
+      DATABASE_URL: postgres://user:pass@postgres:5432/ad?schema=public
       ADMIN_PASSWORD: test
     depends_on:
-      - db
+      - postgres
 
   pgweb:
     image: sosedoff/pgweb
     ports:
       - '8081:8081'
     environment:
-      PGWEB_DATABASE_URL: postgres://user:pass@db:5432/ad?sslmode=disable
+      PGWEB_DATABASE_URL: postgres://user:pass@postgres:5432/ad?sslmode=disable
     depends_on:
-      - db
+      - postgres
 
 secrets:
   ADMIN_PASSWORD:

@@ -3,4 +3,5 @@
   themes: light --default;
 }
 @config '../tailwind.config.js';
+@source "../node_modules/svelte-streamdown/**/*";
 

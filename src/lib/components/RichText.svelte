@@ -18,17 +18,17 @@
 {:else}
   <div class="prose md:text-xl w-full max-w-full">
     {#key content}
-      <Streamdown
-        {content}
-        animation={{ enabled: false }}
-        allowedLinkPrefixes={['mailto:', 'http://', 'https://']}
-      >
+      <Streamdown {content} animation={{ enabled: false }} allowedLinkPrefixes={['btn:', 'mailto:','*']} unwrapDisallowed="true">
         {#snippet link({ children, token })}
-          <SecondaryButton>
-            <a class="no-underline" href={token.href}>
-              {@render children()}
-            </a>
-          </SecondaryButton>
+          {#if token.href.startsWith('btn:')}
+            <SecondaryButton>
+              <a class="no-underline" href={token.href.replace('btn:', '')}>
+                {token.text.replaceAll('btn:', '')}
+              </a>
+            </SecondaryButton>
+          {:else}
+            <a class="link" href={token.href}>{token.text}</a>
+          {/if}
         {/snippet}
       </Streamdown>
     {/key}
