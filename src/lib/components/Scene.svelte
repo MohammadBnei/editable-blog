@@ -18,6 +18,7 @@
   import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
   import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
   import King from './models/king.svelte';
+  import TextStroke from './TextStroke.svelte'; // Import the TextStroke component
 
   const { scene, size, camera, renderer } = useThrelte();
 
@@ -165,3 +166,5 @@
 >
   <T.MeshStandardMaterial color="orange" />
 </King>
+
+<TextStroke text="Hello World!" position={new Vector3(-5, 5, 0)} size={20} color="#FFFFFF" strokeColor="#000000" />
