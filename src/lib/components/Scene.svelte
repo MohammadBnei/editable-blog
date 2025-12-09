@@ -1,92 +1,156 @@
 <script lang="ts">
-  import { T, useTask, useFrame, useThrelte } from '@threlte/core';
-  import { FlyControls } from 'three-stdlib';
-  import { Color, PerspectiveCamera, Scene, Fog, BoxGeometry, MeshPhongMaterial, Mesh, DirectionalLight, SRGBColorSpace } from 'three';
-  import LensflareLight from './LensflareLight.svelte'; // Import the new component
+  import { T, useTask, useThrelte } from '@threlte/core';
+  import { interactivity, OrbitControls } from '@threlte/extras';
+  import { Spring } from 'svelte/motion';
+  import King from './models/king.svelte';
+  import {
+    Vector2,
+    Raycaster,
+    PlaneGeometry,
+    Mesh,
+    Vector3,
+    PMREMGenerator,
+    WebGLRenderTarget,
+    Group,
+    Color,
+    MeshStandardMaterial
+  } from 'three';
+  import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+  import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+  import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+  import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-  // Threlte context
-  const { renderer, camera, invalidate } = useThrelte();
+  const { scene, size, camera, renderer } = useThrelte();
 
-  // Camera setup
-  let mainCamera: PerspectiveCamera;
+  // Initialize interactivity plugin
+  interactivity();
+
+  // Spring for smooth scaling animation
+
+  let intersectionPoint: Vector3 | undefined;
+  let translAccellerationY = 0;
+  let translAccellerationX = 0;
+  let angleAccelleration = 0;
+  let pmrem = new PMREMGenerator(renderer);
+  let envMapRT: WebGLRenderTarget;
+  let kingRef = $state<Group>();
+  let translY = $state(0);
+  let translX = $state(0);
+  let angleZ = $state(0);
+
+  const composer = new EffectComposer(renderer);
+  const renderPass = new RenderPass(scene, $camera);
+  const bloomPass = new UnrealBloomPass(new Vector2($size.width, $size.height), 0.275, 1, 0);
+  const outputPass = new OutputPass();
+  composer.addPass(renderPass);
+  composer.addPass(bloomPass);
+  composer.addPass(outputPass);
+
   $effect(() => {
-    if (camera.current) {
-      mainCamera = camera.current as PerspectiveCamera;
-      mainCamera.position.set(0, 0, 250);
-      mainCamera.fov = 40;
-      mainCamera.near = 1;
-      mainCamera.far = 15000;
-      mainCamera.updateProjectionMatrix();
-    }
+    composer.setSize($size.width, $size.height);
+    bloomPass.resolution.set($size.width, $size.height);
+  });
+  $effect(() => {
+    renderPass.camera = $camera;
   });
 
-  // Scene background and fog
-  let mainScene: Scene;
-  $effect(() => {
-    if (renderer.current && camera.current) {
-      mainScene = renderer.current.scene;
-      mainScene.background = new Color().setHSL(0.51, 0.4, 0.01, SRGBColorSpace);
-      mainScene.fog = new Fog(mainScene.background, 3500, 15000);
-    }
-  });
+  const { renderStage } = useThrelte();
+  useTask(
+    () => {
+      if (intersectionPoint) {
+        const targetY = intersectionPoint?.y || 0;
+        const targetX = intersectionPoint?.x || 0;
+        translAccellerationY += (targetY - translY) * 0.002; // stiffness
+        translAccellerationY *= 0.95; // damping
+        translY += translAccellerationY;
 
-  // FlyControls setup
-  let controls: FlyControls;
-  $effect(() => {
-    if (mainCamera && renderer.current?.domElement) {
-      controls = new FlyControls(mainCamera, renderer.current.domElement);
-      controls.movementSpeed = 2500;
-      controls.rollSpeed = Math.PI / 6;
-      controls.autoForward = false;
-      controls.dragToLook = false;
-    }
-  });
+        translAccellerationX += (targetX - translX) * 0.002; // stiffness
+        translAccellerationX *= 0.95; // damping
+        translX += translAccellerationX;
 
-  // Animation loop for controls
-  useFrame((_, delta) => {
-    if (controls) {
-      controls.update(delta);
-      invalidate(); // Request a new frame if controls update
-    }
-  });
-
-  // World: many cubes
-  $effect(() => {
-    if (mainScene) {
-      const s = 250;
-      const geometry = new BoxGeometry(s, s, s);
-      const material = new MeshPhongMaterial({ color: 0xffffff, specular: 0xffffff, shininess: 50 });
-
-      for (let i = 0; i < 3000; i++) {
-        const mesh = new Mesh(geometry, material);
-        mesh.position.x = 8000 * (2.0 * Math.random() - 1.0);
-        mesh.position.y = 8000 * (2.0 * Math.random() - 1.0);
-        mesh.position.z = 8000 * (2.0 * Math.random() - 1.0);
-        mesh.rotation.x = Math.random() * Math.PI;
-        mesh.rotation.y = Math.random() * Math.PI;
-        mesh.rotation.z = Math.random() * Math.PI;
-        mesh.matrixAutoUpdate = false;
-        mesh.updateMatrix();
-        mainScene.add(mesh);
+        const dir = intersectionPoint
+          .clone()
+          .sub(new Vector3(translX, translY, 0))
+          .normalize();
+        const dirCos = dir.dot(new Vector3(0, 1, 0));
+        const angle = Math.acos(dirCos) - Math.PI * 0.5;
+        angleAccelleration += (angle - angleZ) * 0.01; // stiffness
+        angleAccelleration *= 0.85; // damping
+        angleZ += angleAccelleration;
       }
+      if (envMapRT) {
+        envMapRT.dispose();
+      }
+      if (kingRef) {
+        kingRef.visible = false;
+        scene.background = null;
+        envMapRT = pmrem.fromScene(scene, 0, 0.1, 1000);
+        scene.background = new Color('#598889').multiplyScalar(0.05);
+        kingRef.visible = true;
+        kingRef.traverse(child => {
+          if ('material' in child) {
+            const material = child.material as MeshStandardMaterial;
+            if ('envMapIntensity' in material) {
+              material.envMap = envMapRT.texture;
+              material.envMapIntensity = 100;
+              material.normalScale.set(0.3, 0.3);
+            }
+          }
+        });
+      }
+      composer.render();
+    },
+    {
+      stage: renderStage
     }
-  });
+  );
+
+  const planeGeo = new PlaneGeometry(20, 20);
+  const mesh = new Mesh(planeGeo);
+
+  const raycaster = new Raycaster();
+  const pointer = new Vector2();
+
+  function onpointermove(event: PointerEvent) {
+    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(pointer, $camera);
+    const intersects = raycaster.intersectObject(mesh);
+    intersectionPoint = intersects[0]?.point;
+    // if (intersectionPoint) {
+    //   // this prevents the spring motion to be different while the pointer
+    //   // spans the x axis
+    //   intersectionPoint.x = 3;
+    // }
+  }
 </script>
 
-<!-- Directional Light -->
-<T.DirectionalLight
-  position={[0, -1, 0]}
-  color={new Color().setHSL(0.1, 0.7, 0.5)}
-  intensity={0.15}
-/>
+<svelte:window {onpointermove} />
 
-<!-- Lensflare Lights -->
-<LensflareLight h={0.55} s={0.9} l={0.5} position={[5000, 0, -1000]} />
-<LensflareLight h={0.08} s={0.8} l={0.5} position={[0, 0, -1000]} />
-<LensflareLight h={0.995} s={0.5} l={0.9} position={[5000, 5000, -1000]} />
+<!-- Perspective Camera -->
+<T.PerspectiveCamera
+  makeDefault
+  position={[0, 10, 10]}
+  fov={75}
+  aspect={window.innerWidth / window.innerHeight}
+  oncreate={ref => {
+    ref.lookAt(0, 0, 0); // Make the camera look at the center of the scene to see both objects
+  }}
+>
+  <OrbitControls enableDamping target={[0, 0, 0]} />
+</T.PerspectiveCamera>
 
-<!-- The floor for shadows (optional, removed from original example) -->
-<!-- <T.Mesh rotation.x={-Math.PI / 2} receiveShadow>
-  <T.CircleGeometry args={[4, 40]} />
-  <T.MeshStandardMaterial color="white" />
-</T.Mesh> -->
+<!-- Directional Light for shadows and shading -->
+<T.DirectionalLight position={[0, 10, 10]} castShadow />
+<T.AmbientLight intensity={0.3} />
+
+
+<King
+  bind:ref={kingRef}
+  position={[translX, translY, 0]}
+  rotation={[angleZ, 0, angleZ, 'ZXY']}
+  scale={2}
+>
+  <T.MeshStandardMaterial color="orange" />
+</King>
+
