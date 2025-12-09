@@ -1,37 +1,47 @@
 <script lang="ts">
-  import { T, useThrelte } from '@threlte/core';
+  import { T } from '@threlte/core';
   import {
     Color,
     Group,
     Mesh,
     MeshBasicMaterial,
     ShapeGeometry,
-    Vector3,
-    type Object3D
+    Vector3
   } from 'three';
   import { FontLoader, Font } from 'three/addons/loaders/FontLoader.js';
   import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
-  import { unzipSync, strFromU8 } from 'fflate'; // Using fflate directly
+  import { unzipSync, strFromU8 } from 'fflate';
 
-  export let text: string;
-  export let size: number = 80;
-  export let color: string = '#006699';
-  export let strokeColor: string = '#006699';
-  export let direction: 'ltr' | 'rtl' | 'tb' = 'ltr';
-  export let opacity: number = 0.4;
-  export let strokeWidth: number = 5;
-  export let position: Vector3 = new Vector3(0, 0, 0);
-  export let rotation: [x: number, y: number, z: number] = [0, 0, 0];
-  export let scale: number = 1;
+  const {
+    text,
+    size = 80,
+    color = '#006699',
+    strokeColor = '#006699',
+    direction = 'ltr',
+    opacity = 0.4,
+    strokeWidth = 5,
+    position = new Vector3(0, 0, 0),
+    rotation = [0, 0, 0],
+    scale = 1
+  } = $props<{
+    text: string;
+    size?: number;
+    color?: string;
+    strokeColor?: string;
+    direction?: 'ltr' | 'rtl' | 'tb';
+    opacity?: number;
+    strokeWidth?: number;
+    position?: Vector3;
+    rotation?: [x: number, y: number, z: number];
+    scale?: number;
+  }>();
 
   let textGroup = $state<Group>();
-  let font: Font | undefined;
+  let font = $state<Font | undefined>(undefined);
 
   // Load the font
   $effect(() => {
     const fontLoader = new FontLoader();
-    // Assuming the font file is in the static directory or accessible via a direct path
-    // You might need to adjust this path based on your project structure
     fetch('/fonts/MPLUSRounded1c-Regular.typeface.json.zip')
       .then(response => response.arrayBuffer())
       .then(data => {
@@ -145,4 +155,3 @@
     scale={scale}
   />
 {/if}
-

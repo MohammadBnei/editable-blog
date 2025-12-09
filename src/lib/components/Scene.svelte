@@ -1,8 +1,6 @@
 <script lang="ts">
   import { T, useTask, useThrelte } from '@threlte/core';
   import { interactivity, OrbitControls } from '@threlte/extras';
-  import { Spring } from 'svelte/motion';
-  import King from './models/king.svelte';
   import {
     Vector2,
     Raycaster,
@@ -19,38 +17,41 @@
   import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
   import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
   import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+  import King from './models/king.svelte';
 
   const { scene, size, camera, renderer } = useThrelte();
 
   // Initialize interactivity plugin
   interactivity();
 
-  // Spring for smooth scaling animation
-
   let intersectionPoint: Vector3 | undefined;
-  let translAccellerationY = 0;
-  let translAccellerationX = 0;
-  let angleAccelleration = 0;
-  let pmrem = new PMREMGenerator(renderer);
-  let envMapRT: WebGLRenderTarget;
+  let translAccellerationY = $state(0);
+  let translAccellerationX = $state(0);
+  let angleAccelleration = $state(0);
+  let pmrem = $state(new PMREMGenerator(renderer));
+  let envMapRT = $state<WebGLRenderTarget>();
   let kingRef = $state<Group>();
   let translY = $state(0);
   let translX = $state(0);
   let angleZ = $state(0);
   let followMouse = $state(true); // New state variable to control mouse following
 
-  const composer = new EffectComposer(renderer);
-  const renderPass = new RenderPass(scene, $camera);
-  const bloomPass = new UnrealBloomPass(new Vector2($size.width, $size.height), 0.275, 1, 0);
-  const outputPass = new OutputPass();
-  composer.addPass(renderPass);
-  composer.addPass(bloomPass);
-  composer.addPass(outputPass);
+  const composer = $state(new EffectComposer(renderer));
+  const renderPass = $state(new RenderPass(scene, $camera));
+  const bloomPass = $state(new UnrealBloomPass(new Vector2($size.width, $size.height), 0.275, 1, 0));
+  const outputPass = $state(new OutputPass());
+
+  $effect(() => {
+    composer.addPass(renderPass);
+    composer.addPass(bloomPass);
+    composer.addPass(outputPass);
+  });
 
   $effect(() => {
     composer.setSize($size.width, $size.height);
     bloomPass.resolution.set($size.width, $size.height);
   });
+
   $effect(() => {
     renderPass.camera = $camera;
   });
