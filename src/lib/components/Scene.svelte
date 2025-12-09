@@ -37,7 +37,7 @@
   let translY = $state(0);
   let translX = $state(0);
   let angleZ = $state(0);
-  let followMouse = true; // New state variable to control mouse following
+  let followMouse = $state(true); // New state variable to control mouse following
 
   const composer = new EffectComposer(renderer);
   const renderPass = new RenderPass(scene, $camera);
@@ -58,7 +58,8 @@
   const { renderStage } = useThrelte();
   useTask(
     () => {
-      if (followMouse && intersectionPoint) { // Only update if followMouse is true
+      if (followMouse && intersectionPoint) {
+        // Only update if followMouse is true
         const targetY = intersectionPoint?.y || 0;
         const targetX = intersectionPoint?.x || 0;
         translAccellerationY += (targetY - translY) * 0.002; // stiffness
@@ -102,7 +103,8 @@
       composer.render();
     },
     {
-      stage: renderStage
+      stage: renderStage,
+      autoInvalidate: false
     }
   );
 
@@ -126,13 +128,16 @@
     // }
   }
 
-  function oncontextmenu(event: MouseEvent) {
+  function onFKeyPress(event: KeyboardEvent) {
+    if (event.key !== 'f' || event.repeat) {
+      return;
+    }
     event.preventDefault(); // Prevent the default right-click context menu
     followMouse = !followMouse; // Toggle followMouse state
   }
 </script>
 
-<svelte:window {onpointermove} oncontextmenu={oncontextmenu} />
+<svelte:window {onpointermove} onkeypress={onFKeyPress} />
 
 <!-- Perspective Camera -->
 <T.PerspectiveCamera
@@ -150,7 +155,6 @@
 <!-- Directional Light for shadows and shading -->
 <T.DirectionalLight position={[0, 10, 10]} castShadow />
 <T.AmbientLight intensity={0.3} />
-
 
 <King
   bind:ref={kingRef}
