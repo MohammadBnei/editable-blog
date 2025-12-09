@@ -38,12 +38,15 @@
     "@tailwindcss/postcss": "^4.1.17",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.17",
+    "@threlte/core": "^8.3.1",
+    "@threlte/extras": "^9.7.1",
     "camelcase-keys": "^10.0.1",
     "nanoid": "^5.1.6",
     "pg": "^8.16.3",
     "release-it": "^19.0.6",
     "slugify": "^1.6.6",
-    "tailwindcss": "^4.1.17"
+    "tailwindcss": "^4.1.17",
+    "three": "^0.181.2"
   },
   "release-it": {
     "$schema": "https://unpkg.com/release-it@19/schema/release-it.json",

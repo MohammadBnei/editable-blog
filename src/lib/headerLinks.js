@@ -4,6 +4,7 @@ export const headerLinks = [
   { name: 'Portfolio', href: '/portfolio' },
   { name: 'Bookmark', href: '/bookmark' },
   { name: 'Resume', href: '/resume' },
+  { name: '3D Scene', href: '/3d-scene' }, // Added new link
 ];
 
 export const searchLinks = [
@@ -13,5 +14,6 @@ export const searchLinks = [
   { name: 'Contact', href: '/#contact' },
   { name: 'Portfolio', href: '/portfolio' },
   { name: 'Linkedin Posts', href: '/linkedin-posts' },
-  { name: 'Login', href: '/login' }
+  { name: 'Login', href: '/login' },
+  { name: '3D Scene', href: '/3d-scene' } // Added new link
 ];
