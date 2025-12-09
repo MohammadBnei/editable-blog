@@ -1,24 +1,29 @@
 <script>
-  import { Canvas, T, useTask } from '@threlte/core';
+  import { T, useTask, useLoader } from '@threlte/core';
   import { interactivity } from '@threlte/extras';
   import { Spring } from 'svelte/motion';
-  import { WebGPURenderer } from 'three/webgpu';
-
-  let renderMode = $state('manual');
+  import { GLTFLoader } from 'three-stdlib'; // Import GLTFLoader
 
   // Initialize interactivity plugin
   interactivity();
 
-  // Spring for smooth scaling animation
+  // Spring for smooth scaling animation (can be applied to the GLTF model if desired)
   const scale = new Spring(1);
 
-  // State for rotation
+  // State for rotation (can be applied to the GLTF model if desired)
   let rotation = $state(0);
 
   // Use Threlte's task hook for animation
   useTask(delta => {
-    rotation += delta; // Rotate based on time delta for frame-rate independence
+    // Example: Apply rotation to the GLTF model if it's loaded
+    if ($gltf && $gltf.scene) {
+      $gltf.scene.rotation.y += delta;
+    }
   });
+
+  // Load the GLTF model
+  // Assuming 'static/model.gltf' exists. Adjust path as needed.
+  const gltf = useLoader(GLTFLoader, '/model.gltf');
 </script>
 
 <!-- Perspective Camera -->
@@ -26,29 +31,17 @@
   makeDefault
   position={[10, 10, 10]}
   oncreate={ref => {
-    ref.lookAt(0, 1, 0); // Make the camera look at the cube's initial position
+    ref.lookAt(0, 0, 0); // Make the camera look at the center of the scene
   }}
 />
 
 <!-- Directional Light for shadows and shading -->
 <T.DirectionalLight position={[0, 10, 10]} castShadow />
 
-<!-- The interactive, animated cube -->
-<T.Mesh
-  rotation.y={rotation}
-  position.y={1}
-  scale={scale.current}
-  onpointerenter={() => {
-    scale.target = 1.5; // Scale up on hover
-  }}
-  onpointerleave={() => {
-    scale.target = 1; // Scale down on hover exit
-  }}
-  castShadow
->
-  <T.BoxGeometry args={[1, 2, 1]} />
-  <T.MeshStandardMaterial color="hotpink" />
-</T.Mesh>
+<!-- The loaded GLTF model -->
+{#if $gltf}
+  <T is={$gltf.scene} position.y={0} scale={scale.current} castShadow receiveShadow />
+{/if}
 
 <!-- The floor for shadows -->
 <T.Mesh rotation.x={-Math.PI / 2} receiveShadow>
