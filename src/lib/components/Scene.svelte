@@ -1,9 +1,8 @@
 <script>
-  import { T, useTask, useLoader } from '@threlte/core';
-  import { interactivity } from '@threlte/extras';
+  import { T, useTask } from '@threlte/core';
+  import { interactivity, OrbitControls } from '@threlte/extras';
   import { Spring } from 'svelte/motion';
-  import { STLLoader } from 'three-stdlib'; // Import STLLoader
-  import { MeshStandardMaterial } from 'three'; // Import MeshStandardMaterial for the STL model
+  import King from './models/king.svelte';
 
   // Initialize interactivity plugin
   interactivity();
@@ -13,15 +12,14 @@
 
   // State for rotation
   let rotation = $state(0);
+  let kingRotation = $state(0);
+  let kingRotationDirection = 1;
 
   // Use Threlte's task hook for animation
   useTask(delta => {
     rotation += delta; // Rotate based on time delta for frame-rate independence
+    kingRotation = (Math.abs(kingRotation) + delta) * kingRotationDirection; // Rotate based on time delta for frame-rate independence
   });
-
-  // Load the STL model
-  // Assuming 'static/model.stl' exists. Adjust path as needed.
-  const stlGeometry = useLoader(STLLoader, '/model.stl');
 </script>
 
 <!-- Perspective Camera -->
@@ -31,10 +29,13 @@
   oncreate={ref => {
     ref.lookAt(0, 0, 0); // Make the camera look at the center of the scene to see both objects
   }}
-/>
+>
+  <OrbitControls />
+</T.PerspectiveCamera>
 
 <!-- Directional Light for shadows and shading -->
 <T.DirectionalLight position={[0, 10, 10]} castShadow />
+<T.AmbientLight intensity={0.3} />
 
 <!-- The interactive, animated cube -->
 <T.Mesh
@@ -53,12 +54,18 @@
   <T.MeshStandardMaterial color="hotpink" />
 </T.Mesh>
 
-<!-- The loaded STL model -->
-{#if $stlGeometry}
-  <T.Mesh geometry={$stlGeometry} position.y={-1} castShadow>
-    <T.MeshStandardMaterial color="lightblue" />
-  </T.Mesh>
-{/if}
+<King
+  position={[0, 5, 0]}
+  scale={2}
+  rotation.x={-Math.PI / 2}
+  rotation.z={kingRotation}
+  castShadow
+  onclick={() => {
+    kingRotationDirection *= -1;
+  }}
+>
+  <T.MeshStandardMaterial color="orange" />
+</King>
 
 <!-- The floor for shadows -->
 <T.Mesh rotation.x={-Math.PI / 2} receiveShadow>
