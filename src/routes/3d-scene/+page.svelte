@@ -1,28 +1,25 @@
 <script>
-  import { WebGPURenderer } from 'three/webgpu';
   import WebsiteHeader from './../../lib/components/WebsiteHeader.svelte';
   import Scene from '$lib/components/Scene.svelte';
   import { Canvas } from '@threlte/core';
 
   let showUserMenu = $state(false);
-  let renderMode = $state('manual');
 </script>
 
 <WebsiteHeader bind:showUserMenu></WebsiteHeader>
 
-<div>
-  <Canvas
-    createRenderer={canvas => {
-      return new WebGPURenderer({
-        canvas,
-        antialias: true,
-        forceWebGL: false
-      });
-      renderer.init().then(() => {
-        renderMode = 'on-demand';
-      });
-    }}
-  >
+<div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;">
+  <Canvas>
     <Scene />
   </Canvas>
 </div>
+
+<style>
+  /* Basic styling to make the canvas fill the viewport */
+  div {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1; /* Ensure it's behind other content if any */
+  }
+</style>
