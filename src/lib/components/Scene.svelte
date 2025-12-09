@@ -37,6 +37,7 @@
   let translY = $state(0);
   let translX = $state(0);
   let angleZ = $state(0);
+  let followMouse = true; // New state variable to control mouse following
 
   const composer = new EffectComposer(renderer);
   const renderPass = new RenderPass(scene, $camera);
@@ -57,7 +58,7 @@
   const { renderStage } = useThrelte();
   useTask(
     () => {
-      if (intersectionPoint) {
+      if (followMouse && intersectionPoint) { // Only update if followMouse is true
         const targetY = intersectionPoint?.y || 0;
         const targetX = intersectionPoint?.x || 0;
         translAccellerationY += (targetY - translY) * 0.002; // stiffness
@@ -112,6 +113,7 @@
   const pointer = new Vector2();
 
   function onpointermove(event: PointerEvent) {
+    if (!followMouse) return; // Do nothing if not following mouse
     pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
     pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(pointer, $camera);
@@ -123,9 +125,14 @@
     //   intersectionPoint.x = 3;
     // }
   }
+
+  function oncontextmenu(event: MouseEvent) {
+    event.preventDefault(); // Prevent the default right-click context menu
+    followMouse = !followMouse; // Toggle followMouse state
+  }
 </script>
 
-<svelte:window {onpointermove} />
+<svelte:window {onpointermove} oncontextmenu={oncontextmenu} />
 
 <!-- Perspective Camera -->
 <T.PerspectiveCamera
@@ -153,4 +160,3 @@
 >
   <T.MeshStandardMaterial color="orange" />
 </King>
-
