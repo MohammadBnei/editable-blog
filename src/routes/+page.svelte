@@ -76,6 +76,7 @@
 
   let {
     title,
+    subtitle,
     testimonials,
     faqs,
     introStep1,
@@ -91,7 +92,8 @@
 
   function initOrReset() {
     $currentUser = data.currentUser;
-    title = data.page?.title || 'Mohammad-Amine BANAEI - <br>Projects & Knowledge Blog';
+    title = data.page?.title || 'Migrating fragile MVPs to high-performance Go architectures.';
+    subtitle = data.page?.subtitle || 'I turn \'It works on my machine\' into \'It scales in production.\'';
     faqs = data.page?.faqs || FAQS_PLACEHOLDER;
 
     // Make a deep copy
@@ -189,6 +191,7 @@
           pageId: 'home',
           page: {
             title,
+            subtitle,
             faqs,
             testimonials,
             introStep1,
@@ -257,6 +260,9 @@
     <h1 class="text-4xl md:text-7xl font-bold text-center">
       <PlainText bind:content={title} />
     </h1>
+    <p class="text-xl md:text-2xl text-center mt-4">
+      <PlainText bind:content={subtitle} />
+    </p>
   </div>
 </div>
 
@@ -311,11 +317,10 @@
         type="button"
         on:click={() =>
           document
-            .getElementById('trust-section')
+            .getElementById('productized-services')
             .scrollIntoView({ behavior: 'smooth', block: 'start' })}
-        >View Case Studies</PrimaryButton
+        >Plan Your Migration</PrimaryButton
       >
-      <PrimaryButton size="lg" href={`mailto:${EMAIL}`}>DM me</PrimaryButton>
     </div>
   </div>
 </div>
