@@ -282,13 +282,6 @@
     <div class="pb-6">
       <RichText multiLine bind:content={bio} />
     </div>
-
-    <NotEditable>
-      <div class="flex flex-col sm:flex-row sm:space-x-6 md:space-x-8 space-y-4 sm:space-y-0">
-        <PrimaryButton size="lg" href={`mailto:${EMAIL}`}>Email</PrimaryButton>
-        <!-- Removed WhatsApp button as phone number is no longer present -->
-      </div>
-    </NotEditable>
   </div>
 </div>
 
@@ -296,7 +289,7 @@
   <div class="max-w-(--breakpoint-lg) mx-auto px-6">
     <div class="relative">
       <div class="w-1 bg-gray-900 absolute inset-0 -top-8 bottom-12 mx-auto z-0">
-        <div class="w-4 h-4 rounded-full bg-gray-900 absolute -top-1 -left-[6px]"></div>
+        <div class="w-4 h-4 rounded-full bg-gray-900 absolute -top-1 -left-1.5"></div>
       </div>
       <div class="z-10">
         <IntroStep bind:intro={introStep1} />
