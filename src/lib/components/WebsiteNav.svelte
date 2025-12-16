@@ -5,7 +5,7 @@
   import Search from './Search.svelte';
   import { isEditing, currentUser, currentLang } from '$lib/stores'; // Import currentLang store
   import { goto, invalidateAll } from '$app/navigation';
-  import { headerLinks, brandLink } from '$lib/headerLinks'; // Import headerLinks and brandLink
+  import { headerLinks, brandLink, authLinks } from '$lib/headerLinks'; // Import headerLinks, brandLink, and authLinks
 
   let { showUserMenu = $bindable(), showSearch } = $props();
 
@@ -95,6 +95,11 @@
           {#each headerLinks as link}
             <li><a href={link.href}>{link.name}</a></li>
           {/each}
+          {#if $currentUser}
+            {#each authLinks as link}
+              <li><a href={link.href}>{link.name}</a></li>
+            {/each}
+          {/if}
         </ul>
 
         <!-- Desktop Navigation (hidden on small screens) -->
@@ -111,6 +116,13 @@
               {link.name}
             </a>
           {/each}
+          {#if $currentUser}
+            {#each authLinks as link}
+              <a class="font-medium px-2 py-1 rounded-md hover:text-black" href={link.href}>
+                {link.name}
+              </a>
+            {/each}
+          {/if}
         </div>
 
         <div class="flex-1"></div>
