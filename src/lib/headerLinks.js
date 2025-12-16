@@ -1,5 +1,5 @@
 export const headerLinks = [
-  { name: 'About', href: '/' },
+  { name: 'Mohammad-Amine Banaei', href: '/' }, // Replaced 'About' with your name
   { name: 'Blog', href: '/blog' },
   { name: 'Portfolio', href: '/portfolio' },
   { name: 'Bookmark', href: '/bookmark' },
