@@ -167,4 +167,4 @@
   <T.MeshStandardMaterial color="orange" />
 </King>
 
-<TextStroke text="Hello World!" position={new Vector3(-5, 5, 0)} size={20} color="#FFFFFF" strokeColor="#000000" />
+<TextStroke text="Hello World!" position={new Vector3(0, 5, 0)} size={20} color="#FFFFFF" strokeColor="#000000" />
