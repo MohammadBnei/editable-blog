@@ -1,5 +1,6 @@
+export const brandLink = { name: 'Mohammad-Amine Banaei', href: '/' };
+
 export const headerLinks = [
-  { name: 'Mohammad-Amine Banaei', href: '/' }, // Replaced 'About' with your name
   { name: 'Blog', href: '/blog' },
   { name: 'Portfolio', href: '/portfolio' },
   { name: 'Bookmark', href: '/bookmark' },

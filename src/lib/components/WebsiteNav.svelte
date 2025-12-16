@@ -5,7 +5,7 @@
   import Search from './Search.svelte';
   import { isEditing, currentUser, currentLang } from '$lib/stores'; // Import currentLang store
   import { goto, invalidateAll } from '$app/navigation';
-  import { headerLinks } from '$lib/headerLinks'; // Import headerLinks
+  import { headerLinks, brandLink } from '$lib/headerLinks'; // Import headerLinks and brandLink
 
   let { showUserMenu = $bindable(), showSearch } = $props();
 
@@ -91,6 +91,7 @@
           id="mobile-menu-popover"
           style="position-anchor:--mobile-menu-anchor"
         >
+          <li><a href={brandLink.href}>{brandLink.name}</a></li>
           {#each headerLinks as link}
             <li><a href={link.href}>{link.name}</a></li>
           {/each}
@@ -98,6 +99,13 @@
 
         <!-- Desktop Navigation (hidden on small screens) -->
         <div class="hidden lg:flex lg:items-center lg:space-x-6">
+          <!-- Brand Link (Mohammad-Amine Banaei) -->
+          <a class="font-medium px-2 py-1 rounded-md hover:text-black" href={brandLink.href}>
+            {brandLink.name}
+          </a>
+          <!-- Spacer to push other links to the right -->
+          <div class="flex-1"></div>
+          <!-- Other Header Links -->
           {#each headerLinks as link}
             <a class="font-medium px-2 py-1 rounded-md hover:text-black" href={link.href}>
               {link.name}
