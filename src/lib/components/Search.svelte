@@ -1,8 +1,9 @@
 <script>
   import { onMount } from 'svelte';
   import { debounce, classNames } from '$lib/util';
-  import { searchLinks } from '$lib/headerLinks'; // Import searchLinks
+  import { searchLinks, authLinks } from '$lib/headerLinks'; // Import searchLinks
   import { goto } from '$app/navigation';
+  import { currentUser } from '$lib/stores'; // Import currentLang store
 
   export let showSearch;
   let value;
@@ -13,14 +14,19 @@
 
   onMount(() => {
     input.focus();
+    if ($currentUser) {
+      result.push(...authLinks);
+    }
   });
 
   async function search() {
+    result = searchLinks; // Use searchLinks as shortcuts when no search value
+    if ($currentUser) {
+      result.push(...authLinks);
+    }
     if (value) {
       const response = await fetch(`/api/search?q=${value}`);
       result = await response.json();
-    } else {
-      result = searchLinks; // Use searchLinks as shortcuts when no search value
     }
     selectedResult = 0;
   }
@@ -119,6 +125,35 @@
       href={item.href}>{item.name}</a
     >
   {/each}
+  <!-- <label class="toggle text-base-content">
+    <input type="checkbox" value="dark" class="theme-controller" />
+
+    <svg aria-label="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+      ><g
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        stroke-width="2"
+        fill="none"
+        stroke="currentColor"
+        ><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"
+        ></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path
+          d="M2 12h2"
+        ></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path
+          d="m19.07 4.93-1.41 1.41"
+        ></path></g
+      ></svg
+    >
+
+    <svg aria-label="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+      ><g
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        stroke-width="2"
+        fill="none"
+        stroke="currentColor"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></g
+      ></svg
+    >
+  </label> -->
 </div>
 
 <svelte:window on:keydown={onKeyDown} />

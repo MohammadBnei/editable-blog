@@ -19,7 +19,7 @@
 <textarea
   bind:this={textareaNode}
   bind:value={content}
-  class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+  class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
   class:h-8={!multiLine}
   class:min-h-[100px]={multiLine}
   class:resize-y={multiLine}

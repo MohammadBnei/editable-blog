@@ -83,7 +83,9 @@
             ></path>
           </svg>
         </button>
-
+        <div class="lg:hidden font-bold grow text-center">
+          <a href={brandLink.href}>{brandLink.name}</a>
+        </div>
         <!-- Mobile Dropdown Menu (visible only on small screens) -->
         <ul
           class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm lg:hidden"
@@ -91,7 +93,6 @@
           id="mobile-menu-popover"
           style="position-anchor:--mobile-menu-anchor"
         >
-          <li><a href={brandLink.href}>{brandLink.name}</a></li>
           {#each headerLinks as link}
             <li><a href={link.href}>{link.name}</a></li>
           {/each}
@@ -103,34 +104,28 @@
         </ul>
 
         <!-- Desktop Navigation (hidden on small screens) -->
-        <div class="hidden lg:flex lg:items-center lg:space-x-6">
+        <div class="hidden lg:flex items-center justify-between space-x-6 grow">
           <!-- Brand Link (Mohammad-Amine Banaei) -->
-          <a class="font-medium px-2 py-1 rounded-md hover:text-black" href={brandLink.href}>
+          <a
+            class="font-bold text-xl px-2 py-1 rounded-md hover:scale-105 transition-all"
+            href={brandLink.href}
+          >
             {brandLink.name}
           </a>
-          <!-- Spacer to push other links to the right -->
-          <div class="flex-1"></div>
-          <!-- Other Header Links -->
-          {#each headerLinks as link}
-            <a class="font-medium px-2 py-1 rounded-md hover:text-black" href={link.href}>
-              {link.name}
-            </a>
-          {/each}
-          {#if $currentUser}
-            {#each authLinks as link}
+          <div>
+            <!-- Other Header Links -->
+            {#each headerLinks as link}
               <a class="font-medium px-2 py-1 rounded-md hover:text-black" href={link.href}>
                 {link.name}
               </a>
             {/each}
-          {/if}
+          </div>
         </div>
-
-        <div class="flex-1"></div>
 
         <!-- Search Button -->
         <button
           title="Search"
-          class="mr-6 hover:text-black cursor-pointer"
+          class="m-2 hover:text-black cursor-pointer"
           onclick={() => (showSearch = true)}
           aria-label="Search"
         >
@@ -178,7 +173,7 @@
         <!-- Language Toggle -->
         <button
           onclick={() => setLanguage(toggleLangValue)}
-          class={`ml-4 uppercase hover:underline cursor-pointer`}
+          class="m-2 uppercase hover:underline cursor-pointer"
           aria-label="Toggle Language">{$currentLang}</button
         >
       </div>

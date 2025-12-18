@@ -64,7 +64,7 @@
     }
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = e => {
       try {
         const importedData = JSON.parse(e.target.result);
         // Overwrite existing page keys with imported ones
@@ -73,10 +73,8 @@
             page[key] = importedData[key];
           }
         }
-        alert('Page content imported successfully!');
       } catch (error) {
         console.error('Error parsing JSON:', error);
-        alert('Failed to import page content. Please ensure it is a valid JSON file.');
       }
     };
     reader.readAsText(file);
@@ -107,10 +105,10 @@
 </svelte:head>
 
 <WebsiteHeader bind:showUserMenu cancel={() => ($isEditing = false)} save={savePage}>
-  <div class="flex flex-col">
+  <div class="flex flex-col gap-1">
+    <PrimaryButton on:click={exportPageContent}>Export Page JSON</PrimaryButton>
     {#if $isEditing}
-      <PrimaryButton onclick={exportPageContent}>Export Page JSON</PrimaryButton>
-      <PrimaryButton onclick={() => fileInput.click()}>Import Page JSON</PrimaryButton>
+      <PrimaryButton on:click={() => fileInput.click()}>Import Page JSON</PrimaryButton>
       <input
         type="file"
         accept="application/json"
@@ -119,7 +117,7 @@
         class="hidden"
       />
     {/if}
-    <PrimaryButton onclick={toggleEdit}>Edit Page</PrimaryButton>
+    <PrimaryButton on:click={toggleEdit}>Edit Page</PrimaryButton>
     <LoginMenu />
   </div>
 </WebsiteHeader>
@@ -431,9 +429,9 @@
       <h2 class="text-4xl font-bold mb-4">
         <PlainText bind:content={page.ctaHeadline} />
       </h2>
-      <p class="text-xl mb-8">
+      <div class="text-xl mb-8">
         <PlainText bind:content={page.ctaSubheadline} />
-      </p>
+      </div>
       <PrimaryButton>
         <PlainText bind:content={page.ctaButtonText} />
       </PrimaryButton>

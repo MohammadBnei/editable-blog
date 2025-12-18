@@ -19,4 +19,6 @@
   <meta name="viewport" content="width=device-width" />
 </svelte:head>
 
-{@render children()}
+<main class="snap-y">
+  {@render children()}
+</main>
