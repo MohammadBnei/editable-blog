@@ -16,6 +16,8 @@
   let page = $derived(data.page || {});
 
   let showUserMenu = $state(false);
+  let fileInput; // Reference to the hidden file input
+
   // --------------------------------------------------------------------------
   // Page logic
   // --------------------------------------------------------------------------
@@ -39,6 +41,47 @@
       console.error(err);
       alert('There was an error. Please try again.');
     }
+  }
+
+  function exportPageContent() {
+    const filename = `page-content-${data.lang || 'en'}.json`;
+    const jsonStr = JSON.stringify(page, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function importPageContent(event) {
+    const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        // Overwrite existing page keys with imported ones
+        for (const key in importedData) {
+          if (Object.prototype.hasOwnProperty.call(importedData, key)) {
+            page[key] = importedData[key];
+          }
+        }
+        alert('Page content imported successfully!');
+      } catch (error) {
+        console.error('Error parsing JSON:', error);
+        alert('Failed to import page content. Please ensure it is a valid JSON file.');
+      }
+    };
+    reader.readAsText(file);
+    // Reset the file input to allow importing the same file again
+    event.target.value = '';
   }
 </script>
 
@@ -65,6 +108,17 @@
 
 <WebsiteHeader bind:showUserMenu cancel={() => ($isEditing = false)} save={savePage}>
   <div class="flex flex-col">
+    {#if $isEditing}
+      <PrimaryButton onclick={exportPageContent}>Export Page JSON</PrimaryButton>
+      <PrimaryButton onclick={() => fileInput.click()}>Import Page JSON</PrimaryButton>
+      <input
+        type="file"
+        accept="application/json"
+        bind:this={fileInput}
+        onchange={importPageContent}
+        class="hidden"
+      />
+    {/if}
     <PrimaryButton onclick={toggleEdit}>Edit Page</PrimaryButton>
     <LoginMenu />
   </div>
