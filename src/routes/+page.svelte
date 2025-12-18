@@ -144,7 +144,7 @@
 <div id="pillars" class="hero min-h-screen snap-center">
   <div class="hero-content">
     <div class="max-w-(--breakpoint-lg) overflow-auto">
-      <h1 class="text-2xl md:text-4xl font-bold text-center mb-12">
+      <h1 class="text-4xl font-bold text-center mb-12">
         <PlainText bind:content={page.pillarTitle} />
       </h1>
       <div class="stats stats-vertical lg:stats-horizontal shadow">
@@ -168,7 +168,7 @@
 <div id="engagements" class="hero min-h-screen snap-center">
   <div class="hero-content">
     <div class="max-w-(--breakpoint-lg) space-y-2">
-      <h1 class="text-2xl md:text-4xl font-bold text-center my-12">
+      <h1 class="text-4xl font-bold text-center my-12">
         <PlainText bind:content={page.engagementTitle} />
       </h1>
       <div class="card shadow-sm">
@@ -196,7 +196,7 @@
 <div id="provenresults" class="hero min-h-screen snap-center">
   <div class="hero-content">
     <div class="max-w-(--breakpoint-lg) space-y-2">
-      <h1 class="text-2xl md:text-4xl font-bold text-center my-12">
+      <h1 class="text-4xl font-bold text-center my-12">
         <PlainText bind:content={page.provenTitle} />
       </h1>
       <div class="card shadow-sm">
@@ -234,7 +234,7 @@
           alt="Mohammad-Amine BANAEI"
         />
       </div>
-      <h1 class="text-2xl md:text-4xl font-bold text-center mb-12">
+      <h1 class="text-4xl font-bold text-center mb-12">
         <PlainText bind:content={page.bioTitle} />
       </h1>
       <div class="stats stats-vertical lg:stats-horizontal shadow lg:grid-cols-2 lg:gap-4">
@@ -256,7 +256,7 @@
 <div id="the-process" class="hero min-h-screen snap-center">
   <div class="hero-content">
     <div class="max-w-(--breakpoint-lg) space-y-2">
-      <h1 class="text-2xl md:text-4xl font-bold text-center my-12">
+      <h1 class="text-4xl font-bold text-center my-12">
         <PlainText bind:content={page.processTitle} />
       </h1>
       <h2 class="text-xl md:text-2xl text-center mb-12">
@@ -362,7 +362,7 @@
 <div id="objection-handling" class="hero min-h-screen snap-center">
   <div class="hero-content">
     <div class="max-w-(--breakpoint-lg)">
-      <h1 class="text-2xl md:text-4xl font-bold text-center my-12">
+      <h1 class="text-4xl font-bold text-center my-12">
         <PlainText bind:content={page.faqTitle} />
       </h1>
       <h2 class="text-xl md:text-2xl text-center mb-12">
