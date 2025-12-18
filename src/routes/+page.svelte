@@ -169,6 +169,37 @@
 <!-- svelte-ignore element_invalid_self_closing_tag -->
 <div class="divider" />
 
+<!-- Bio -->
+<div id="contact" class="hero min-h-screen snap-center">
+  <div class="hero-content">
+    <div class="max-w-(--breakpoint-lg) overflow-auto">
+      <div class="w-48 h-48 md:w-72 md:h-72 mx-auto overflow-hidden relative rounded-full">
+        <Image
+          class="block w-48 h-48 md:w-72 md:h-72 rounded-full"
+          maxWidth="384"
+          maxHeight="384"
+          bind:src={page.bioPicture}
+          alt="Mohammad-Amine BANAEI"
+        />
+      </div>
+      <h1 class="text-2xl md:text-4xl font-bold text-center mb-12">
+        <PlainText bind:content={page.bioTitle} />
+      </h1>
+      <div class="stats stats-vertical lg:stats-horizontal shadow lg:grid-cols-2 lg:gap-4">
+        <div class="stat prose md:text-xl">
+          <RichText multiLine bind:content={page.bio} />
+        </div>
+        <div class="stat prose md:text-xl">
+          <RichText multiLine bind:content={page.knowledgeTransfer} />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- svelte-ignore element_invalid_self_closing_tag -->
+<div class="divider" />
+
 <!-- The Process -->
 <div id="the-process" class="hero min-h-screen snap-center">
   <div class="hero-content">
@@ -198,7 +229,7 @@
           </div>
           <div class="timeline-start mb-10 md:text-end">
             <time class="font-mono italic">Step 1</time>
-            <div class="text-lg font-black">
+            <div class="text-lg font-black prose">
               <PlainText bind:content={page.processStep1Title} />
             </div>
             <RichText multiLine bind:content={page.processStep1Content} />
@@ -223,7 +254,7 @@
           </div>
           <div class="timeline-end md:mb-10">
             <time class="font-mono italic">Step 2</time>
-            <div class="text-lg font-black">
+            <div class="text-lg font-black prose">
               <PlainText bind:content={page.processStep2Title} />
             </div>
             <RichText multiLine bind:content={page.processStep2Content} />
@@ -248,44 +279,13 @@
           </div>
           <div class="timeline-start mb-10 md:text-end">
             <time class="font-mono italic">Step 3</time>
-            <div class="text-lg font-black">
+            <div class="text-lg font-black prose">
               <PlainText bind:content={page.processStep3Title} />
             </div>
             <RichText multiLine bind:content={page.processStep3Content} />
           </div>
         </li>
       </ul>
-    </div>
-  </div>
-</div>
-
-<!-- svelte-ignore element_invalid_self_closing_tag -->
-<div class="divider" />
-
-<!-- Bio -->
-<div id="contact" class="hero min-h-screen snap-center">
-  <div class="hero-content">
-    <div class="max-w-(--breakpoint-lg) overflow-auto">
-      <div class="w-48 h-48 md:w-72 md:h-72 mx-auto overflow-hidden relative rounded-full">
-        <Image
-          class="block w-48 h-48 md:w-72 md:h-72 rounded-full"
-          maxWidth="384"
-          maxHeight="384"
-          bind:src={page.bioPicture}
-          alt="Mohammad-Amine BANAEI"
-        />
-      </div>
-      <h1 class="text-2xl md:text-4xl font-bold text-center mb-12">
-        <PlainText bind:content={page.bioTitle} />
-      </h1>
-      <div class="stats stats-vertical lg:stats-horizontal shadow lg:grid-cols-2 lg:gap-4">
-        <div class="stat prose md:text-xl">
-          <RichText multiLine bind:content={page.bio} />
-        </div>
-        <div class="stat prose md:text-xl">
-          <RichText multiLine bind:content={page.knowledgeTransfer} />
-        </div>
-      </div>
     </div>
   </div>
 </div>
