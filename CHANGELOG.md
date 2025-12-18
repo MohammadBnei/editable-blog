@@ -1,5 +1,18 @@
 # Changelog
 
+# [0.31.0](/compare/0.30.3...0.31.0) (2025-12-18)
+
+
+### Features
+
+* add "The Process" timeline section to homepage dd27408
+* add FAQ chat bubble section and final CTA section 2d31964
+* Add JSON export/import for page content in edit mode 82a6d63
+* Conditionally display auth links in navigation 5678492
+* Replace 'About' with 'Mohammad-Amine Banaei' in header links 99e10e7
+* Separate brand link from navigation links 19875ae
+* update landing page hero section with new headline and CTA cad16f8
+
 ## [0.30.3](/compare/0.30.2...0.30.3) (2025-12-03)
 
 ## [0.30.2](/compare/0.30.1...0.30.2) (2025-12-03)
