@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.31.1](/compare/0.31.0...0.31.1) (2025-12-18)
+
+
+### Bug Fixes
+
+* **import json:** toggle edition upon importing new json file ffd983d
+
 # [0.31.0](/compare/0.30.3...0.31.0) (2025-12-18)
 
 
