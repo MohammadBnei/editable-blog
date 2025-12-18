@@ -65,6 +65,8 @@
 
     const reader = new FileReader();
     reader.onload = e => {
+      toggleEdit();
+
       try {
         const importedData = JSON.parse(e.target.result);
         // Overwrite existing page keys with imported ones
@@ -107,16 +109,14 @@
 <WebsiteHeader bind:showUserMenu cancel={() => ($isEditing = false)} save={savePage}>
   <div class="flex flex-col gap-1">
     <PrimaryButton on:click={exportPageContent}>Export Page JSON</PrimaryButton>
-    {#if $isEditing}
-      <PrimaryButton on:click={() => fileInput.click()}>Import Page JSON</PrimaryButton>
-      <input
-        type="file"
-        accept="application/json"
-        bind:this={fileInput}
-        onchange={importPageContent}
-        class="hidden"
-      />
-    {/if}
+    <PrimaryButton on:click={() => fileInput.click()}>Import Page JSON</PrimaryButton>
+    <input
+      type="file"
+      accept="application/json"
+      bind:this={fileInput}
+      onchange={importPageContent}
+      class="hidden"
+    />
     <PrimaryButton on:click={toggleEdit}>Edit Page</PrimaryButton>
     <LoginMenu />
   </div>
