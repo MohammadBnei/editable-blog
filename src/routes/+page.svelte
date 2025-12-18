@@ -313,4 +313,83 @@
   </div>
 </div>
 
+<!-- svelte-ignore element_invalid_self_closing_tag -->
+<div class="divider" />
+
+<!-- Objection Handling (The FAQ) -->
+<div id="objection-handling" class="hero min-h-screen snap-center">
+  <div class="hero-content">
+    <div class="max-w-(--breakpoint-lg) space-y-8">
+      <h1 class="text-2xl md:text-4xl font-bold text-center my-12">
+        <PlainText bind:content={page.faqTitle} />
+      </h1>
+      <h2 class="text-xl md:text-2xl text-center mb-12">
+        <PlainText bind:content={page.faqSubtitle} />
+      </h2>
+
+      <!-- Interaction 1: The Stack Clash -->
+      <div class="chat chat-start">
+        <div class="chat-header">Client</div>
+        <div class="chat-bubble prose">
+          <RichText multiLine bind:content={page.faqClient1} />
+        </div>
+      </div>
+      <div class="chat chat-end">
+        <div class="chat-header">You</div>
+        <div class="chat-bubble prose">
+          <RichText multiLine bind:content={page.faqYour1} />
+        </div>
+      </div>
+
+      <!-- Interaction 2: The Role Confusion -->
+      <div class="chat chat-start">
+        <div class="chat-header">Client</div>
+        <div class="chat-bubble prose">
+          <RichText multiLine bind:content={page.faqClient2} />
+        </div>
+      </div>
+      <div class="chat chat-end">
+        <div class="chat-header">You</div>
+        <div class="chat-bubble prose">
+          <RichText multiLine bind:content={page.faqYour2} />
+        </div>
+      </div>
+
+      <!-- Interaction 3: The "Bus Factor" Fear -->
+      <div class="chat chat-start">
+        <div class="chat-header">Client</div>
+        <div class="chat-bubble prose">
+          <RichText multiLine bind:content={page.faqClient3} />
+        </div>
+      </div>
+      <div class="chat chat-end">
+        <div class="chat-header">You</div>
+        <div class="chat-bubble prose">
+          <RichText multiLine bind:content={page.faqYour3} />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- svelte-ignore element_invalid_self_closing_tag -->
+<div class="divider" />
+
+<!-- The Grand Finale: The Footer CTA -->
+<div id="footer-cta" class="hero min-h-[50vh] snap-center bg-primary text-primary-content">
+  <div class="hero-content text-center">
+    <div class="max-w-md">
+      <h2 class="text-4xl font-bold mb-4">
+        <PlainText bind:content={page.ctaHeadline} />
+      </h2>
+      <p class="text-xl mb-8">
+        <PlainText bind:content={page.ctaSubheadline} />
+      </p>
+      <PrimaryButton on:click={() => console.log('Book Your Free Scalability Audit clicked')}>
+        <PlainText bind:content={page.ctaButtonText} />
+      </PrimaryButton>
+    </div>
+  </div>
+</div>
+
 <Footer counter="/" />
