@@ -65,7 +65,7 @@
 
 <WebsiteHeader bind:showUserMenu cancel={() => ($isEditing = false)} save={savePage}>
   <div class="flex flex-col">
-    <PrimaryButton on:click={toggleEdit}>Edit Page</PrimaryButton>
+    <PrimaryButton onclick={toggleEdit}>Edit Page</PrimaryButton>
     <LoginMenu />
   </div>
 </WebsiteHeader>
@@ -303,23 +303,13 @@
   </NotEditable>
 {/if}
 
-<!-- FAQs -->
-<div class="bg-white">
-  <div class="max-w-(--breakpoint-lg) mx-auto px-6">
-    <div class="font-bold text-sm sm:text-base">FAQs</div>
-    <div class="prose md:prose-xl pb-12 sm:pb-24">
-      <RichText multiLine bind:content={page.faqs} />
-    </div>
-  </div>
-</div>
-
 <!-- svelte-ignore element_invalid_self_closing_tag -->
 <div class="divider" />
 
 <!-- Objection Handling (The FAQ) -->
 <div id="objection-handling" class="hero min-h-screen snap-center">
   <div class="hero-content">
-    <div class="max-w-(--breakpoint-lg) space-y-8">
+    <div class="max-w-(--breakpoint-lg)">
       <h1 class="text-2xl md:text-4xl font-bold text-center my-12">
         <PlainText bind:content={page.faqTitle} />
       </h1>
@@ -330,53 +320,58 @@
       <!-- Interaction 1: The Stack Clash -->
       <div class="chat chat-start">
         <div class="chat-header">Client</div>
-        <div class="chat-bubble prose">
-          <RichText multiLine bind:content={page.faqClient1} />
+        <div class="chat-bubble">
+          <div class="prose">
+            <RichText bind:content={page.faqClient1} />
+          </div>
         </div>
       </div>
       <div class="chat chat-end">
-        <div class="chat-header">You</div>
-        <div class="chat-bubble prose">
-          <RichText multiLine bind:content={page.faqYour1} />
+        <div class="chat-header text-neutral-400">MBanaei</div>
+        <div class="chat-bubble">
+          <div class="prose">
+            <RichText bind:content={page.faqYour1} />
+          </div>
         </div>
       </div>
 
       <!-- Interaction 2: The Role Confusion -->
       <div class="chat chat-start">
-        <div class="chat-header">Client</div>
-        <div class="chat-bubble prose">
-          <RichText multiLine bind:content={page.faqClient2} />
+        <div class="chat-bubble">
+          <div class="prose">
+            <RichText bind:content={page.faqClient2} />
+          </div>
         </div>
       </div>
       <div class="chat chat-end">
-        <div class="chat-header">You</div>
-        <div class="chat-bubble prose">
-          <RichText multiLine bind:content={page.faqYour2} />
+        <div class="chat-bubble">
+          <div class="prose">
+            <RichText bind:content={page.faqYour2} />
+          </div>
         </div>
       </div>
 
       <!-- Interaction 3: The "Bus Factor" Fear -->
       <div class="chat chat-start">
-        <div class="chat-header">Client</div>
-        <div class="chat-bubble prose">
-          <RichText multiLine bind:content={page.faqClient3} />
+        <div class="chat-bubble">
+          <div class="prose">
+            <RichText bind:content={page.faqClient3} />
+          </div>
         </div>
       </div>
       <div class="chat chat-end">
-        <div class="chat-header">You</div>
-        <div class="chat-bubble prose">
-          <RichText multiLine bind:content={page.faqYour3} />
+        <div class="chat-bubble">
+          <div class="prose">
+            <RichText bind:content={page.faqYour3} />
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- svelte-ignore element_invalid_self_closing_tag -->
-<div class="divider" />
-
 <!-- The Grand Finale: The Footer CTA -->
-<div id="footer-cta" class="hero min-h-[50vh] snap-center bg-primary text-primary-content">
+<div id="footer-cta" class="hero min-h-[50vh] snap-center bg-primary text-primary-content mt-24">
   <div class="hero-content text-center">
     <div class="max-w-md">
       <h2 class="text-4xl font-bold mb-4">
@@ -385,7 +380,7 @@
       <p class="text-xl mb-8">
         <PlainText bind:content={page.ctaSubheadline} />
       </p>
-      <PrimaryButton on:click={() => console.log('Book Your Free Scalability Audit clicked')}>
+      <PrimaryButton>
         <PlainText bind:content={page.ctaButtonText} />
       </PrimaryButton>
     </div>
