@@ -109,6 +109,16 @@
       <div class="md:text-xl mt-4 prose m-auto">
         <RichText multiLine bind:content={page.pitch} />
       </div>
+      <div class="m-auto w-fit">
+        {#if $isEditing}
+          <PlainText bind:content={page.mainCTA} />
+        {/if}
+        <a href={page.mainCTA || '#'} target="_blank" rel="noopener noreferrer">
+          <PrimaryButton>
+            <PlainText bind:content={page.ctaButtonText} />
+          </PrimaryButton>
+        </a>
+      </div>
     </div>
   </div>
 </div>
@@ -234,6 +244,12 @@
         <div class="stat prose md:text-xl">
           <RichText multiLine bind:content={page.knowledgeTransfer} />
         </div>
+      </div>
+      <h1 class="text-4xl font-bold text-center my-12">
+        <PlainText bind:content={page.contactTitle} />
+      </h1>
+      <div class="prose md:text-xl">
+        <RichText multiLine bind:content={page.bio2} />
       </div>
     </div>
   </div>
@@ -422,9 +438,14 @@
       <div class="text-xl mb-8">
         <PlainText bind:content={page.ctaSubheadline} />
       </div>
-      <PrimaryButton>
-        <PlainText bind:content={page.ctaButtonText} />
-      </PrimaryButton>
+      {#if $isEditing}
+        <PlainText bind:content={page.mainCTA} />
+      {/if}
+      <a href={page.mainCTA || '#'} target="_blank" rel="noopener noreferrer">
+        <PrimaryButton>
+          <PlainText bind:content={page.ctaButtonText} />
+        </PrimaryButton>
+      </a>
     </div>
   </div>
 </div>

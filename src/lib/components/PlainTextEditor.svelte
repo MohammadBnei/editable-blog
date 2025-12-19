@@ -1,19 +1,7 @@
 <script>
-  import { onMount, onDestroy } from 'svelte';
-
-  export let content = '';
-  export let multiLine = false;
+  let { content = $bindable(''), multiLine = false } = $props();
 
   let textareaNode;
-
-  // Focus the textarea when the component mounts
-  onMount(() => {
-    if (textareaNode) {
-      textareaNode.focus();
-    }
-  });
-
-  // No onDestroy needed as there are no external resources to clean up
 </script>
 
 <textarea
@@ -25,7 +13,7 @@
   class:resize-y={multiLine}
   class:overflow-hidden={!multiLine}
   rows={multiLine ? 5 : 1}
-  on:keydown={(e) => {
+  onkeydown={e => {
     // Prevent new lines if not multiLine, but allow other key presses
     if (!multiLine && e.key === 'Enter') {
       e.preventDefault();
