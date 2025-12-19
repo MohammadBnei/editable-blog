@@ -222,7 +222,7 @@
 <div class="divider" />
 
 <!-- Bio -->
-<div id="contact" class="hero min-h-screen snap-center">
+<div id="bio" class="hero min-h-screen snap-center">
   <div class="hero-content">
     <div class="max-w-(--breakpoint-lg) overflow-auto">
       <div class="w-48 h-48 md:w-72 md:h-72 mx-auto overflow-hidden relative rounded-full">
@@ -245,10 +245,10 @@
           <RichText multiLine bind:content={page.knowledgeTransfer} />
         </div>
       </div>
-      <h1 class="text-4xl font-bold text-center my-12">
+      <h1 class="text-4xl font-bold text-center my-12" id=contact>
         <PlainText bind:content={page.contactTitle} />
       </h1>
-      <div class="prose md:text-xl">
+      <div class="prose md:text-xl text-center">
         <RichText multiLine bind:content={page.bio2} />
       </div>
     </div>
