@@ -1,11 +1,8 @@
-<script>
-  let { content = $bindable(''), multiLine = false } = $props();
-
-  let textareaNode;
+<script lang="ts">
+  let { content = $bindable<string>(), multiLine = false } = $props();
 </script>
 
 <textarea
-  bind:this={textareaNode}
   bind:value={content}
   class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
   class:h-8={!multiLine}

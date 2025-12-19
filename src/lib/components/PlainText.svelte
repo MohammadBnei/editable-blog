@@ -1,9 +1,8 @@
-<script>
+<script lang="ts">
   import { isEditing } from '$lib/stores.js';
   import PlainTextEditor from './PlainTextEditor.svelte';
 
-  export let content;
-  export let multiLine = false;
+  let { content = $bindable<string>(), multiLine = false } = $props();
 </script>
 
 {#if $isEditing}
