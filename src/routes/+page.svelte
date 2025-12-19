@@ -147,15 +147,30 @@
       <h1 class="text-4xl font-bold text-center mb-12">
         <PlainText bind:content={page.pillarTitle} />
       </h1>
-      <div class="stats stats-vertical lg:stats-horizontal shadow">
-        <div class="stat prose md:text-xl">
-          <RichText multiLine bind:content={page.pillar1} />
+      <div class="stats stats-vertical lg:stats-horizontal shadow lg:grid-cols-3 gap-2">
+        <div class="stat grid-rows-[20%_80%]">
+          <h2 class="text-2xl md:text-4xl font-bold text-center mb-2">
+            <PlainText bind:content={page.pillar1Title} />
+          </h2>
+          <div class="prose md:text-xl">
+            <RichText multiLine bind:content={page.pillar1} />
+          </div>
         </div>
-        <div class="stat prose md:text-xl">
-          <RichText multiLine bind:content={page.pillar2} />
+        <div class="stat grid-rows-[20%_80%]">
+          <h2 class="text-2xl md:text-4xl font-bold text-center mb-2">
+            <PlainText bind:content={page.pillar2Title} />
+          </h2>
+          <div class="prose md:text-xl">
+            <RichText multiLine bind:content={page.pillar2} />
+          </div>
         </div>
-        <div class="stat prose md:text-xl">
-          <RichText multiLine bind:content={page.pillar3} />
+        <div class="stat grid-rows-[20%_80%]">
+          <h2 class="text-2xl md:text-4xl font-bold text-center mb-2">
+            <PlainText bind:content={page.pillar3Title} />
+          </h2>
+          <div class="prose md:text-xl">
+            <RichText multiLine bind:content={page.pillar3} />
+          </div>
         </div>
       </div>
     </div>
