@@ -18,10 +18,6 @@
   let showUserMenu = $state(false);
   let fileInput; // Reference to the hidden file input
 
-  // --------------------------------------------------------------------------
-  // Page logic
-  // --------------------------------------------------------------------------
-
   function toggleEdit() {
     $isEditing = true;
     showUserMenu = false;
@@ -84,27 +80,6 @@
     event.target.value = '';
   }
 </script>
-
-<svelte:head>
-  <title>{page.title}</title>
-  <meta name="description" content={page.bio} />
-  <link rel="alternate" hreflang="en" href="https://blog.bnei.dev" />
-  <link rel="canonical" href="https://blog.bnei.dev" />
-
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://blog.bnei.dev" />
-  <meta property="og:title" content={page.title} />
-  <meta property="og:description" content={page.bio} />
-  <meta property="og:image" content="https://blog.bnei.dev{page.bioPicture}" />
-
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://blog.bnei.dev" />
-  <meta property="twitter:title" content={page.title} />
-  <meta property="twitter:description" content={page.bio} />
-  <meta property="twitter:image" content="https://blog.bnei.dev{page.bioPicture}" />
-</svelte:head>
 
 <WebsiteHeader bind:showUserMenu cancel={() => ($isEditing = false)} save={savePage}>
   <div class="flex flex-col gap-1">
