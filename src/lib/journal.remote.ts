@@ -125,3 +125,25 @@ export const deleteJournalEntry = form(z.number(), async (id) => {
   if (result.rowCount === 0) error(404, 'Journal entry not found');
   return { success: true };
 });
+
+export const addJournalExchanges = form(
+  z.object({
+    id: z.number(),
+    messages: z.array(JournalDataSchema.shape.messages.element).min(1)
+  }),
+  async ({ id, messages }) => {
+    const result = await dbQuery(
+      `UPDATE journal 
+       SET data = jsonb_set(
+         data, 
+         '{messages}', 
+         (data->'messages')::jsonb || $2::jsonb
+       ) 
+       WHERE id = $1 RETURNING id`,
+      [id, JSON.stringify(messages)]
+    );
+
+    if (result.rowCount === 0) error(404, 'Journal entry not found');
+    return { success: true };
+  }
+);
