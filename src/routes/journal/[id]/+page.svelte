@@ -75,8 +75,12 @@
           <div class="stat bg-base-100 border border-base-content/5 rounded-box">
             <div class="stat-title capitalize">{key.replace(/_/g, ' ')}</div>
             <div class="stat-value text-lg">
-              {#if typeof value === 'object'}
-                {JSON.stringify(value)}
+              {#if Array.isArray(value)}
+                <div class="flex flex-wrap gap-1 mt-1">
+                  {#each value as item}
+                    <span class="badge badge-sm badge-soft">{item}</span>
+                  {/each}
+                </div>
               {:else}
                 {value}
               {/if}
