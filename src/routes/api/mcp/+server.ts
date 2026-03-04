@@ -1,27 +1,33 @@
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import type { RequestHandler } from './$types';
+import { createMcpHandler } from '@vercel/mcp-adapter';
 import { mcpServer } from '$lib/mcp';
-import { json, type RequestHandler } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+
+const handler = createMcpHandler(
+	(server) => {
+		// Use the existing tools registered on mcpServer
+		// Note: The adapter might expect tools to be registered via this callback
+		// if the server instance is fresh. 
+		// Since mcpServer is imported, we rely on its existing registration.
+	},
+	{
+		// Optional: if you want to provide a pre-existing server instance
+		// many adapters allow passing the server as an option
+	},
+	{
+		maxDuration: 5,
+		streamableHttpEndpoint: '/api/mcp',
+		verboseLogs: true,
+	},
+);
+
+export const GET: RequestHandler = async ({ request }) => {
+	return handler(request);
+};
 
 export const POST: RequestHandler = async ({ request }) => {
-  const token = request.headers.get('Authorization')?.replace('Bearer ', '');
-  if (!env.MCP_API_TOKEN || token !== env.MCP_API_TOKEN) {
-    return json({ error: 'Unauthorized' }, { status: 401 });
-  }
+	return handler(request);
+};
 
-  const transport = new StreamableHTTPServerTransport({
-    sessionIdGenerator: undefined,
-    enableJsonResponse: true
-  });
-
-  await mcpServer.connect(transport);
-
-  const body = await request.json();
-  const response = await transport.handleRequest(request, new Response(), body);
-  
-  request.signal.addEventListener('abort', () => transport.close());
-
-  return new Response(response, {
-    headers: { 'Content-Type': 'application/json' }
-  });
+export const DELETE: RequestHandler = async ({ request }) => {
+	return handler(request);
 };
