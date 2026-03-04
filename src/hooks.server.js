@@ -1,6 +1,5 @@
 import { getCurrentUser } from '$lib/api';
 import { migrate } from './lib/db';
-import type { Handle } from '@sveltejs/kit';
 import { eventHandler, readBody } from 'h3';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
@@ -8,7 +7,7 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 const server = new McpServer({ name: 'sveltekit-mcp', version: '1.0.0' });
 
 const mcpHandler = eventHandler(async (event) => {
-  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
+  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID(), enableJsonResponse: true });
   event.node.res.on('close', () => transport.close());
   await server.connect(transport);
   const body = await readBody(event);
@@ -17,7 +16,7 @@ const mcpHandler = eventHandler(async (event) => {
 
 let migrated = false;
 
-export const handle: Handle = async ({ event, resolve }) => {
+export const handle: import('@sveltejs/kit').Handle = async ({ event, resolve }) => {
   if (event.url.pathname === '/api/mcp') {
     return mcpHandler(event.nativeEvent);
   }
