@@ -1,4 +1,4 @@
-import { query, command } from '$app/server';
+import { query, command, form } from '$app/server';
 import { z } from 'zod';
 import * as service from './journal.service';
 import { JournalSchema, JournalDataSchema } from './journal.service';
@@ -16,8 +16,17 @@ export const getJournalEntry = query(z.number(), service.getJournalEntry);
 
 export const createJournalEntry = command(JournalSchema, service.createJournalEntry);
 
+export const createJournalEntryForm = form(JournalSchema, service.createJournalEntry);
 
 export const updateJournalEntry = command(
+  z.object({
+    id: z.number(),
+    updates: JournalSchema.partial()
+  }),
+  async ({ id, updates }) => service.updateJournalEntry(id, updates)
+);
+
+export const updateJournalEntryForm = form(
   z.object({
     id: z.number(),
     updates: JournalSchema.partial()
@@ -29,7 +38,19 @@ export const deleteJournalEntry = command(z.object({ id: z.number() }), async ({
   service.deleteJournalEntry(id)
 );
 
+export const deleteJournalEntryForm = form(z.object({ id: z.number() }), async ({ id }) =>
+  service.deleteJournalEntry(id)
+);
+
 export const addJournalExchanges = command(
+  z.object({
+    id: z.number(),
+    messages: z.array(JournalDataSchema.shape.messages.element).min(1)
+  }),
+  async ({ id, messages }) => service.addJournalExchanges(id, messages)
+);
+
+export const addJournalExchangesForm = form(
   z.object({
     id: z.number(),
     messages: z.array(JournalDataSchema.shape.messages.element).min(1)
