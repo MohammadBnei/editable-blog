@@ -1,5 +1,19 @@
 # Changelog
 
+# [0.33.0](/compare/0.32.0...0.33.0) (2026-03-04)
+
+
+### Bug Fixes
+
+* add sessionIdGenerator and fix Handle type import in hooks.server.js 04b706b
+* pass Response object to transport handleRequest in MCP API 99f729b
+
+
+### Features
+
+* implement @vercel/mcp-adapter for MCP endpoint handler 381923b
+* implement MCP server handler using h3 in server hooks 7a7e0b8
+
 # [0.32.0](/compare/0.31.6...0.32.0) (2026-03-04)
 
 
