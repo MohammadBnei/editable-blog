@@ -1,15 +1,13 @@
 import { getCurrentUser } from '$lib/api';
 import { migrate } from './lib/db';
 import { eventHandler, readBody } from 'h3';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { mcpServer } from '$lib/mcp';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-
-const server = new McpServer({ name: 'sveltekit-mcp', version: '1.0.0' });
 
 const mcpHandler = eventHandler(async (event) => {
   const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: () => crypto.randomUUID(), enableJsonResponse: true });
   event.node.res.on('close', () => transport.close());
-  await server.connect(transport);
+  await mcpServer.connect(transport);
   const body = await readBody(event);
   await transport.handleRequest(event.node.req, event.node.res, body);
 });
