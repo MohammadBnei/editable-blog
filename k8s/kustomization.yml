@@ -9,4 +9,4 @@ resources:
 
 images:
 - name: mohammaddocker/editable-blog
-  newTag: 0.34.0
+  newTag: 0.34.1
