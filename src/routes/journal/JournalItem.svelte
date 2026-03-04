@@ -39,7 +39,12 @@
       </svg>
     </a>
     <form
-      {...deleteJournalEntry}
+      {...deleteJournalEntry.enhance(async ({ submit }) => {
+        if (confirm('Delete this entry?')) {
+          await submit();
+          onrefresh();
+        }
+      })}
     >
       <input {...deleteJournalEntry.fields.id.as('hidden', entry.id)} />
       <button class="btn btn-square btn-ghost btn-sm text-error" aria-label="Delete">

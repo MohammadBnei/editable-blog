@@ -16,9 +16,6 @@
     return 'badge-error';
   });
 
-  {#if createPost.result?.success}
-	<p>Successfully published!</p>
-{/if}
 </script>
 
 <div class="p-4 max-w-2xl mx-auto flex flex-col gap-8">
@@ -29,7 +26,14 @@
     </div>
     <div class="flex gap-2">
       <a href="/journal/{id}/edit" class="btn btn-outline btn-sm">Edit</a>
-      <form {...deleteJournalEntry}>
+      <form
+        {...deleteJournalEntry.enhance(async ({ submit }) => {
+          if (confirm('Delete this entry?')) {
+            await submit();
+            goto('/journal');
+          }
+        })}
+      >
         <input {...deleteJournalEntry.fields.id.as('number')} value={id} hidden />
         <button class="btn btn-error btn-outline btn-sm">Delete</button>
       </form>
