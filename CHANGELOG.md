@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.34.0](/compare/0.33.0...0.34.0) (2026-03-04)
+
+
+### Features
+
+* add form counterparts for journal remote commands c8801d4
+
 # [0.33.0](/compare/0.32.0...0.33.0) (2026-03-04)
 
 
