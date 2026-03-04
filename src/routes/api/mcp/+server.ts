@@ -1,8 +1,14 @@
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { mcpServer } from '$lib/mcp';
-import type { RequestHandler } from '@sveltejs/kit';
+import { json, type RequestHandler } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
 
 export const POST: RequestHandler = async ({ request }) => {
+  const token = request.headers.get('Authorization')?.replace('Bearer ', '');
+  if (!env.MCP_API_TOKEN || token !== env.MCP_API_TOKEN) {
+    return json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: undefined,
     enableJsonResponse: true
