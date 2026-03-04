@@ -120,7 +120,7 @@ export const updateJournalEntry = form(
   }
 );
 
-export const deleteJournalEntry = form(z.number(), async (id) => {
+export const deleteJournalEntry = form(z.object({ id: z.number() }), async ({ id }) => {
   const result = await dbQuery('DELETE FROM journal WHERE id = $1', [id]);
   if (result.rowCount === 0) error(404, 'Journal entry not found');
   return { success: true };
