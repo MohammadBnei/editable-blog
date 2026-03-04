@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { JournalEntry } from '$lib/journal.remote';
   import { deleteJournalEntry, updateJournalEntry } from '$lib/journal.remote';
-  import { formatDistanceToNow } from 'date-fns';
 
   let { entry, onrefresh }: { entry: JournalEntry; onrefresh: () => void } = $props();
 
@@ -36,7 +35,7 @@
     {/if}
     
     <span class="text-xs opacity-50">
-      {formatDistanceToNow(new Date(entry.created_at), { addSuffix: true })}
+      {new Date(entry.created_at).toLocaleDateString('fr-FR')}
     </span>
   </div>
 
