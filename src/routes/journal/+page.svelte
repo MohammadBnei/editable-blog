@@ -5,6 +5,7 @@
   let limit = $state(10);
   const entries = $derived(getJournalEntries({ limit }));
 
+  const { title, summary, friction_score, category, data, metadata } = createJournalEntry.fields;
 </script>
 
 <div class="p-4 max-w-4xl mx-auto flex flex-col gap-8">
@@ -13,30 +14,31 @@
   </header>
 
   <section class="card bg-base-200 shadow-sm">
-    <form
-      use:createJournalEntry.enhance={async ({ form, submit }) => {
-        await submit();
-        form.reset();
-        entries.refresh();
-      }}
-      method="POST"
-      class="card-body gap-4"
-    >
+    <form {...createJournalEntry} class="card-body gap-4">
       <h2 class="card-title text-sm uppercase tracking-wider opacity-70">New Entry</h2>
-      
+
       <div class="fieldset">
         <label class="floating-label">
-          <input {...createJournalEntry.fields.title.as('text')} class="input w-full" placeholder="Title" required />
+          <input
+            {...createJournalEntry.fields.title.as('text')}
+            class="input w-full"
+            placeholder="Title"
+            required
+          />
           <span>Title</span>
         </label>
-        {#each createJournalEntry.fields.title.issues() as issue}
+        {#each title.issues() as issue}
           <p class="text-error text-xs mt-1">{issue.message}</p>
         {/each}
       </div>
 
       <div class="fieldset">
         <label class="floating-label">
-          <textarea {...createJournalEntry.fields.summary.as('text')} class="textarea w-full h-24" placeholder="How was your day?"></textarea>
+          <textarea
+            {...summary.as('text')}
+            class="textarea w-full h-24"
+            placeholder="How was your day?"
+          ></textarea>
           <span>Summary</span>
         </label>
       </div>
@@ -44,9 +46,15 @@
       <div class="flex items-center gap-4">
         <div class="flex-1">
           <span class="label text-xs">Friction Score</span>
-          <input {...createJournalEntry.fields.friction_score.as('range')} min="0" max="10" step="1" class="range range-primary" />
+          <input
+            {...friction_score.as('range')}
+            min="0"
+            max="10"
+            step="1"
+            class="range range-primary"
+          />
         </div>
-        
+
         <button class="btn btn-primary" disabled={createJournalEntry.pending}>
           {#if createJournalEntry.pending}
             <span class="loading loading-spinner"></span>
@@ -73,9 +81,9 @@
             <JournalItem {entry} onrefresh={() => entries.refresh()} />
           {/each}
         </div>
-        
+
         {#if data.length >= limit}
-          <button class="btn btn-ghost btn-sm mx-auto" onclick={() => limit += 10}>
+          <button class="btn btn-ghost btn-sm mx-auto" onclick={() => (limit += 10)}>
             Load more
           </button>
         {/if}
