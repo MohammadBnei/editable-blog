@@ -127,6 +127,26 @@ const migrations = [
 
       COMMIT;
     `
+  },
+  {
+    name: '20240304_create_journal_table',
+    sql: `
+      BEGIN TRANSACTION;
+
+      CREATE TABLE IF NOT EXISTS journal (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        summary TEXT,
+        friction_score INTEGER,
+        category TEXT,
+        data JSONB DEFAULT '{}'::jsonb,
+        metadata JSONB DEFAULT '{}'::jsonb,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+
+      COMMIT;
+    `
   }
   // Add more migrations here as objects { name: '...', sql: '...' }
 ];
