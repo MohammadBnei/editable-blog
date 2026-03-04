@@ -17,7 +17,7 @@ export const POST: RequestHandler = async ({ request }) => {
   await mcpServer.connect(transport);
 
   const body = await request.json();
-  const response = await transport.handleRequest(request, undefined, body);
+  const response = await transport.handleRequest(request, new Response(), body);
   
   request.signal.addEventListener('abort', () => transport.close());
 
