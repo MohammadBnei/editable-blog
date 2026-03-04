@@ -40,12 +40,6 @@
     </a>
     <form
       {...deleteJournalEntry}
-      use:deleteJournalEntry.enhance={async ({ submit }) => {
-        if (confirm('Delete this entry?')) {
-          await submit();
-          onrefresh();
-        }
-      }}
     >
       <input {...deleteJournalEntry.fields.id.as('hidden')} value={entry.id} />
       <button class="btn btn-square btn-ghost btn-sm text-error" aria-label="Delete">
