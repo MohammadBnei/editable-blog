@@ -1,13 +1,10 @@
 import type { RequestHandler } from './$types';
 import { createMcpHandler } from '@vercel/mcp-adapter';
-import { mcpServer } from '$lib/mcp';
+import { registerJournalTools } from '$lib/mcp';
 
 const handler = createMcpHandler(
 	(server) => {
-		// Use the existing tools registered on mcpServer
-		// Note: The adapter might expect tools to be registered via this callback
-		// if the server instance is fresh. 
-		// Since mcpServer is imported, we rely on its existing registration.
+		registerJournalTools(server);
 	},
 	{
 		// Optional: if you want to provide a pre-existing server instance
