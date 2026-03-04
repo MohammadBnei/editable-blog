@@ -34,7 +34,7 @@
     class="card-body gap-4"
   >
     {#if isEdit}
-      <input {...updateJournalEntry.fields.id.as('hidden')} value={entry?.id} />
+      <input {...updateJournalEntry.fields.id.as('hidden', entry?.id)} />
     {/if}
 
     <div class="fieldset">

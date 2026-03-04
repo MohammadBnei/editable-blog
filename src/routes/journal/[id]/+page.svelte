@@ -27,7 +27,7 @@
       <form
         {...deleteJournalEntry}
       >
-        <input {...deleteJournalEntry.fields.id.as('hidden')} value={id} />
+        <input {...deleteJournalEntry.fields.id.as('hidden', id)} />
         <button class="btn btn-error btn-outline btn-sm">Delete</button>
       </form>
     </div>
