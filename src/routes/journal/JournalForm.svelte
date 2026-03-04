@@ -30,15 +30,15 @@
 
 <section class="card bg-base-200 shadow-sm">
   <form
+    {...form}
     use:form.enhance={async ({ submit }) => {
       await submit();
       goto('/journal');
     }}
-    method="POST"
     class="card-body gap-4"
   >
     {#if isEdit}
-      <input type="hidden" name="id" value={entry?.id} />
+      <input {...updateJournalEntry.fields.id.as('hidden')} value={entry?.id} />
     {/if}
 
     <div class="fieldset">

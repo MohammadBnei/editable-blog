@@ -25,15 +25,15 @@
     <div class="flex gap-2">
       <a href="/journal/{id}/edit" class="btn btn-outline btn-sm">Edit</a>
       <form
+        {...deleteJournalEntry}
         use:deleteJournalEntry.enhance={async ({ submit }) => {
           if (confirm('Delete this entry?')) {
             await submit();
             goto('/journal');
           }
         }}
-        method="POST"
       >
-        <input type="hidden" name="id" value={id} />
+        <input {...deleteJournalEntry.fields.id.as('hidden')} value={id} />
         <button class="btn btn-error btn-outline btn-sm">Delete</button>
       </form>
     </div>
