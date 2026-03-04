@@ -1,6 +1,6 @@
 import { query, command, form } from '$app/server';
 import { query as dbQuery } from './db';
-import * as v from 'valibot';
+import { z } from 'zod';
 import { error } from '@sveltejs/kit';
 
 export interface JournalMessage {
@@ -25,33 +25,30 @@ export interface JournalEntry {
   updated_at: string;
 }
 
-const JournalDataSchema = v.object({
-  messages: v.array(
-    v.object({
-      type: v.picklist(['question', 'answer']),
-      text: v.string(),
-      timestamp: v.string()
+const JournalDataSchema = z.object({
+  messages: z.array(
+    z.object({
+      type: z.enum(['question', 'answer']),
+      text: z.string(),
+      timestamp: z.string()
     })
   )
 });
 
-const JournalSchema = v.object({
-  title: v.pipe(v.string(), v.nonEmpty()),
-  summary: v.optional(v.string()),
-  friction_score: v.optional(v.number()),
-  category: v.optional(v.string()),
-  data: v.optional(JournalDataSchema, { messages: [] }),
-  metadata: v.optional(v.record(v.string(), v.any()), {})
+const JournalSchema = z.object({
+  title: z.string().min(1),
+  summary: z.string().optional(),
+  friction_score: z.number().optional(),
+  category: z.string().optional(),
+  data: JournalDataSchema.default({ messages: [] }),
+  metadata: z.record(z.string(), z.any()).default({})
 });
 
 export const getJournalEntries = query(
-  v.optional(
-    v.object({
-      category: v.optional(v.string()),
-      friction_score: v.optional(v.number())
-    }),
-    {}
-  ),
+  z.object({
+    category: z.string().optional(),
+    friction_score: z.number().optional()
+  }).default({}),
   async (filters) => {
     let sql = 'SELECT * FROM journal';
     const where: string[] = [];
@@ -78,7 +75,7 @@ export const getJournalEntries = query(
   }
 );
 
-export const getJournalEntry = query(v.number(), async (id) => {
+export const getJournalEntry = query(z.number(), async (id) => {
   const result = await dbQuery('SELECT * FROM journal WHERE id = $1', [id]);
   if (result.rows.length === 0) error(404, 'Journal entry not found');
   return result.rows[0] as JournalEntry;
@@ -94,9 +91,9 @@ export const createJournalEntry = command(JournalSchema, async (data) => {
 });
 
 export const updateJournalEntry = command(
-  v.object({
-    id: v.number(),
-    updates: v.partial(JournalSchema)
+  z.object({
+    id: z.number(),
+    updates: JournalSchema.partial()
   }),
   async ({ id, updates }) => {
     const fields = Object.keys(updates);
@@ -116,7 +113,7 @@ export const updateJournalEntry = command(
   }
 );
 
-export const deleteJournalEntry = command(v.number(), async (id) => {
+export const deleteJournalEntry = command(z.number(), async (id) => {
   const result = await dbQuery('DELETE FROM journal WHERE id = $1', [id]);
   if (result.rowCount === 0) error(404, 'Journal entry not found');
   return { success: true };
