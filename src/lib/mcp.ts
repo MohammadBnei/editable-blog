@@ -9,11 +9,13 @@ export const mcpServer = new McpServer({
 
 mcpServer.registerTool(
   'get_journal_entries',
-  'Get a list of journal entries with optional filters',
   {
-    category: z.string().optional(),
-    friction_score: z.number().optional(),
-    limit: z.number().optional()
+    description: 'Get a list of journal entries with optional filters',
+    inputSchema: {
+      category: z.string().optional(),
+      friction_score: z.number().optional(),
+      limit: z.number().optional()
+    }
   },
   async (filters) => {
     const entries = await getJournalEntries(filters);
@@ -25,8 +27,10 @@ mcpServer.registerTool(
 
 mcpServer.registerTool(
   'get_journal_entry',
-  'Get a single journal entry by ID',
-  { id: z.number() },
+  {
+    description: 'Get a single journal entry by ID',
+    inputSchema: { id: z.number() }
+  },
   async ({ id }) => {
     const entry = await getJournalEntry(id);
     return {
@@ -37,36 +41,10 @@ mcpServer.registerTool(
 
 mcpServer.registerTool(
   'create_journal_entry',
-  'Create a new journal entry',
   {
-    title: z.string().min(1),
-    summary: z.string().optional(),
-    friction_score: z.number().optional(),
-    category: z.string().optional(),
-    data: z.object({
-      messages: z.array(z.object({
-        type: z.enum(['question', 'answer']),
-        text: z.string(),
-        timestamp: z.string()
-      }))
-    }).optional(),
-    metadata: z.record(z.string(), z.any()).optional()
-  },
-  async (data) => {
-    const id = await createJournalEntry(data);
-    return {
-      content: [{ type: 'text', text: `Created journal entry with ID: ${id}` }]
-    };
-  }
-);
-
-mcpServer.registerTool(
-  'update_journal_entry',
-  'Update an existing journal entry',
-  {
-    id: z.number(),
-    updates: z.object({
-      title: z.string().min(1).optional(),
+    description: 'Create a new journal entry',
+    inputSchema: {
+      title: z.string().min(1),
       summary: z.string().optional(),
       friction_score: z.number().optional(),
       category: z.string().optional(),
@@ -78,7 +56,37 @@ mcpServer.registerTool(
         }))
       }).optional(),
       metadata: z.record(z.string(), z.any()).optional()
-    })
+    }
+  },
+  async (data) => {
+    const id = await createJournalEntry(data);
+    return {
+      content: [{ type: 'text', text: `Created journal entry with ID: ${id}` }]
+    };
+  }
+);
+
+mcpServer.registerTool(
+  'update_journal_entry',
+  {
+    description: 'Update an existing journal entry',
+    inputSchema: {
+      id: z.number(),
+      updates: z.object({
+        title: z.string().min(1).optional(),
+        summary: z.string().optional(),
+        friction_score: z.number().optional(),
+        category: z.string().optional(),
+        data: z.object({
+          messages: z.array(z.object({
+            type: z.enum(['question', 'answer']),
+            text: z.string(),
+            timestamp: z.string()
+          }))
+        }).optional(),
+        metadata: z.record(z.string(), z.any()).optional()
+      })
+    }
   },
   async ({ id, updates }) => {
     await updateJournalEntry({ id, updates });
@@ -90,14 +98,16 @@ mcpServer.registerTool(
 
 mcpServer.registerTool(
   'add_journal_exchanges',
-  'Add messages/exchanges to an existing journal entry',
   {
-    id: z.number(),
-    messages: z.array(z.object({
-      type: z.enum(['question', 'answer']),
-      text: z.string(),
-      timestamp: z.string()
-    })).min(1)
+    description: 'Add messages/exchanges to an existing journal entry',
+    inputSchema: {
+      id: z.number(),
+      messages: z.array(z.object({
+        type: z.enum(['question', 'answer']),
+        text: z.string(),
+        timestamp: z.string()
+      })).min(1)
+    }
   },
   async ({ id, messages }) => {
     await addJournalExchanges({ id, messages });
@@ -109,8 +119,10 @@ mcpServer.registerTool(
 
 mcpServer.registerTool(
   'delete_journal_entry',
-  'Delete a journal entry',
-  { id: z.number() },
+  {
+    description: 'Delete a journal entry',
+    inputSchema: { id: z.number() }
+  },
   async ({ id }) => {
     await deleteJournalEntry(id);
     return {
