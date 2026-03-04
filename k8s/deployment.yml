@@ -25,6 +25,13 @@ spec:
           envFrom:
             - secretRef:
                 name: managed-editable-blog-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
           livenessProbe:
             httpGet:
               path: /healthz
