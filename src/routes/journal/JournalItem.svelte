@@ -11,8 +11,8 @@
   );
 </script>
 
-<div class="list-row items-center gap-4 p-4 hover:bg-base-200 transition-colors">
-  <div class="flex flex-col gap-1 list-col-grow">
+<div class="list-row items-center gap-4 p-4 hover:bg-base-200 transition-colors relative">
+  <a href="/journal/{entry.id}" class="flex flex-col gap-1 list-col-grow">
     <div class="flex items-center gap-2">
       <h3 class="font-bold text-lg">{entry.title}</h3>
       {#if entry.friction_score !== null}
@@ -30,7 +30,7 @@
     <span class="text-xs opacity-50">
       {new Date(entry.created_at).toLocaleDateString('fr-FR')}
     </span>
-  </div>
+  </a>
 
   <div class="flex gap-2">
     <a href="/journal/{entry.id}" class="btn btn-square btn-ghost btn-sm" aria-label="Edit">
