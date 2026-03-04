@@ -44,13 +44,39 @@ const JournalSchema = v.object({
   metadata: v.optional(v.record(v.string(), v.any()), {})
 });
 
-export const getJournalEntries = query(async () => {
-  const result = await dbQuery(
-    'SELECT * FROM journal ORDER BY created_at DESC',
-    []
-  );
-  return result.rows as JournalEntry[];
-});
+export const getJournalEntries = query(
+  v.optional(
+    v.object({
+      category: v.optional(v.string()),
+      friction_score: v.optional(v.number())
+    }),
+    {}
+  ),
+  async (filters) => {
+    let sql = 'SELECT * FROM journal';
+    const where: string[] = [];
+    const params: any[] = [];
+
+    if (filters.category) {
+      params.push(filters.category);
+      where.push(`category = $${params.length}`);
+    }
+
+    if (filters.friction_score !== undefined) {
+      params.push(filters.friction_score);
+      where.push(`friction_score = $${params.length}`);
+    }
+
+    if (where.length > 0) {
+      sql += ` WHERE ${where.join(' AND ')}`;
+    }
+
+    sql += ' ORDER BY created_at DESC';
+
+    const result = await dbQuery(sql, params);
+    return result.rows as JournalEntry[];
+  }
+);
 
 export const getJournalEntry = query(v.number(), async (id) => {
   const result = await dbQuery('SELECT * FROM journal WHERE id = $1', [id]);
