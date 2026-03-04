@@ -30,7 +30,10 @@
 
 <section class="card bg-base-200 shadow-sm">
   <form
-    {...form}
+    {...form.enhance(async ({ submit }) => {
+      await submit();
+      goto('/journal');
+    })}
     class="card-body gap-4"
   >
     {#if isEdit}
