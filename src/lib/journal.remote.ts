@@ -88,7 +88,7 @@ export const getJournalEntry = query(z.number(), async (id) => {
   return result.rows[0] as JournalEntry;
 });
 
-export const createJournalEntry = command(JournalSchema, async (data) => {
+export const createJournalEntry = form(JournalSchema, async (data) => {
   const result = await dbQuery(
     `INSERT INTO journal (title, summary, friction_score, category, data, metadata)
      VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
@@ -97,7 +97,7 @@ export const createJournalEntry = command(JournalSchema, async (data) => {
   return result.rows[0].id as number;
 });
 
-export const updateJournalEntry = command(
+export const updateJournalEntry = form(
   z.object({
     id: z.number(),
     updates: JournalSchema.partial()
@@ -120,7 +120,7 @@ export const updateJournalEntry = command(
   }
 );
 
-export const deleteJournalEntry = command(z.number(), async (id) => {
+export const deleteJournalEntry = form(z.number(), async (id) => {
   const result = await dbQuery('DELETE FROM journal WHERE id = $1', [id]);
   if (result.rowCount === 0) error(404, 'Journal entry not found');
   return { success: true };

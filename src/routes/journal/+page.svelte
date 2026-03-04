@@ -5,11 +5,6 @@
   let limit = $state(10);
   const entries = $derived(getJournalEntries({ limit }));
 
-  const newEntryForm = createJournalEntry.enhance(async ({ form, submit }) => {
-    await submit();
-    form.reset();
-    entries.refresh();
-  });
 </script>
 
 <div class="p-4 max-w-4xl mx-auto flex flex-col gap-8">
@@ -18,7 +13,15 @@
   </header>
 
   <section class="card bg-base-200 shadow-sm">
-    <form {...newEntryForm} class="card-body gap-4">
+    <form
+      use:createJournalEntry.enhance={async ({ form, submit }) => {
+        await submit();
+        form.reset();
+        entries.refresh();
+      }}
+      method="POST"
+      class="card-body gap-4"
+    >
       <h2 class="card-title text-sm uppercase tracking-wider opacity-70">New Entry</h2>
       
       <div class="fieldset">
