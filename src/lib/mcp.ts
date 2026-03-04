@@ -124,7 +124,7 @@ mcpServer.registerTool(
     inputSchema: { id: z.number() }
   },
   async ({ id }) => {
-    await deleteJournalEntry(id);
+    await deleteJournalEntry({ id });
     return {
       content: [{ type: 'text', text: `Deleted journal entry ${id}` }]
     };

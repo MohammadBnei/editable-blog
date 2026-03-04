@@ -21,10 +21,10 @@
       class="flex flex-col space-y-8"
       use:enhance={() => {
         return async ({ result, update }) => {
+          update();
           if (result.type === 'redirect') {
             window.history.back();
           }
-          update();
         };
       }}
     >
