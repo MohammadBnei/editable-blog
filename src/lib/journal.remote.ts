@@ -47,7 +47,8 @@ const JournalSchema = z.object({
 export const getJournalEntries = query(
   z.object({
     category: z.string().optional(),
-    friction_score: z.number().optional()
+    friction_score: z.number().optional(),
+    limit: z.number().optional()
   }).default({}),
   async (filters) => {
     let sql = 'SELECT * FROM journal';
@@ -64,11 +65,17 @@ export const getJournalEntries = query(
       where.push(`friction_score = $${params.length}`);
     }
 
+
+
     if (where.length > 0) {
       sql += ` WHERE ${where.join(' AND ')}`;
     }
 
     sql += ' ORDER BY created_at DESC';
+
+    if (filters.limit) {
+      sql += ` LIMIT ${filters.limit}`;
+    }
 
     const result = await dbQuery(sql, params);
     return result.rows as JournalEntry[];

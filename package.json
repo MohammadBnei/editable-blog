@@ -27,11 +27,13 @@
     "svelte": "^5.44.0",
     "svelte-adapter-bun": "^0.5.2",
     "svelte-streamdown": "^2.6.1",
-    "vite": "7.2.4"
+    "vite": "7.2.4",
+    "zod": "^4.3.6"
   },
   "type": "module",
   "dependencies": {
     "@fontsource/jost": "^5.2.8",
+    "@modelcontextprotocol/sdk": "^1.27.1",
     "@release-it/conventional-changelog": "^10.0.2",
     "@sveltejs/adapter-node": "^5.4.0",
     "@tailwindcss/forms": "^0.5.10",
