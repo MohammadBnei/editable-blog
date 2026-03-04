@@ -7,7 +7,7 @@
   const { data } = $props();
   const entry = data.entry;
 
-  console.log({id})
+  console.log({ id });
 
   let frictionColor = $derived.by(() => {
     if (entry.friction_score === null) return 'badge-ghost';
@@ -15,10 +15,9 @@
     if (entry.friction_score < 7) return 'badge-warning';
     return 'badge-error';
   });
-
 </script>
 
-<div class="p-4 max-w-2xl mx-auto flex flex-col gap-8">
+<div class="p-4 max-w-3xl mx-auto flex flex-col gap-8">
   <header class="flex justify-between items-start">
     <div>
       <a href="/journal" class="btn btn-ghost btn-sm mb-4">← Back to List</a>
@@ -50,6 +49,30 @@
       {/await}
     </div>
 
+    {#if entry.data?.messages?.length > 0}
+      <section class="flex flex-col gap-4">
+        <h3 class="text-xl font-bold">Conversation</h3>
+        <div class="bg-base-200/50 p-6 rounded-box border border-base-content/5">
+          {#each entry.data.messages as message}
+            <div class="chat {message.type === 'question' ? 'chat-start' : 'chat-end'}">
+              <div class="chat-header opacity-50 text-xs mb-1">
+                {message.type === 'question' ? 'Assistant' : 'User'}
+                <time class="ml-1"
+                  >{new Date(message.timestamp).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}</time
+                >
+              </div>
+              <div class="chat-bubble {message.type === 'question' ? '' : 'chat-bubble-primary'}">
+                {message.text}
+              </div>
+            </div>
+          {/each}
+        </div>
+      </section>
+    {/if}
+
     <p class="text-sm opacity-50">
       Created on {new Date(entry.created_at).toLocaleDateString('fr-FR', { dateStyle: 'long' })}
     </p>
@@ -70,7 +93,7 @@
   {#if Object.keys(entry.metadata).length > 0}
     <section>
       <h3 class="text-xl font-bold mb-4">Metadata</h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="flex flex-col gap-4">
         {#each Object.entries(entry.metadata) as [key, value]}
           <div class="stat bg-base-100 border border-base-content/5 rounded-box">
             <div class="stat-title capitalize">{key.replace(/_/g, ' ')}</div>
@@ -84,29 +107,6 @@
               {:else}
                 {value}
               {/if}
-            </div>
-          </div>
-        {/each}
-      </div>
-    </section>
-  {/if}
-
-  {#if entry.data?.messages?.length > 0}
-    <section class="flex flex-col gap-4">
-      <h3 class="text-xl font-bold">Conversation</h3>
-      <div class="bg-base-200/50 p-6 rounded-box border border-base-content/5">
-        {#each entry.data.messages as message}
-          <div class="chat {message.type === 'question' ? 'chat-start' : 'chat-end'}">
-            <div class="chat-header opacity-50 text-xs mb-1">
-              {message.type === 'question' ? 'Assistant' : 'User'}
-              <time class="ml-1">{new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</time>
-            </div>
-            <div
-              class="chat-bubble {message.type === 'question'
-                ? ''
-                : 'chat-bubble-primary'}"
-            >
-              {message.text}
             </div>
           </div>
         {/each}

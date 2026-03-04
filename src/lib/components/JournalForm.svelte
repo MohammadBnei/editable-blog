@@ -1,21 +1,21 @@
 <script lang="ts">
-  import { createJournalEntry, updateJournalEntry } from '$lib/journal.remote';
+  import { createJournalEntryForm, updateJournalEntryForm } from '$lib/journal.remote';
   import { goto } from '$app/navigation';
   import type { JournalEntry } from '$lib/journal.remote';
 
   let { entry = null }: { entry?: JournalEntry | null } = $props();
 
   const isEdit = $derived(!!entry);
-  const form = $derived(isEdit ? updateJournalEntry : createJournalEntry);
+  const form = $derived(isEdit ? updateJournalEntryForm : createJournalEntryForm);
   
   // Fields mapping
-  const title = $derived(isEdit ? updateJournalEntry.fields.updates.title : createJournalEntry.fields.title);
-  const summary = $derived(isEdit ? updateJournalEntry.fields.updates.summary : createJournalEntry.fields.summary);
-  const friction_score = $derived(isEdit ? updateJournalEntry.fields.updates.friction_score : createJournalEntry.fields.friction_score);
+  const title = $derived(isEdit ? updateJournalEntryForm.fields.updates.title : createJournalEntryForm.fields.title);
+  const summary = $derived(isEdit ? updateJournalEntryForm.fields.updates.summary : createJournalEntryForm.fields.summary);
+  const friction_score = $derived(isEdit ? updateJournalEntryForm.fields.updates.friction_score : createJournalEntryForm.fields.friction_score);
 
   $effect(() => {
     if (entry) {
-      updateJournalEntry.fields.set({
+      updateJournalEntryForm.fields.set({
         id: entry.id,
         updates: {
           title: entry.title,
@@ -37,7 +37,7 @@
     class="card-body gap-4"
   >
     {#if isEdit}
-      <input {...updateJournalEntry.fields.id.as('hidden', entry?.id)} />
+      <input {...updateJournalEntryForm.fields.id.as('hidden', entry?.id)} />
     {/if}
 
     <div class="fieldset">
