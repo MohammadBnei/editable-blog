@@ -16,6 +16,7 @@ export const getJournalEntry = query(z.number(), service.getJournalEntry);
 
 export const createJournalEntry = command(JournalSchema, service.createJournalEntry);
 
+
 export const updateJournalEntry = command(
   z.object({
     id: z.number(),
