@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { getJournalEntries, getJournalEntry, createJournalEntry, updateJournalEntry, deleteJournalEntry } from './journal.remote';
+import { getJournalEntries, getJournalEntry, createJournalEntry, updateJournalEntry, deleteJournalEntry, addJournalExchanges } from './journal.remote';
 
 export const mcpServer = new McpServer({
   name: 'journal-mcp',
@@ -84,6 +84,25 @@ mcpServer.registerTool(
     await updateJournalEntry({ id, updates });
     return {
       content: [{ type: 'text', text: `Updated journal entry ${id}` }]
+    };
+  }
+);
+
+mcpServer.registerTool(
+  'add_journal_exchanges',
+  'Add messages/exchanges to an existing journal entry',
+  {
+    id: z.number(),
+    messages: z.array(z.object({
+      type: z.enum(['question', 'answer']),
+      text: z.string(),
+      timestamp: z.string()
+    })).min(1)
+  },
+  async ({ id, messages }) => {
+    await addJournalExchanges({ id, messages });
+    return {
+      content: [{ type: 'text', text: `Added exchanges to journal entry ${id}` }]
     };
   }
 );
