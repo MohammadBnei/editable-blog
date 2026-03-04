@@ -1,9 +1,26 @@
 import { getCurrentUser } from '$lib/api';
 import { migrate } from './lib/db';
+import type { Handle } from '@sveltejs/kit';
+import { eventHandler, readBody } from 'h3';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+
+const server = new McpServer({ name: 'sveltekit-mcp', version: '1.0.0' });
+
+const mcpHandler = eventHandler(async (event) => {
+  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
+  event.node.res.on('close', () => transport.close());
+  await server.connect(transport);
+  const body = await readBody(event);
+  await transport.handleRequest(event.node.req, event.node.res, body);
+});
 
 let migrated = false;
 
-export async function handle({ event, resolve }) {
+export const handle: Handle = async ({ event, resolve }) => {
+  if (event.url.pathname === '/api/mcp') {
+    return mcpHandler(event.nativeEvent);
+  }
   if (!migrated) {
     migrate().catch(err => {
       console.error('Failed to run database migrations on startup:', err);
