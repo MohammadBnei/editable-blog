@@ -1,7 +1,7 @@
 <script lang="ts">
   import { invalidateAll } from '$app/navigation';
   import { getJournalEntries } from '$lib/journal.remote';
-  import JournalItem from './JournalItem.svelte';
+  import JournalItem from '$lib/components/JournalItem.svelte';
 
   let { data } = $props();
   let limit = $state(10);

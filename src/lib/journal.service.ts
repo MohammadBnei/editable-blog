@@ -73,6 +73,7 @@ export async function getJournalEntries(filters: {
   }
 
   const result = await dbQuery(sql, params);
+  console.log({ result: result.rows })
   return result.rows as JournalEntry[];
 }
 

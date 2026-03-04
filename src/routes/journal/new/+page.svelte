@@ -1,5 +1,5 @@
 <script lang="ts">
-  import JournalForm from '../JournalForm.svelte';
+  import JournalForm from '$lib/components/JournalForm.svelte';
 </script>
 
 <div class="p-4 max-w-2xl mx-auto flex flex-col gap-8">

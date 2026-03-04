@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getJournalEntry, deleteJournalEntry } from '$lib/journal.remote';
+  import { getJournalEntry, deleteJournalEntryForm } from '$lib/journal.remote';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
 
@@ -27,14 +27,14 @@
     <div class="flex gap-2">
       <a href="/journal/{id}/edit" class="btn btn-outline btn-sm">Edit</a>
       <form
-        {...deleteJournalEntry.enhance(async ({ submit }) => {
+        {...deleteJournalEntryForm.enhance(async ({ submit }) => {
           if (confirm('Delete this entry?')) {
             await submit();
             goto('/journal');
           }
         })}
       >
-        <input {...deleteJournalEntry.fields.id.as('number')} value={id} hidden />
+        <input {...deleteJournalEntryForm.fields.id.as('number')} value={id} hidden />
         <button class="btn btn-error btn-outline btn-sm">Delete</button>
       </form>
     </div>
@@ -94,12 +94,12 @@
         {#each entry.data.messages as message}
           <div class="chat {message.type === 'question' ? 'chat-start' : 'chat-end'}">
             <div class="chat-header opacity-50 text-xs mb-1">
-              {message.type === 'question' ? 'User' : 'Assistant'}
+              {message.type === 'question' ? 'Assistant' : 'User'}
               <time class="ml-1">{new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</time>
             </div>
             <div
               class="chat-bubble {message.type === 'question'
-                ? 'chat-bubble-neutral'
+                ? ''
                 : 'chat-bubble-primary'}"
             >
               {message.text}

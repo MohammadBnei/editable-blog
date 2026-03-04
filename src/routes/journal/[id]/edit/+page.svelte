@@ -1,7 +1,7 @@
 <script lang="ts">
+	import JournalForm from '$lib/components/JournalForm.svelte';
   import { getJournalEntry } from '$lib/journal.remote';
   import { page } from '$app/state';
-  import JournalForm from '../../JournalForm.svelte';
 
   const id = Number(page.params.id);
   const entryQuery = $derived(getJournalEntry(id));
