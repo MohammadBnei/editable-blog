@@ -1,5 +1,39 @@
 # Changelog
 
+# [0.32.0](/compare/0.31.6...0.32.0) (2026-03-04)
+
+
+### Bug Fixes
+
+* pass value to hidden input fields via .as() method fac9926
+
+
+### Features
+
+* add `getSearchResults` remote query function 9951def
+* add add_journal_exchanges tool to mcpServer dfa2a70
+* add addJournalExchanges to append messages to journal entries a8d26d4
+* add authentication check to journal page load a95797d
+* add bearer token authentication to mcp endpoint 8c3c1c6
+* add category and friction_score filters to getJournalEntries 068fd72
+* add confirmation dialog and form enhancement to delete entry 3b16a64
+* add cpu and memory resource limits and requests f51cdc4
+* add IngressRoute and CORS middleware for bnei.dev f6a49a2
+* add journal entry detail page and separate edit route b5043bd
+* add journal page and component using remote functions 232e452
+* add journal.remote.ts for CRUD with SvelteKit remote functions 28f5997
+* add layout with WebsiteHeader for journal routes 0486f2f
+* add migration to create journal table eaae775
+* add separate create and edit pages for journal entries 6af8c98
+* add trigger to automatically update updated_at in journal table 9d92bd2
+* display journal entry metadata and conversation chat sections b822f49
+* enhance journal entry deletion with confirmation and redirect 6496df3
+* enhance journal form and redirect to index on submit f669e65
+* extract journal logic into a reusable service layer ca85ad0
+* implement MCP server with journal CRUD tools and API route 105c068
+* make journal items clickable to view details 142da67
+* move journal entry form to separate page 80b8567
+
 ## [0.31.6](/compare/0.31.5...0.31.6) (2025-12-19)
 
 ## [0.31.5](/compare/0.31.4...0.31.5) (2025-12-19)
