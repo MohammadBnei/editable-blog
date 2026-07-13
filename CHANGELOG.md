@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.35.0](https://github.com/MohammadBnei/editable-blog/compare/0.34.1...0.35.0) (2026-07-13)
+
+
+### Features
+
+* add retro interview skill and enhance blog post rendering with interview format ([d07469a](https://github.com/MohammadBnei/editable-blog/commit/d07469a01e47b101ec092353d3036b1538dd1969))
+
 ## [0.34.1](/compare/0.34.0...0.34.1) (2026-03-04)
 
 # [0.34.0](/compare/0.33.0...0.34.0) (2026-03-04)
