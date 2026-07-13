@@ -8,5 +8,5 @@ resources:
   - service.yml
 
 images:
-  - name: mohammaddocker/editable-blog
-    newTag: 0.34.0
+- name: mohammaddocker/editable-blog
+  newTag: 0.34.1
