@@ -11,7 +11,7 @@
   <div>
     <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-widest text-primary">Hello</p>
     <h1 class="mb-6 font-mono text-5xl font-extrabold tracking-tight sm:text-6xl">
-      I'm Daniel, Yalda et Dounia Noori.
+      I'm Mohammad-Amine.
     </h1>
     <p class="mb-10 max-w-xl text-xl leading-relaxed text-base-content/70">
       I write about code and life, in English and French.
