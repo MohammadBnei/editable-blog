@@ -1,11 +1,12 @@
-import { getArticles } from '$lib/api';
+import { getAllContent } from '$lib/cms/content-processor.js';
 
-export async function load({ locals }) {
-  const currentUser = locals.user;
-  const articles = await getArticles(currentUser, locals.lang);
+export const load = async () => {
+  const allContent = await getAllContent();
+  const posts = allContent.filter(item => item.directory === 'blog');
+  const frPosts = allContent.filter(item => item.directory === 'blog/fr');
 
   return {
-    currentUser,
-    articles
+    posts,
+    frPosts
   };
-}
+};

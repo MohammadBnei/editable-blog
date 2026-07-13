@@ -4,8 +4,8 @@ kind: Kustomization
 namespace: editable-blog
 
 resources:
-- deployment.yml
-- service.yml
+  - deployment.yml
+  - service.yml
 
 images:
 - name: mohammaddocker/editable-blog

@@ -1,13 +1,12 @@
-import { getPage } from '$lib/api';
+import { getAllContent, getContentByUrl } from '$lib/cms/content-processor.js';
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ locals }) {
-  const currentUser = locals.user; // Get current user for admin features
-  const lang = locals.lang || 'en'; // Use the language from locals, default to 'en'
-  const page = await getPage('portfolio', lang); // Static content for the portfolio page
+export const load = async () => {
+  const allContent = await getAllContent();
+  const projects = allContent.filter(item => item.mainDirectory === 'portfolio');
+  const intro = await getContentByUrl('/pages/portfolio');
 
   return {
-    currentUser,
-    page
+    projects,
+    intro
   };
-}
+};

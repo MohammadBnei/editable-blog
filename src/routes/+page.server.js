@@ -1,13 +1,10 @@
-import { getArticles, getPage } from '$lib/api';
+import { getAllContent } from '$lib/cms/content-processor.js';
 
-export async function load({ locals }) {
-  const currentUser = locals.user;
-  const articles = await getArticles(currentUser, locals.lang);
-  const page = await getPage('home', locals.lang);
+export const load = async () => {
+  const allContent = await getAllContent();
+  const posts = allContent
+    .filter(item => item.directory === 'blog')
+    .sort((a, b) => new Date(b.metadata.date) - new Date(a.metadata.date));
 
-  return {
-    currentUser,
-    articles: articles.slice(0, 3),
-    page
-  };
-}
+  return { latestPost: posts[0] ?? null };
+};

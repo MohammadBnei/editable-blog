@@ -1,7 +1,19 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="notebook" data-width="comfortable">
   <head>
     <meta charset="utf-8" />
+    <script>
+      (function () {
+        var w = localStorage.getItem('content-width');
+        if (w === 'cozy' || w === 'comfortable' || w === 'wide') {
+          document.documentElement.dataset.width = w;
+        }
+        var t = localStorage.getItem('theme');
+        if (t === 'notebook' || t === 'notebook-dark') {
+          document.documentElement.dataset.theme = t;
+        }
+      })();
+    </script>
     <link rel="icon" type="image/png" href="%sveltekit.assets%/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="48x48" href="%sveltekit.assets%/favicon-48x48.png" />
     <link rel="apple-touch-icon" sizes="72x72" href="%sveltekit.assets%/favicon-72x72.png" />

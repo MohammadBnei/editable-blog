@@ -1,54 +1,44 @@
 <script>
-  import { goto } from '$app/navigation';
-  import PrimaryButton from '$lib/components/PrimaryButton.svelte';
-  import LoginMenu from '$lib/components/LoginMenu.svelte';
-  import ArticleTeaser from '$lib/components/ArticleTeaser.svelte';
-  import Footer from '$lib/components/Footer.svelte';
-  import EditableWebsiteTeaser from '$lib/components/EditableWebsiteTeaser.svelte';
-  import WebsiteHeader from '$lib/components/WebsiteHeader.svelte';
+  import { langPref } from '$lib/stores/lang.svelte.js';
 
   let { data } = $props();
-  let showUserMenu = $state(false);
+  let { posts, frPosts } = $derived(data);
+  let shown = $derived(langPref.value === 'fr' ? frPosts : posts);
 </script>
 
 <svelte:head>
-  <title>Blog</title>
-  <meta name="description" content="What you always wanted to know about web development." />
+  <title>Articles - bnei.dev</title>
 </svelte:head>
 
-<WebsiteHeader bind:showUserMenu>
-  <div class="flex flex-col">
-    <PrimaryButton type="button" on:click={() => goto('/blog/new')}>New blog post</PrimaryButton>
-    <LoginMenu />
-  </div>
-</WebsiteHeader>
+<h1 class="mb-10 font-mono text-4xl font-extrabold tracking-tight">Latest Articles</h1>
 
-<div class="pb-8 max-w-(--breakpoint-lg) mx-auto">
-  <div class="mx-auto px-6 pt-12 sm:pt-24">
-    <a href="/api/raw/blog" class="btn btn-sm">
-      <svg xmlns="http://www.w3.org/2000/svg" height="1.3em" viewBox="0 0 25 25">
-        <path
-          fill="currentColor"
-          d="M18.92 6.05a.75.75 0 0 0-.598-.297L9.327 5.75a.75.75 0 1 0 0 1.5l7.19.002l-10.72 10.72a.75.75 0 0 0 1.061 1.06L17.573 8.318l.002 7.177a.75.75 0 0 0 1.5-.001l-.003-8.933a.75.75 0 0 0-.152-.51"
-        />
-      </svg>
-      markdown
-    </a>
-    <div class="font-bold text-sm">LATEST ARTICLES</div>
-    {#if data.articles.length === 0}
-      <div class="md:text-xl py-4">No blog posts have been published so far.</div>
-    {/if}
-  </div>
+{#if shown.length === 0}
+  <p class="font-mono text-base-content/70">No French articles yet — check back soon.</p>
+{/if}
 
-  {#each data.articles as article, i}
-    <div class="card bg-base-100 shadow-xl mb-6 mx-auto">
-      <div class="card-body">
-        <ArticleTeaser {article} firstEntry={i === 0} />
-      </div>
-    </div>
+<div class="grid gap-4">
+  {#each shown as post (post.url)}
+    <article class="group">
+      <a
+        href={post.url}
+        class="block rounded-box border border-base-300 bg-base-200 p-6 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg"
+      >
+        <div class="mb-2 flex items-center gap-2 font-mono text-sm text-base-content/70">
+          <span>{post.metadata.date || 'No date'}</span>
+          {#if post.metadata.format === 'interview'}
+            <span
+              class="rounded-field border border-primary/40 px-1.5 py-0.5 text-[0.65rem] uppercase tracking-wide text-primary"
+              >Q&amp;A</span
+            >
+          {/if}
+        </div>
+        <h2 class="mb-2 text-2xl font-bold transition-colors group-hover:text-primary">
+          {post.metadata.title}
+        </h2>
+        <p class="leading-relaxed text-base-content/70">
+          {post.metadata.description}
+        </p>
+      </a>
+    </article>
   {/each}
 </div>
-
-<EditableWebsiteTeaser />
-
-<Footer counter="/blog" />

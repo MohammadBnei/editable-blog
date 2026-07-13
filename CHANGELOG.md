@@ -4,58 +4,53 @@
 
 # [0.34.0](/compare/0.33.0...0.34.0) (2026-03-04)
 
-
 ### Features
 
-* add form counterparts for journal remote commands c8801d4
+- add form counterparts for journal remote commands c8801d4
 
 # [0.33.0](/compare/0.32.0...0.33.0) (2026-03-04)
 
-
 ### Bug Fixes
 
-* add sessionIdGenerator and fix Handle type import in hooks.server.js 04b706b
-* pass Response object to transport handleRequest in MCP API 99f729b
-
+- add sessionIdGenerator and fix Handle type import in hooks.server.js 04b706b
+- pass Response object to transport handleRequest in MCP API 99f729b
 
 ### Features
 
-* implement @vercel/mcp-adapter for MCP endpoint handler 381923b
-* implement MCP server handler using h3 in server hooks 7a7e0b8
+- implement @vercel/mcp-adapter for MCP endpoint handler 381923b
+- implement MCP server handler using h3 in server hooks 7a7e0b8
 
 # [0.32.0](/compare/0.31.6...0.32.0) (2026-03-04)
 
-
 ### Bug Fixes
 
-* pass value to hidden input fields via .as() method fac9926
-
+- pass value to hidden input fields via .as() method fac9926
 
 ### Features
 
-* add `getSearchResults` remote query function 9951def
-* add add_journal_exchanges tool to mcpServer dfa2a70
-* add addJournalExchanges to append messages to journal entries a8d26d4
-* add authentication check to journal page load a95797d
-* add bearer token authentication to mcp endpoint 8c3c1c6
-* add category and friction_score filters to getJournalEntries 068fd72
-* add confirmation dialog and form enhancement to delete entry 3b16a64
-* add cpu and memory resource limits and requests f51cdc4
-* add IngressRoute and CORS middleware for bnei.dev f6a49a2
-* add journal entry detail page and separate edit route b5043bd
-* add journal page and component using remote functions 232e452
-* add journal.remote.ts for CRUD with SvelteKit remote functions 28f5997
-* add layout with WebsiteHeader for journal routes 0486f2f
-* add migration to create journal table eaae775
-* add separate create and edit pages for journal entries 6af8c98
-* add trigger to automatically update updated_at in journal table 9d92bd2
-* display journal entry metadata and conversation chat sections b822f49
-* enhance journal entry deletion with confirmation and redirect 6496df3
-* enhance journal form and redirect to index on submit f669e65
-* extract journal logic into a reusable service layer ca85ad0
-* implement MCP server with journal CRUD tools and API route 105c068
-* make journal items clickable to view details 142da67
-* move journal entry form to separate page 80b8567
+- add `getSearchResults` remote query function 9951def
+- add add_journal_exchanges tool to mcpServer dfa2a70
+- add addJournalExchanges to append messages to journal entries a8d26d4
+- add authentication check to journal page load a95797d
+- add bearer token authentication to mcp endpoint 8c3c1c6
+- add category and friction_score filters to getJournalEntries 068fd72
+- add confirmation dialog and form enhancement to delete entry 3b16a64
+- add cpu and memory resource limits and requests f51cdc4
+- add IngressRoute and CORS middleware for bnei.dev f6a49a2
+- add journal entry detail page and separate edit route b5043bd
+- add journal page and component using remote functions 232e452
+- add journal.remote.ts for CRUD with SvelteKit remote functions 28f5997
+- add layout with WebsiteHeader for journal routes 0486f2f
+- add migration to create journal table eaae775
+- add separate create and edit pages for journal entries 6af8c98
+- add trigger to automatically update updated_at in journal table 9d92bd2
+- display journal entry metadata and conversation chat sections b822f49
+- enhance journal entry deletion with confirmation and redirect 6496df3
+- enhance journal form and redirect to index on submit f669e65
+- extract journal logic into a reusable service layer ca85ad0
+- implement MCP server with journal CRUD tools and API route 105c068
+- make journal items clickable to view details 142da67
+- move journal entry form to separate page 80b8567
 
 ## [0.31.6](/compare/0.31.5...0.31.6) (2025-12-19)
 
@@ -69,57 +64,51 @@
 
 ## [0.31.1](/compare/0.31.0...0.31.1) (2025-12-18)
 
-
 ### Bug Fixes
 
-* **import json:** toggle edition upon importing new json file ffd983d
+- **import json:** toggle edition upon importing new json file ffd983d
 
 # [0.31.0](/compare/0.30.3...0.31.0) (2025-12-18)
 
-
 ### Features
 
-* add "The Process" timeline section to homepage dd27408
-* add FAQ chat bubble section and final CTA section 2d31964
-* Add JSON export/import for page content in edit mode 82a6d63
-* Conditionally display auth links in navigation 5678492
-* Replace 'About' with 'Mohammad-Amine Banaei' in header links 99e10e7
-* Separate brand link from navigation links 19875ae
-* update landing page hero section with new headline and CTA cad16f8
+- add "The Process" timeline section to homepage dd27408
+- add FAQ chat bubble section and final CTA section 2d31964
+- Add JSON export/import for page content in edit mode 82a6d63
+- Conditionally display auth links in navigation 5678492
+- Replace 'About' with 'Mohammad-Amine Banaei' in header links 99e10e7
+- Separate brand link from navigation links 19875ae
+- update landing page hero section with new headline and CTA cad16f8
 
 ## [0.30.3](/compare/0.30.2...0.30.3) (2025-12-03)
 
 ## [0.30.2](/compare/0.30.1...0.30.2) (2025-12-03)
 
-
 ### Bug Fixes
 
-* **richText:** allowing mailto links 28d4cf4
+- **richText:** allowing mailto links 28d4cf4
 
 ## [0.30.1](/compare/0.30.0...0.30.1) (2025-11-26)
 
 # [0.30.0](/compare/0.29.0...0.30.0) (2025-11-26)
 
-
 ### Features
 
-* Apply card system to blog article teasers da9fec2
+- Apply card system to blog article teasers da9fec2
 
 # [0.29.0](/compare/0.28.10...0.29.0) (2025-11-26)
 
-
 ### Bug Fixes
 
-* correct apk install to apk add in Alpine Linux Dockerfile ddbcdb8
-* replace build-essential with build-base for Alpine Linux compatibility efa9b80
-
+- correct apk install to apk add in Alpine Linux Dockerfile ddbcdb8
+- replace build-essential with build-base for Alpine Linux compatibility efa9b80
 
 ### Features
 
-* add file upload button to EditorControls c7da9a7
-* Add responsive navigation with mobile burger dropdown 47558b6
-* add upload success modal with asset URL and copy functionality 54b57d2
-* re-add upload function with supported file types and Safari compatibility 62f7a22
+- add file upload button to EditorControls c7da9a7
+- Add responsive navigation with mobile burger dropdown 47558b6
+- add upload success modal with asset URL and copy functionality 54b57d2
+- re-add upload function with supported file types and Safari compatibility 62f7a22
 
 ## [0.28.10](/compare/0.28.9...0.28.10) (2025-11-26)
 
@@ -143,149 +132,131 @@
 
 # [0.28.0](/compare/0.27.0...0.28.0) (2025-11-25)
 
-
 ### Bug Fixes
 
-* correct button scroll target from contact to testimonials 23fe072
-
+- correct button scroll target from contact to testimonials 23fe072
 
 ### Features
 
-* add isEditing store import to TrustSection 78109c4
-* add Trust section with cards replacing testimonials 00b9289
-* **k8s/service.yml:** add support for serving the application on 'bnei.dev' domain alongside 'blog.bnei.dev' to improve accessibility and user experience 64b306d
-* replace single CTA with "View Case Studies" and "DM me" buttons 343e3f5
-* simplify trust section with single rich text per item 7892b40
+- add isEditing store import to TrustSection 78109c4
+- add Trust section with cards replacing testimonials 00b9289
+- **k8s/service.yml:** add support for serving the application on 'bnei.dev' domain alongside 'blog.bnei.dev' to improve accessibility and user experience 64b306d
+- replace single CTA with "View Case Studies" and "DM me" buttons 343e3f5
+- simplify trust section with single rich text per item 7892b40
 
 # [0.27.0](https://github.com/MohammadBnei/editable-blog/compare/0.26.1...0.27.0) (2025-11-08)
 
-
 ### Bug Fixes
 
-* Make bookmarks state reactive and improve URL display and clickability ([ea7f499](https://github.com/MohammadBnei/editable-blog/commit/ea7f4992ff95d86b9d338d77d540a37a41dd4fca))
-
+- Make bookmarks state reactive and improve URL display and clickability ([ea7f499](https://github.com/MohammadBnei/editable-blog/commit/ea7f4992ff95d86b9d338d77d540a37a41dd4fca))
 
 ### Features
 
-* Add API endpoint to fetch URL metadata ([c1e329a](https://github.com/MohammadBnei/editable-blog/commit/c1e329aec59781d3344a51077f7f5a9d890d3514))
-* Adjust bookmark display for desktop and mobile views ([60b2ec4](https://github.com/MohammadBnei/editable-blog/commit/60b2ec4f4579cb770435aa70ed0c6c7024ce6550))
-* Automatically add HTTPS protocol to bookmark URLs ([0165de8](https://github.com/MohammadBnei/editable-blog/commit/0165de8b212909ed58786e0c4660b86cb5962348))
-* Implement DaisyUI list, sorting, and SEO card for bookmarks ([a356a37](https://github.com/MohammadBnei/editable-blog/commit/a356a370f93b016f0b0f7f09c3195abd228aebc2))
+- Add API endpoint to fetch URL metadata ([c1e329a](https://github.com/MohammadBnei/editable-blog/commit/c1e329aec59781d3344a51077f7f5a9d890d3514))
+- Adjust bookmark display for desktop and mobile views ([60b2ec4](https://github.com/MohammadBnei/editable-blog/commit/60b2ec4f4579cb770435aa70ed0c6c7024ce6550))
+- Automatically add HTTPS protocol to bookmark URLs ([0165de8](https://github.com/MohammadBnei/editable-blog/commit/0165de8b212909ed58786e0c4660b86cb5962348))
+- Implement DaisyUI list, sorting, and SEO card for bookmarks ([a356a37](https://github.com/MohammadBnei/editable-blog/commit/a356a370f93b016f0b0f7f09c3195abd228aebc2))
 
 ## [0.26.1](https://github.com/MohammadBnei/editable-blog/compare/0.26.0...0.26.1) (2025-11-08)
 
 # [0.26.0](https://github.com/MohammadBnei/editable-blog/compare/0.25.2...0.26.0) (2025-11-08)
 
-
 ### Features
 
-* Add new 'Bookmarks' page with dynamic content and editing ([762002d](https://github.com/MohammadBnei/editable-blog/commit/762002d0529a37637d0c32ab78b40ab54885e211))
-* Implement new project creation with modal and redirect ([3e88692](https://github.com/MohammadBnei/editable-blog/commit/3e88692566131d22b78d300b4b0e7b564d877bb8))
-* Separate header and search navigation links ([527534e](https://github.com/MohammadBnei/editable-blog/commit/527534ebcedddd80ea995a81fdf30c1d18fc8891))
+- Add new 'Bookmarks' page with dynamic content and editing ([762002d](https://github.com/MohammadBnei/editable-blog/commit/762002d0529a37637d0c32ab78b40ab54885e211))
+- Implement new project creation with modal and redirect ([3e88692](https://github.com/MohammadBnei/editable-blog/commit/3e88692566131d22b78d300b4b0e7b564d877bb8))
+- Separate header and search navigation links ([527534e](https://github.com/MohammadBnei/editable-blog/commit/527534ebcedddd80ea995a81fdf30c1d18fc8891))
 
 ## [0.25.2](https://github.com/MohammadBnei/editable-blog/compare/0.25.1...0.25.2) (2025-11-07)
 
-
 ### Bug Fixes
 
-* **portfolio:** using derived instead of state to allow lang change updates ([7201b1a](https://github.com/MohammadBnei/editable-blog/commit/7201b1a3dab6ee8181c55fad86871b29adbe9908))
+- **portfolio:** using derived instead of state to allow lang change updates ([7201b1a](https://github.com/MohammadBnei/editable-blog/commit/7201b1a3dab6ee8181c55fad86871b29adbe9908))
 
 ## [0.25.1](https://github.com/MohammadBnei/editable-blog/compare/0.25.0...0.25.1) (2025-11-07)
 
 # [0.25.0](https://github.com/MohammadBnei/editable-blog/compare/0.24.0...0.25.0) (2025-11-07)
 
-
 ### Features
 
-* Prepend ORIGIN to relative markdown links in raw API responses ([64fec5a](https://github.com/MohammadBnei/editable-blog/commit/64fec5a56a09ded200f4eef04769875661a740b3))
+- Prepend ORIGIN to relative markdown links in raw API responses ([64fec5a](https://github.com/MohammadBnei/editable-blog/commit/64fec5a56a09ded200f4eef04769875661a740b3))
 
 # [0.24.0](https://github.com/MohammadBnei/editable-blog/compare/0.23.0...0.24.0) (2025-11-07)
 
-
 ### Bug Fixes
 
-* Correct regex for slug generation in portfolio page ([5985908](https://github.com/MohammadBnei/editable-blog/commit/5985908afcd6a47677efb17d8fe001a05f2f8c42))
-* Move raw markdown links to page and set UTF-8 charset ([13be6c8](https://github.com/MohammadBnei/editable-blog/commit/13be6c81cbcdebca0346f1431c8829e5a18f2849))
-
+- Correct regex for slug generation in portfolio page ([5985908](https://github.com/MohammadBnei/editable-blog/commit/5985908afcd6a47677efb17d8fe001a05f2f8c42))
+- Move raw markdown links to page and set UTF-8 charset ([13be6c8](https://github.com/MohammadBnei/editable-blog/commit/13be6c81cbcdebca0346f1431c8829e5a18f2849))
 
 ### Features
 
-* Add API endpoints for raw blog and portfolio markdown content ([2d895d0](https://github.com/MohammadBnei/editable-blog/commit/2d895d022be3042000e9aa48e35b98d365c1d040))
-* Add icon to "View Raw Markdown" button and adjust styling ([b5184db](https://github.com/MohammadBnei/editable-blog/commit/b5184dbf9f591f3230df3b7b687b8b76edfb63b7))
-* Add raw Markdown view links to blog and portfolio pages ([46f9b59](https://github.com/MohammadBnei/editable-blog/commit/46f9b59e667c15ea7ba8750e4908d17cda3b7431))
-* Update "View Raw Markdown" buttons with SVG icon and text ([cc87131](https://github.com/MohammadBnei/editable-blog/commit/cc8713191bebecef12fa9e15d11d69571b8be244))
+- Add API endpoints for raw blog and portfolio markdown content ([2d895d0](https://github.com/MohammadBnei/editable-blog/commit/2d895d022be3042000e9aa48e35b98d365c1d040))
+- Add icon to "View Raw Markdown" button and adjust styling ([b5184db](https://github.com/MohammadBnei/editable-blog/commit/b5184dbf9f591f3230df3b7b687b8b76edfb63b7))
+- Add raw Markdown view links to blog and portfolio pages ([46f9b59](https://github.com/MohammadBnei/editable-blog/commit/46f9b59e667c15ea7ba8750e4908d17cda3b7431))
+- Update "View Raw Markdown" buttons with SVG icon and text ([cc87131](https://github.com/MohammadBnei/editable-blog/commit/cc8713191bebecef12fa9e15d11d69571b8be244))
 
 # [0.23.0](https://github.com/MohammadBnei/editable-blog/compare/0.22.0...0.23.0) (2025-11-04)
 
-
 ### Bug Fixes
 
-* Adjust expand button placement and size in PortfolioProject ([8cc1cc6](https://github.com/MohammadBnei/editable-blog/commit/8cc1cc6b16f8b2b4b17b621d1c2e715b2615eb4c))
-* Adjust RichText component width within PortfolioProject ([19036aa](https://github.com/MohammadBnei/editable-blog/commit/19036aa7df7b61d20fcab7cb449535ff09cedb2f))
-* Correctly bind project prop for two-way data flow ([bc1cddf](https://github.com/MohammadBnei/editable-blog/commit/bc1cddf353f6e348701e2e6c64a80ddc8a482726))
-* Ensure project reactivity after title and slug updates ([c38a8a3](https://github.com/MohammadBnei/editable-blog/commit/c38a8a31838086688a727b62102ad5800d115e0f))
-* Remove alert messages for unauthorized access and save errors ([815e1c5](https://github.com/MohammadBnei/editable-blog/commit/815e1c5145fb6c083cd84aa2eb65493e00c4ce8b))
-* Update content prop on editor change ([dd9fdfb](https://github.com/MohammadBnei/editable-blog/commit/dd9fdfb01221bdbe67e659bda6cad29830240728))
-* Update project slug reactively in PortfolioProject component ([b46527a](https://github.com/MohammadBnei/editable-blog/commit/b46527a04e63d9bba9aee85639be75c19bda5689))
-* Update project title and slug reactively in PortfolioProject component ([3a4f65b](https://github.com/MohammadBnei/editable-blog/commit/3a4f65b773242f1ec765ee4884d433147f0e1ba4))
-
+- Adjust expand button placement and size in PortfolioProject ([8cc1cc6](https://github.com/MohammadBnei/editable-blog/commit/8cc1cc6b16f8b2b4b17b621d1c2e715b2615eb4c))
+- Adjust RichText component width within PortfolioProject ([19036aa](https://github.com/MohammadBnei/editable-blog/commit/19036aa7df7b61d20fcab7cb449535ff09cedb2f))
+- Correctly bind project prop for two-way data flow ([bc1cddf](https://github.com/MohammadBnei/editable-blog/commit/bc1cddf353f6e348701e2e6c64a80ddc8a482726))
+- Ensure project reactivity after title and slug updates ([c38a8a3](https://github.com/MohammadBnei/editable-blog/commit/c38a8a31838086688a727b62102ad5800d115e0f))
+- Remove alert messages for unauthorized access and save errors ([815e1c5](https://github.com/MohammadBnei/editable-blog/commit/815e1c5145fb6c083cd84aa2eb65493e00c4ce8b))
+- Update content prop on editor change ([dd9fdfb](https://github.com/MohammadBnei/editable-blog/commit/dd9fdfb01221bdbe67e659bda6cad29830240728))
+- Update project slug reactively in PortfolioProject component ([b46527a](https://github.com/MohammadBnei/editable-blog/commit/b46527a04e63d9bba9aee85639be75c19bda5689))
+- Update project title and slug reactively in PortfolioProject component ([3a4f65b](https://github.com/MohammadBnei/editable-blog/commit/3a4f65b773242f1ec765ee4884d433147f0e1ba4))
 
 ### Features
 
-* Add dynamic portfolio project pages and editing capabilities ([e24b1b3](https://github.com/MohammadBnei/editable-blog/commit/e24b1b3efa1dd741e907eb5f6efa716fb3df8049))
-* Add WebsiteHeader and LoginMenu to portfolio page ([2fd3ac9](https://github.com/MohammadBnei/editable-blog/commit/2fd3ac9f0dcb718345a2b0ee5eeffc4644118730))
-* Auto-generate project slug from title ([56333a9](https://github.com/MohammadBnei/editable-blog/commit/56333a94d1f675d8fa673328adc54a3f04af2543))
-* Enable editing of individual portfolio projects on their slug page ([3f50f79](https://github.com/MohammadBnei/editable-blog/commit/3f50f7944664173c1156dba0b7c5ebe748a63562))
-* Make project slug reactive to title changes ([1e54793](https://github.com/MohammadBnei/editable-blog/commit/1e54793f92cf1e550bd7140fb0654e1cd11c233c))
+- Add dynamic portfolio project pages and editing capabilities ([e24b1b3](https://github.com/MohammadBnei/editable-blog/commit/e24b1b3efa1dd741e907eb5f6efa716fb3df8049))
+- Add WebsiteHeader and LoginMenu to portfolio page ([2fd3ac9](https://github.com/MohammadBnei/editable-blog/commit/2fd3ac9f0dcb718345a2b0ee5eeffc4644118730))
+- Auto-generate project slug from title ([56333a9](https://github.com/MohammadBnei/editable-blog/commit/56333a94d1f675d8fa673328adc54a3f04af2543))
+- Enable editing of individual portfolio projects on their slug page ([3f50f79](https://github.com/MohammadBnei/editable-blog/commit/3f50f7944664173c1156dba0b7c5ebe748a63562))
+- Make project slug reactive to title changes ([1e54793](https://github.com/MohammadBnei/editable-blog/commit/1e54793f92cf1e550bd7140fb0654e1cd11c233c))
 
 # [0.22.0](https://github.com/MohammadBnei/editable-blog/compare/0.21.0...0.22.0) (2025-09-29)
 
-
 ### Bug Fixes
 
-* Display full post text directly in page, remove FullPostDisplay component ([827a339](https://github.com/MohammadBnei/editable-blog/commit/827a3391a63dcf6da0d3d2ef7887fee305ef4d2f))
-
+- Display full post text directly in page, remove FullPostDisplay component ([827a339](https://github.com/MohammadBnei/editable-blog/commit/827a3391a63dcf6da0d3d2ef7887fee305ef4d2f))
 
 ### Features
 
-* Add toggle to display full LinkedIn post text ([7d8f975](https://github.com/MohammadBnei/editable-blog/commit/7d8f975650bde4bf43612d744ce2d30ea10a015b))
+- Add toggle to display full LinkedIn post text ([7d8f975](https://github.com/MohammadBnei/editable-blog/commit/7d8f975650bde4bf43612d744ce2d30ea10a015b))
 
 # [0.21.0](https://github.com/MohammadBnei/editable-blog/compare/0.20.3...0.21.0) (2025-09-29)
 
-
 ### Features
 
-* Add validate and publish buttons to LinkedIn posts list ([f2ccf08](https://github.com/MohammadBnei/editable-blog/commit/f2ccf08b1bd854d62adf7c1cc4a162a4f089afce))
+- Add validate and publish buttons to LinkedIn posts list ([f2ccf08](https://github.com/MohammadBnei/editable-blog/commit/f2ccf08b1bd854d62adf7c1cc4a162a4f089afce))
 
 ## [0.20.3](https://github.com/MohammadBnei/editable-blog/compare/0.20.2...0.20.3) (2025-09-29)
 
 ## [0.20.2](https://github.com/MohammadBnei/editable-blog/compare/0.20.1...0.20.2) (2025-09-29)
 
-
 ### Bug Fixes
 
-* **PlainText:** removed html tag from plain text component ([8d40ccd](https://github.com/MohammadBnei/editable-blog/commit/8d40ccd3d4ec7b3b31e0c6fdd740e03c04a9f9a2))
+- **PlainText:** removed html tag from plain text component ([8d40ccd](https://github.com/MohammadBnei/editable-blog/commit/8d40ccd3d4ec7b3b31e0c6fdd740e03c04a9f9a2))
 
 ## [0.20.1](https://github.com/MohammadBnei/editable-blog/compare/0.20.0...0.20.1) (2025-09-29)
 
-
 ### Bug Fixes
 
-* **article:** articles are now in full width ([dedf39f](https://github.com/MohammadBnei/editable-blog/commit/dedf39fd00b3b94d6c454481d0ab45674c59f58c))
+- **article:** articles are now in full width ([dedf39f](https://github.com/MohammadBnei/editable-blog/commit/dedf39fd00b3b94d6c454481d0ab45674c59f58c))
 
 # [0.20.0](https://github.com/MohammadBnei/editable-blog/compare/0.19.0...0.20.0) (2025-09-26)
 
-
 ### Bug Fixes
 
-* **linkedin posts:** using correct syntax for store value ($) ([6b73cbd](https://github.com/MohammadBnei/editable-blog/commit/6b73cbd95443db596fc9a69a49748c146352982c))
-
+- **linkedin posts:** using correct syntax for store value ($) ([6b73cbd](https://github.com/MohammadBnei/editable-blog/commit/6b73cbd95443db596fc9a69a49748c146352982c))
 
 ### Features
 
-* Add next/previous post navigation for LinkedIn posts ([accd4ef](https://github.com/MohammadBnei/editable-blog/commit/accd4efd605a35a46f28dba75d65592ac0ab1e84))
-* Add pre-commit hook to format code with Prettier ([9f0aadf](https://github.com/MohammadBnei/editable-blog/commit/9f0aadfbd55b9a9cc4a13dc7fa20e3d3ac505d63))
-* Implement next and previous LinkedIn post navigation ([0827cf2](https://github.com/MohammadBnei/editable-blog/commit/0827cf23dfa93941ac28cafe7a513b4daad28946))
+- Add next/previous post navigation for LinkedIn posts ([accd4ef](https://github.com/MohammadBnei/editable-blog/commit/accd4efd605a35a46f28dba75d65592ac0ab1e84))
+- Add pre-commit hook to format code with Prettier ([9f0aadf](https://github.com/MohammadBnei/editable-blog/commit/9f0aadfbd55b9a9cc4a13dc7fa20e3d3ac505d63))
+- Implement next and previous LinkedIn post navigation ([0827cf2](https://github.com/MohammadBnei/editable-blog/commit/0827cf23dfa93941ac28cafe7a513b4daad28946))
 
 # [0.19.0](https://github.com/MohammadBnei/editable-blog/compare/0.18.1...0.19.0) (2025-09-26)
 

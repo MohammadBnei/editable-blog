@@ -70,11 +70,11 @@ spec:
       - PUT
       - DELETE
     customRequestHeaders:
-      X-Forwarded-Proto: "https"
-      X-Forwarded-Host: "{{ .Host }}"
+      X-Forwarded-Proto: 'https'
+      X-Forwarded-Host: '{{ .Host }}'
     accessControlAllowOriginList:
-      - "https://bnei.dev"
-      - "https://blog.bnei.dev"
+      - 'https://bnei.dev'
+      - 'https://blog.bnei.dev'
     accessControlAllowHeaders:
       - Content-Type
       - Authorization

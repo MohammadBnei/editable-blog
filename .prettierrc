@@ -5,10 +5,8 @@
   "printWidth": 100,
   "arrowParens": "avoid",
   "svelteSortOrder": "options-scripts-markup-styles",
-  "svelteStrictMode": false,
   "svelteIndentScriptAndStyle": true,
   "plugins": ["prettier-plugin-svelte"],
-  "pluginSearchDirs": ["."],
   "overrides": [
     { "files": "*.svelte", "options": { "parser": "svelte" } },
     { "files": "*.css", "options": { "singleQuote": false } }
