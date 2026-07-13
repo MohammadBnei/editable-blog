@@ -106,6 +106,25 @@ const transformLinks = (html, currentDirectory) => {
   });
 };
 
+// Decode the HTML entities rehype/mdsvex escape inside a compiled code block
+const decodeHtmlEntities = str =>
+  str
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&');
+
+// Mermaid fenced code blocks compile to <pre class="language-mermaid"><code
+// class="language-mermaid">...</code></pre>; mermaid.run() instead expects a
+// bare <pre class="mermaid"> containing the raw (unescaped) diagram source.
+const transformMermaidBlocks = html => {
+  return html.replace(
+    /<pre class="language-mermaid"><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g,
+    (match, code) => `<pre class="mermaid not-prose">${decodeHtmlEntities(code)}</pre>`
+  );
+};
+
 // Scans all markdown files and folders in the content directory
 const scanContentDirectory = async () => {
   const contentPath = path.resolve('content');
@@ -168,6 +187,7 @@ const scanContentDirectory = async () => {
           html = await processMarkdownWithMDSvex(processedMarkdownContent);
           html = removeFirstH1(html);
           html = transformLinks(html, directory);
+          html = transformMermaidBlocks(html);
         }
 
         // Add main directory information to create content tree
@@ -192,33 +212,6 @@ const scanContentDirectory = async () => {
   await scanDir(contentPath);
 
   return contentEntries;
-};
-
-// Function that detects folders in the content directory
-const getContentDirectories = () => {
-  const contentPath = path.resolve('content');
-  const directories = [];
-
-  if (!fs.existsSync(contentPath)) {
-    console.warn('Content folder not found!');
-    return directories;
-  }
-
-  const entries = fs.readdirSync(contentPath);
-
-  for (const entry of entries) {
-    const fullPath = path.join(contentPath, entry);
-    if (fs.statSync(fullPath).isDirectory()) {
-      directories.push({
-        name: entry,
-        path: `content/${entry}`,
-        title: formatTitle(entry),
-        url: `/${entry}`
-      });
-    }
-  }
-
-  return directories;
 };
 
 // Function to create a title from a slug
@@ -264,71 +257,12 @@ const getContentByUrl = async url => {
   // Remove trailing slash (/) from URL
   const normalizedUrl = url.endsWith('/') ? url.slice(0, -1) : url;
 
-  console.log('Normalized URL for lookup:', normalizedUrl);
-
   // Check content URLs and find matching content
-  const result = allContent.find(entry => {
+  return allContent.find(entry => {
     // Remove trailing slash from content URL as well
     const entryUrl = entry.url.endsWith('/') ? entry.url.slice(0, -1) : entry.url;
-    console.log(`Comparing: "${entryUrl}" vs "${normalizedUrl}"`);
     return entryUrl === normalizedUrl;
   });
-
-  console.log('Match result:', result ? `Found: ${result.url}` : 'Not found');
-  return result;
-};
-
-// Get content from a specific directory
-const getContentByDirectory = async directory => {
-  const allContent = await getAllContent();
-
-  // Direct matching for main directories
-  if (directory === 'root') {
-    return allContent.filter(entry => entry.directory === 'root');
-  }
-
-  // Get all content that starts with the specified directory, including subdirectories
-  return allContent.filter(entry => {
-    // 1. Exact match case (e.g., 'blog' directory for 'blog')
-    // 2. Subdirectory match (e.g., 'blog/category' directory for 'blog')
-    return entry.directory === directory || entry.directory.startsWith(directory + '/');
-  });
-};
-
-// Clear cache (might be necessary in development mode)
-const clearContentCache = () => {
-  cachedContent = null;
-};
-
-// Function to find subdirectories - returns subdirectories for a specific directory
-const getSubDirectories = async directory => {
-  const allContent = await getAllContent();
-  const subdirs = new Set();
-
-  // If not the main directory, filter relevant content
-  const contents = allContent.filter(
-    entry =>
-      entry.directory !== 'root' &&
-      (entry.directory === directory || entry.directory.startsWith(directory + '/'))
-  );
-
-  // Extract subdirectories from contents
-  contents.forEach(entry => {
-    // Get only subdirectories by skipping the main directory
-    const relativePath = entry.directory.replace(directory + '/', '');
-    if (relativePath && relativePath.includes('/')) {
-      // Get the first subdirectory level (e.g., 'blog/category/js' -> 'category')
-      const firstLevel = relativePath.split('/')[0];
-      subdirs.add(firstLevel);
-    }
-  });
-
-  return Array.from(subdirs).map(subdir => ({
-    name: subdir,
-    path: `${directory}/${subdir}`,
-    title: formatTitle(subdir),
-    url: `/${directory}/${subdir}`
-  }));
 };
 
 // Function to process template variables
@@ -399,126 +333,5 @@ const processTemplateVariables = content => {
   return processedContent;
 };
 
-// Function to build sidebar navigation tree for a directory
-const getSidebarTree = async directory => {
-  const allContent = await getAllContent();
-
-  // Filter content for this directory
-  const directoryContent = allContent.filter(
-    entry => entry.directory === directory || entry.directory.startsWith(directory + '/')
-  );
-
-  // Group by subdirectory
-  const groups = {};
-
-  directoryContent.forEach(entry => {
-    // Get relative path from the main directory
-    const relativePath =
-      entry.directory === directory ? '' : entry.directory.replace(directory + '/', '');
-
-    const parts = relativePath.split('/').filter(Boolean);
-    const groupKey = parts[0] || '_root';
-
-    if (!groups[groupKey]) {
-      groups[groupKey] = {
-        title: groupKey === '_root' ? formatTitle(directory) : formatTitle(groupKey),
-        items: []
-      };
-    }
-
-    groups[groupKey].items.push({
-      title: entry.metadata.title,
-      url: entry.url,
-      order: entry.metadata.order || 999
-    });
-  });
-
-  // Sort items within each group
-  Object.values(groups).forEach(group => {
-    group.items.sort((a, b) => a.order - b.order);
-  });
-
-  // Convert to sidebar format
-  const result = [];
-
-  // Add root items first
-  if (groups._root) {
-    groups._root.items.forEach(item => {
-      result.push(item);
-    });
-    delete groups._root;
-  }
-
-  // Add grouped items
-  Object.entries(groups).forEach(([key, group]) => {
-    result.push({
-      title: group.title,
-      children: group.items
-    });
-  });
-
-  return result;
-};
-
-// Function to get all directories as sidebar navigation
-const getAllDirectoriesSidebar = async () => {
-  const directories = getContentDirectories();
-  const result = [];
-
-  directories.forEach(dir => {
-    const dirContent = getSidebarTree(dir.name);
-    if (dirContent.length > 0) {
-      result.push({
-        title: dir.title,
-        url: dir.url,
-        children: dirContent
-      });
-    }
-  });
-
-  return result;
-};
-
-// Get all unique tags from all content
-const getAllTags = async () => {
-  const allContent = await getAllContent();
-  const tagsSet = new Set();
-
-  allContent.forEach(entry => {
-    if (entry.metadata.tags && Array.isArray(entry.metadata.tags)) {
-      entry.metadata.tags.forEach(tag => tagsSet.add(tag.toLowerCase()));
-    }
-  });
-
-  return Array.from(tagsSet).sort();
-};
-
-// Get all posts that have a specific tag
-const getPostsByTag = async tag => {
-  const allContent = await getAllContent();
-  const normalizedTag = tag.toLowerCase();
-
-  return allContent.filter(entry => {
-    if (!entry.metadata.tags || !Array.isArray(entry.metadata.tags)) {
-      return false;
-    }
-    return entry.metadata.tags.some(t => t.toLowerCase() === normalizedTag);
-  });
-};
-
 // Export functions
-export {
-  scanContentDirectory,
-  getContentDirectories,
-  formatTitle,
-  getAllContent,
-  getContentByUrl,
-  getContentByDirectory,
-  clearContentCache,
-  getSubDirectories,
-  processTemplateVariables,
-  getSidebarTree,
-  getAllDirectoriesSidebar,
-  getAllTags,
-  getPostsByTag
-};
+export { getAllContent, getContentByUrl };

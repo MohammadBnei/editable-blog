@@ -1,23 +1,43 @@
 <script>
-  // Landing page
+  let { data } = $props();
+  let { latestPost } = $derived(data);
 </script>
 
 <svelte:head>
   <title>bnei.dev</title>
 </svelte:head>
 
-<section class="py-16 sm:py-24">
-  <p class="mb-4 text-sm font-semibold uppercase tracking-widest text-blue-600">Hello</p>
-  <h1 class="mb-6 text-5xl font-extrabold tracking-tight sm:text-6xl">I'm Mohammad.</h1>
-  <p class="mb-10 max-w-xl text-xl leading-relaxed text-slate-600 dark:text-slate-400">
-    I write about code and life, in English and French.
-  </p>
+<section class="grid gap-12 py-16 sm:py-24 lg:grid-cols-2 lg:items-center">
+  <div>
+    <p class="mb-4 font-mono text-sm font-semibold uppercase tracking-widest text-primary">Hello</p>
+    <h1 class="mb-6 font-mono text-5xl font-extrabold tracking-tight sm:text-6xl">
+      I'm Daniel, Yalda et Dounia Noori.
+    </h1>
+    <p class="mb-10 max-w-xl text-xl leading-relaxed text-base-content/70">
+      I write about code and life, in English and French.
+    </p>
 
-  <a
-    href="/blog"
-    class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 font-medium text-white transition-colors hover:bg-blue-700"
-  >
-    Read my posts
-    <span aria-hidden="true">&rarr;</span>
-  </a>
+    <a href="/blog" class="btn btn-primary rounded-field gap-2">
+      Read my posts
+      <span aria-hidden="true">&rarr;</span>
+    </a>
+  </div>
+
+  {#if latestPost}
+    <div class="rounded-box border border-base-300 bg-base-200 p-6 font-mono text-sm shadow-sm">
+      <div class="mb-4 flex gap-1.5">
+        <span class="h-3 w-3 rounded-full bg-base-300"></span>
+        <span class="h-3 w-3 rounded-full bg-base-300"></span>
+        <span class="h-3 w-3 rounded-full bg-base-300"></span>
+      </div>
+      <div class="text-primary">$ latest_post --show</div>
+      <div class="mt-3 text-base-content/70">{latestPost.metadata.date}</div>
+      <a
+        href={latestPost.url}
+        class="mt-1 block text-base-content transition-colors hover:text-primary"
+      >
+        {latestPost.metadata.title}
+      </a>
+    </div>
+  {/if}
 </section>

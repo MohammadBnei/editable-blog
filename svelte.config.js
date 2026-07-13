@@ -27,18 +27,22 @@ const config = {
       // Static site output folder
       pages: 'build',
       assets: 'build',
-      // No fallback: every route here is prerenderable, so `strict: true`
-      // fails the build loudly if that ever stops being true, instead of
-      // silently overwriting a prerendered page with an empty SPA shell.
+      // Every route here is prerenderable, so `strict: true` fails the
+      // build loudly if that ever stops being true, instead of silently
+      // overwriting a prerendered page with an empty SPA shell. `fallback`
+      // is unrelated to that check (it only guards non-prerenderable
+      // routes) — it just gives `serve`/static hosts a 404.html to serve
+      // for any path with no prerendered file, which then renders our
+      // +error.svelte client-side.
       precompress: false,
-      strict: true
+      strict: true,
+      fallback: '404.html'
     }),
 
     // Custom alias defined to handle the content folder
     alias: {
       $content: path.resolve('./content'),
-      $lib: path.resolve('./src/lib'),
-      'statue-ssg': path.resolve('./src/lib')
+      $lib: path.resolve('./src/lib')
     },
 
     // Static site pre-processing options

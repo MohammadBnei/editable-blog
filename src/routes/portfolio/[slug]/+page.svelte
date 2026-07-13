@@ -1,6 +1,6 @@
 <script>
-  export let data;
-  const { project } = data;
+  let { data } = $props();
+  let { project } = $derived(data);
 </script>
 
 <svelte:head>
@@ -9,23 +9,23 @@
 
 <a
   href="/portfolio"
-  class="mb-8 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+  class="mb-8 inline-flex items-center gap-1 font-mono text-sm font-medium text-base-content/60 transition-colors hover:text-primary"
 >
   <span aria-hidden="true">&larr;</span> Back to portfolio
 </a>
 
-<article class="prose prose-lg dark:prose-invert prose-a:text-blue-600 max-w-none">
-  <header class="mb-10 not-prose">
-    <h1 class="mb-3 text-4xl font-extrabold tracking-tight">{project.metadata.title}</h1>
-    <div class="flex gap-4 text-sm font-medium">
-      {#if project.metadata.gitLink}
-        <a href={project.metadata.gitLink} class="text-blue-600 hover:underline">Source</a>
-      {/if}
-      {#if project.metadata.liveLink}
-        <a href={project.metadata.liveLink} class="text-blue-600 hover:underline">Live</a>
-      {/if}
-    </div>
-  </header>
+<header class="mb-10">
+  <h1 class="mb-3 font-mono text-4xl font-extrabold tracking-tight">{project.metadata.title}</h1>
+  <div class="flex gap-4 font-mono text-sm font-medium">
+    {#if project.metadata.gitLink}
+      <a href={project.metadata.gitLink} class="text-primary hover:underline">Source</a>
+    {/if}
+    {#if project.metadata.liveLink}
+      <a href={project.metadata.liveLink} class="text-primary hover:underline">Live</a>
+    {/if}
+  </div>
+</header>
 
+<article class="prose prose-lg prose-a:text-primary mx-auto">
   {@html project.content}
 </article>

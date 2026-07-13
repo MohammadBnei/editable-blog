@@ -1,4 +1,4 @@
-import { getContentByUrl, getAllContent } from 'statue-ssg/cms/content-processor.js';
+import { getContentByUrl, getAllContent } from '$lib/cms/content-processor.js';
 import { error } from '@sveltejs/kit';
 
 export const entries = async () => {
@@ -14,7 +14,11 @@ export const load = async ({ params }) => {
     throw error(404, 'Post not found');
   }
 
+  const frUrl = `/blog/fr/${params.slug}`;
+  const frPost = await getContentByUrl(frUrl);
+
   return {
-    post
+    post,
+    translationUrl: frPost ? frUrl : null
   };
 };

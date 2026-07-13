@@ -1,4 +1,4 @@
-import { getAllContent, getContentByUrl } from 'statue-ssg/cms/content-processor.js';
+import { getAllContent, getContentByUrl } from '$lib/cms/content-processor.js';
 
 export const load = async () => {
   const allContent = await getAllContent();

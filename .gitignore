@@ -12,3 +12,5 @@ vite.config.ts.timestamp-*
 fly.toml
 .tool-versions
 .aider*
+.playwright-mcp
+content/notes/retros/

@@ -16,25 +16,30 @@ bun run release # release-it (bumps version, writes CHANGELOG.md)
 ```
 
 There is no test suite, no database, and no admin login in this repo.
-`bun run lint`'s eslint step currently fails (`.eslintrc.cjs` predates
-ESLint 9's flat-config requirement) — pre-existing, unrelated to content
-changes.
 
 ## Architecture
 
-Fully static site generated with [statue-ssg](https://github.com/accretional/statue)
-(vendored into `src/lib/cms` and `src/lib/themes` via `bunx statue init`,
-not a live dependency you re-run). SvelteKit's `@sveltejs/adapter-static`
+Fully static site originally scaffolded from [statue-ssg](https://github.com/accretional/statue)
+via `bunx statue init`, but statue-ssg is no longer a dependency at all —
+`src/lib/cms/content-processor.js` is a one-time vendored copy, trimmed to
+the two functions this site actually uses (`getAllContent`,
+`getContentByUrl`), imported directly as `$lib/cms/content-processor.js`
+(no alias indirection). The vendored `src/lib/themes` CSS files were
+likewise replaced entirely by daisyUI theme tokens, see `DESIGN.md`.
+SvelteKit's `@sveltejs/adapter-static`
 prerenders every route at build time (`prerender: { crawl: true }` in
 `svelte.config.js`, `export const prerender = true` in the root layout) —
 there is no server-side rendering at runtime, no database, and no admin
 editing UI. Publishing content means committing a markdown file.
 
 **Content model**: markdown files under `content/`, read at build time via
-`statue-ssg/cms/content-processor.js` (`getAllContent`, `getContentByUrl`).
+`$lib/cms/content-processor.js` (`getAllContent`, `getContentByUrl`).
 A file's route comes from its path: `content/<dir>/<slug>.md` → `/<dir>/<slug>`,
 frontmatter (YAML, via `gray-matter`) becomes `metadata`, and the markdown
-body is rendered to `content` HTML.
+body is rendered to `content` HTML. `scripts/generate-rss-feed.js` imports
+the same vendored file directly by relative path (it runs as a plain Node
+script in `postbuild`, outside Vite, so SvelteKit's `$lib` alias doesn't
+apply there).
 
 - `content/blog/<slug>.md` — English posts, listed at `/blog`
   (`src/routes/blog/+page.server.js` filters to `directory === 'blog'`).

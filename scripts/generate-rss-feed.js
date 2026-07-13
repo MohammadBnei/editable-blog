@@ -297,12 +297,12 @@ async function generateRSSFeed() {
 
     console.log(`🔗 Using site URL: ${baseUrl}`);
 
-    // Import content processor from statue-ssg package
+    // Import content processor (vendored copy, see src/lib/cms/content-processor.js)
     let getAllContent;
     try {
-      const processor = await import('statue-ssg/cms/content-processor.js');
+      const processor = await import('../src/lib/cms/content-processor.js');
       getAllContent = processor.getAllContent;
-    } catch (error) {
+    } catch {
       console.log('⚠️  No content found, skipping RSS feed generation');
       return;
     }

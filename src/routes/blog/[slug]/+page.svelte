@@ -1,6 +1,8 @@
 <script>
-  export let data;
-  const { post } = data;
+  import BlogPost from '$lib/components/BlogPost.svelte';
+
+  let { data } = $props();
+  let { post } = $derived(data);
 </script>
 
 <svelte:head>
@@ -9,16 +11,9 @@
 
 <a
   href="/blog"
-  class="mb-8 inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+  class="mb-8 inline-flex items-center gap-1 font-mono text-sm font-medium text-base-content/60 transition-colors hover:text-primary"
 >
   <span aria-hidden="true">&larr;</span> Back to articles
 </a>
 
-<article class="prose prose-lg dark:prose-invert prose-a:text-blue-600 max-w-none">
-  <header class="mb-10 not-prose">
-    <h1 class="mb-2 text-4xl font-extrabold tracking-tight">{post.metadata.title}</h1>
-    <div class="text-slate-400 dark:text-slate-500">{post.metadata.date}</div>
-  </header>
-
-  {@html post.content}
-</article>
+<BlogPost {post} />
