@@ -1,8 +1,8 @@
 {
-	"compilerOptions": {
-		"baseUrl": ".",
-		"paths": {
-			"$lib/*": ["src/lib/*"]
-		}
-	}
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "$lib/*": ["src/lib/*"]
+    }
+  }
 }

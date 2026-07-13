@@ -1,0 +1,32 @@
+{
+  "$schema": "../../site.config.schema.json",
+  "site": {
+    "name": "bnei.dev",
+    "description": "Thoughts on code and life.",
+    "url": "https://blog.bnei.dev",
+    "author": "Mohammad"
+  },
+  "navbar": {
+    "siteTitle": "bnei.dev",
+    "logo": null,
+    "defaultNavItems": [
+      { "title": "Home", "url": "/" },
+      { "title": "Articles", "url": "/blog" },
+      { "title": "Portfolio", "url": "/portfolio" },
+      { "title": "Resume", "url": "/resume" }
+    ],
+    "hiddenFromNav": []
+  },
+  "contact": {
+    "address": {}
+  },
+  "social": {},
+  "legal": {
+    "doNotSell": {}
+  },
+  "rss": {
+    "enabled": true,
+    "contentMode": "full",
+    "maxItems": 100
+  }
+}

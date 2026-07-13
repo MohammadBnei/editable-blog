@@ -1,28 +1,20 @@
-import { getPage } from '$lib/api';
+import { getContentByUrl, getAllContent } from 'statue-ssg/cms/content-processor.js';
 import { error } from '@sveltejs/kit';
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ params, locals }) {
-  const { slug } = params;
-  const lang = locals.lang || 'en';
-  const currentUser = locals.user;
+export const entries = async () => {
+  const all = await getAllContent();
+  return all.filter(item => item.mainDirectory === 'portfolio').map(item => ({ slug: item.slug }));
+};
 
-  // Fetch the main portfolio page to find the specific project
-  const portfolioPage = await getPage('portfolio', lang);
-
-  if (!portfolioPage || !portfolioPage.projects) {
-    error(404, 'Portfolio not found');
-  }
-
-  const project = portfolioPage.projects.find(p => p.slug === slug);
+export const load = async ({ params }) => {
+  const url = `/portfolio/${params.slug}`;
+  const project = await getContentByUrl(url);
 
   if (!project) {
     error(404, 'Project not found');
   }
 
   return {
-    project,
-    currentUser,
-    portfolioPage // Pass the entire portfolioPage for saving updates
+    project
   };
-}
+};

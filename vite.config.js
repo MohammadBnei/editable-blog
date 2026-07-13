@@ -1,8 +1,18 @@
+import { defineConfig } from 'vite';
 import { sveltekit } from '@sveltejs/kit/vite';
-import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
 
-const config = {
-  plugins: [tailwindcss(), sveltekit()]
-};
+export default defineConfig({
+  plugins: [sveltekit()],
 
-export default config;
+  resolve: {
+    alias: {
+      $content: path.resolve('content'),
+      $cms: path.resolve('src/lib/cms')
+    }
+  },
+
+  server: {
+    port: 3000
+  }
+});

@@ -1,0 +1,80 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Commands
+
+```bash
+bun install     # install deps
+bun run dev     # dev server (vite)
+bun run build   # prerenders the whole site to build/, then generates
+                # sitemap.xml/robots.txt/rss.xml (postbuild)
+bun run preview # serve build/ locally with `serve`, same as production
+bun run lint    # prettier --check + eslint
+bun run format  # prettier --write (also runs as husky pre-commit hook)
+bun run release # release-it (bumps version, writes CHANGELOG.md)
+```
+
+There is no test suite, no database, and no admin login in this repo.
+`bun run lint`'s eslint step currently fails (`.eslintrc.cjs` predates
+ESLint 9's flat-config requirement) — pre-existing, unrelated to content
+changes.
+
+## Architecture
+
+Fully static site generated with [statue-ssg](https://github.com/accretional/statue)
+(vendored into `src/lib/cms` and `src/lib/themes` via `bunx statue init`,
+not a live dependency you re-run). SvelteKit's `@sveltejs/adapter-static`
+prerenders every route at build time (`prerender: { crawl: true }` in
+`svelte.config.js`, `export const prerender = true` in the root layout) —
+there is no server-side rendering at runtime, no database, and no admin
+editing UI. Publishing content means committing a markdown file.
+
+**Content model**: markdown files under `content/`, read at build time via
+`statue-ssg/cms/content-processor.js` (`getAllContent`, `getContentByUrl`).
+A file's route comes from its path: `content/<dir>/<slug>.md` → `/<dir>/<slug>`,
+frontmatter (YAML, via `gray-matter`) becomes `metadata`, and the markdown
+body is rendered to `content` HTML.
+
+- `content/blog/<slug>.md` — English posts, listed at `/blog`
+  (`src/routes/blog/+page.server.js` filters to `directory === 'blog'`).
+- `content/blog/fr/<slug>.md` — French posts, served at `/blog/fr/<slug>`
+  via a dedicated `src/routes/blog/fr/[slug]/` route (SvelteKit's
+  `[slug]` routing can't match multi-segment paths, so this isn't the same
+  route as the English one). There is no `/blog/fr` index page yet.
+- `content/portfolio/<slug>.md` — projects, listed at `/portfolio`
+  (frontmatter: `title`, `gitLink`, `liveLink`).
+- `content/pages/{resume,portfolio}.md` — single-page content (resume body,
+  portfolio intro text), loaded by slug via `getContentByUrl('/pages/<slug>')`.
+
+Each content-backed route follows the same shape: `+page.server.js` calls
+`getAllContent`/`getContentByUrl`/`entries()` from the content-processor,
+`+page.svelte` renders `{@html post.content}` inside a `prose` block. Adding
+a new content type means copying that pattern (see `src/routes/blog/[slug]/`
+or `src/routes/portfolio/[slug]/`), not inventing a new content-loading
+mechanism.
+
+**i18n**: UI/navigation is English-only (no lang cookie, no language
+switcher). Only blog posts are bilingual, via the `content/blog/fr/`
+directory convention above.
+
+**Health check**: `static/healthz` is a plain static file (not a SvelteKit
+route) — statue copies `static/` verbatim into `build/`, so it's served as
+a real `200 ok` response by whatever serves `build/`. k8s's liveness/readiness
+probes hit it directly.
+
+**Deployment**: `Dockerfile` builds with `bun run build` (produces a fully
+static `build/` directory) and serves it with `bun x serve build -l 3000` —
+no Node/Bun server process handles requests, `serve` is a plain static file
+server. (Don't add `-s`/single-page mode: with everything prerendered, that
+flag makes `serve` silently fall back to `index.html` for any path it
+doesn't recognize immediately, including `/healthz` — this broke the health
+check once already.) GitHub Actions (`.github/workflows/docker.yml`,
+`release.yml`) → Kustomize image bump (`k8s/`) → Argo CD sync, unchanged
+from before this pivot; nothing content-related happens in CI beyond the
+Docker build.
+
+**Everything from the previous Postgres/n8n/admin-editor architecture is
+gone**: no `pg`, no `src/hooks.server.ts`, no `/login`, no journal/
+LinkedIn-posts/bookmark/view-counter features. If you're looking for how
+those used to work, check git history before this pivot, not this file.

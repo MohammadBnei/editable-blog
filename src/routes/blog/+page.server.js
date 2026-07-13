@@ -1,11 +1,11 @@
-import { getArticles } from '$lib/api';
+import { getAllContent } from 'statue-ssg/cms/content-processor.js';
 
-export async function load({ locals }) {
-  const currentUser = locals.user;
-  const articles = await getArticles(currentUser, locals.lang);
+export const load = async () => {
+  // Get all content and filter for English blog posts (French posts live under blog/fr)
+  const allContent = await getAllContent();
+  const posts = allContent.filter(item => item.directory === 'blog');
 
   return {
-    currentUser,
-    articles
+    posts
   };
-}
+};

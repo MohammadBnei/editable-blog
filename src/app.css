@@ -1,7 +1,0 @@
-@import "tailwindcss";
-@plugin "daisyui" {
-  themes: light --default, dark;
-}
-@config '../tailwind.config.js';
-@source "../node_modules/svelte-streamdown/**/*";
-

@@ -4,13 +4,13 @@ This is my personal blog, utilizing PostgreSQL for the database and n8n for tran
 
 This blog supports:
 
--   **Multi-language content** for articles and pages.
--   **Article management**: Create, edit, publish, unpublish, and delete blog posts.
--   **Page management**: Edit static page content (e.g., "About", "Contact", "Portfolio", "Resume").
--   **Asset management**: Upload and manage images directly within the editor.
--   **LinkedIn Integration**: Create, validate, publish, and manage LinkedIn posts directly from articles, leveraging n8n for automated posting and translation workflows.
--   **Automated Translation**: New blog posts can be automatically translated into multiple languages using n8n workflows.
--   **Basic analytics**: Simple page view counters.
+- **Multi-language content** for articles and pages.
+- **Article management**: Create, edit, publish, unpublish, and delete blog posts.
+- **Page management**: Edit static page content (e.g., "About", "Contact", "Portfolio", "Resume").
+- **Asset management**: Upload and manage images directly within the editor.
+- **LinkedIn Integration**: Create, validate, publish, and manage LinkedIn posts directly from articles, leveraging n8n for automated posting and translation workflows.
+- **Automated Translation**: New blog posts can be automatically translated into multiple languages using n8n workflows.
+- **Basic analytics**: Simple page view counters.
 
 Check out the blog at [blog.bnei.dev](https://blog.bnei.dev).
 
@@ -20,10 +20,10 @@ It's a dynamic website but light as a feather compared to building on top of a C
 
 ## Step 0 - Requirements
 
--   Node.js 18+
--   bun
--   PostgreSQL
--   n8n (for automated translations and LinkedIn posting)
+- Node.js 18+
+- bun
+- PostgreSQL
+- n8n (for automated translations and LinkedIn posting)
 
 These are needed to run this personal blog.
 
@@ -84,9 +84,9 @@ You can preview the production build with `bun run preview`.
 
 This project is set up for continuous deployment with a robust GitOps workflow.
 
--   **Kubernetes Deployment**: The application is deployed to Kubernetes using Kustomize, with configuration files located in the `k8s` folder.
--   **CI/CD**: A complete Continuous Integration/Continuous Delivery pipeline is in place to automate testing and deployment.
--   **GitOps with Argo CD**: Argo CD is used for GitOps, ensuring that the deployed application state automatically synchronizes with the configuration defined in the Git repository.
+- **Kubernetes Deployment**: The application is deployed to Kubernetes using Kustomize, with configuration files located in the `k8s` folder.
+- **CI/CD**: A complete Continuous Integration/Continuous Delivery pipeline is in place to automate testing and deployment.
+- **GitOps with Argo CD**: Argo CD is used for GitOps, ensuring that the deployed application state automatically synchronizes with the configuration defined in the Git repository.
 
 ## Making changes to your website
 

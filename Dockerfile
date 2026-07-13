@@ -23,4 +23,4 @@ COPY --from=builder /app/package.json /app
 
 WORKDIR /app
 ENV NODE_ENV=production
-CMD [ "bun", "./build/index.js"]
+CMD ["bun", "x", "serve", "build", "-l", "3000"]
