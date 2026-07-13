@@ -75,15 +75,22 @@ question lines."
 format: interview
 qa:
   - q: Question text
-    a: Answer text
+    a: Answer text, rendered as markdown (mermaid fences work too)
+  - pause: Optional caption for a session break
   - q: Another question
     a: Another answer
 ```
 
 When `format: interview` is set, the post body (markdown content) is
-**ignored** — only `qa` renders, as an annotated transcript: mono uppercase
-`Q:`/`A:` tags, rust left-border on answer blocks. Regular posts (no
-`format` field) render their markdown body as prose, unchanged.
+**ignored** — only `qa` renders, as an annotated transcript. Each turn
+applies the site's own mono/serif duality: `q` is a small muted mono
+eyebrow (metadata voice), `a` is compiled through the same markdown +
+mermaid pipeline as a regular post body and rendered in the serif body
+face (reading voice), with the rust accent on the `A` label and the
+left-border. A `{ pause: "..." }` entry (no `q`/`a`) renders as a quiet
+hairline divider with a caption — for marking a break in a long interview,
+no animation. Regular posts (no `format` field) render their markdown
+body as prose, unchanged.
 See `content/blog/interview-example.md` for a working example, and the
 branch in `src/routes/blog/[slug]/+page.svelte`.
 

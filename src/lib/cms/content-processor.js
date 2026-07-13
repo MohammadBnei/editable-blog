@@ -125,6 +125,25 @@ const transformMermaidBlocks = html => {
   );
 };
 
+// Interview-format qa turns: compile each `a` through the same markdown
+// pipeline as a post body (so answers can use markdown + mermaid). `pause`
+// marker entries have no `a` and pass through untouched.
+const compileQaTurns = async (qa, directory) => {
+  const turns = [];
+  for (const turn of qa) {
+    if (turn.pause !== undefined) {
+      turns.push(turn);
+      continue;
+    }
+    let aHtml = await processMarkdownWithMDSvex(turn.a ?? '');
+    aHtml = removeFirstH1(aHtml);
+    aHtml = transformLinks(aHtml, directory);
+    aHtml = transformMermaidBlocks(aHtml);
+    turns.push({ q: turn.q, aHtml });
+  }
+  return turns;
+};
+
 // Scans all markdown files and folders in the content directory
 const scanContentDirectory = async () => {
   const contentPath = path.resolve('content');
@@ -188,6 +207,10 @@ const scanContentDirectory = async () => {
           html = removeFirstH1(html);
           html = transformLinks(html, directory);
           html = transformMermaidBlocks(html);
+        }
+
+        if (finalMetadata.format === 'interview' && Array.isArray(finalMetadata.qa)) {
+          finalMetadata.qa = await compileQaTurns(finalMetadata.qa, directory);
         }
 
         // Add main directory information to create content tree
