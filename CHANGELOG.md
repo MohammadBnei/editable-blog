@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.36.0](https://github.com/MohammadBnei/editable-blog/compare/0.35.0...0.36.0) (2026-07-27)
+
+
+### Features
+
+* add Helm values for ukubi-cluster common-app-chart deployment ([06d89de](https://github.com/MohammadBnei/editable-blog/commit/06d89de26cc11553141df5470836e47c41b13e8f))
+
 # [0.35.0](https://github.com/MohammadBnei/editable-blog/compare/0.34.1...0.35.0) (2026-07-13)
 
 
