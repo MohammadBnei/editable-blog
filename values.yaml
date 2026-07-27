@@ -1,0 +1,119 @@
+# editable-blog — deployed via infra-bootstrap's common-app-chart
+# (gitops/apps/registry.yaml entry: editable-blog). Test subject for the
+# ukubi-cluster Stage 1 platform validation before the Freebox cutover.
+
+image:
+  repository: mohammaddocker/editable-blog
+  tag: "0.35.0"
+
+service:
+  port: 3000
+
+annotations:
+  # Infisical operator feature: restarts the Deployment when the managed
+  # secret's content changes. (The old cluster's `monitor.bnei.dev/enabled`
+  # label had no consumer in the new platform's Prometheus setup — dropped.)
+  secrets.infisical.com/auto-reload: "true"
+
+ingress:
+  hostname: blog.bnei.dev
+  middlewares:
+    - name: compress
+    - name: sveltekit-cors
+
+livenessProbe:
+  enabled: true
+  path: /healthz
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  failureThreshold: 3
+
+readinessProbe:
+  enabled: true
+  path: /healthz
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+# Same Infisical project/creds the legacy k8s-cluster/secrets/editable-blog.yml
+# used (k8s-cluster repo, now superseded by this file) — same underlying
+# Infisical Postgres DB as the new cluster's platform-infisical-backend, so
+# no secret migration needed. The shared universal-auth-credentials machine
+# identity (namespace infisical) must be granted access to this project in
+# the Infisical UI first — separate grant from the main infra-bootstrap
+# project, same as pgweb's pgweb-p9-hy grant.
+infisical:
+  enabled: true
+  projectSlug: "editable-blog-555c"
+  envSlug: staging
+  secretsPath: "/"
+  secretName: managed-editable-blog-secret
+
+# bnei.dev bare domain also routed to the blog on the legacy cluster.
+# common-app-chart's built-in IngressRoute only takes one hostname, so the
+# second host is a raw extra manifest here rather than a chart change.
+extraManifests:
+  - |
+    apiVersion: traefik.io/v1alpha1
+    kind: IngressRoute
+    metadata:
+      name: {{ .Release.Name }}-root-domain
+      namespace: {{ .Release.Namespace }}
+    spec:
+      entryPoints:
+        - websecure
+      routes:
+        - kind: Rule
+          match: Host(`bnei.dev`)
+          middlewares:
+            - name: compress
+            - name: sveltekit-cors
+          services:
+            - kind: Service
+              name: {{ .Release.Name }}
+              port: {{ .Values.service.port }}
+      tls:
+        certResolver: {{ .Values.ingress.certResolver }}
+
+  - |
+    apiVersion: traefik.io/v1alpha1
+    kind: Middleware
+    metadata:
+      name: compress
+      namespace: {{ .Release.Namespace }}
+    spec:
+      compress: {}
+
+  - |
+    apiVersion: traefik.io/v1alpha1
+    kind: Middleware
+    metadata:
+      name: sveltekit-cors
+      namespace: {{ .Release.Namespace }}
+    spec:
+      headers:
+        accessControlAllowMethods:
+          - GET
+          - POST
+          - OPTIONS
+          - PUT
+          - DELETE
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
+          X-Forwarded-Host: "{{ "{{ .Host }}" }}"
+        accessControlAllowOriginList:
+          - "https://bnei.dev"
+          - "https://blog.bnei.dev"
+        accessControlAllowHeaders:
+          - Content-Type
+          - Authorization
+          - X-Requested-With
+        accessControlMaxAge: 100
+        addVaryHeader: true
