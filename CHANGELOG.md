@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.36.1](https://github.com/MohammadBnei/editable-blog/compare/0.36.0...0.36.1) (2026-07-28)
+
 # [0.36.0](https://github.com/MohammadBnei/editable-blog/compare/0.35.0...0.36.0) (2026-07-27)
 
 
