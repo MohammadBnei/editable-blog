@@ -4,7 +4,7 @@
 
 image:
   repository: mohammaddocker/editable-blog
-  tag: "0.37.3"
+  tag: "0.37.4"
 service:
   port: 3000
 ingress:
