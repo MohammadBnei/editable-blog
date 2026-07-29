@@ -4,38 +4,32 @@
 
 image:
   repository: mohammaddocker/editable-blog
-  tag: "0.37.0"
-
+  tag: "0.37.2"
 service:
   port: 3000
-
 ingress:
   hostname: blog.bnei.dev
   middlewares:
     - name: compress
     - name: sveltekit-cors
-
 livenessProbe:
   enabled: true
   path: /healthz
   initialDelaySeconds: 10
   periodSeconds: 10
   failureThreshold: 3
-
 readinessProbe:
   enabled: true
   path: /healthz
   initialDelaySeconds: 5
   periodSeconds: 10
   failureThreshold: 3
-
 resources:
   requests:
     cpu: 100m
     memory: 128Mi
   limits:
     memory: 256Mi
-
 # Same Infisical project/creds the legacy k8s-cluster/secrets/editable-blog.yml
 # used (k8s-cluster repo, now superseded by this file) — same underlying
 # Infisical Postgres DB as the new cluster's platform-infisical-backend, so
@@ -50,7 +44,6 @@ infisical:
   secretsPath: "/"
   secretName: managed-editable-blog-secret
   autoReload: true
-
 # bnei.dev bare domain also routed to the blog on the legacy cluster.
 # common-app-chart's built-in IngressRoute only takes one hostname, so the
 # second host is a raw extra manifest here rather than a chart change.
@@ -76,7 +69,6 @@ extraManifests:
               port: {{ .Values.service.port }}
       tls:
         certResolver: {{ .Values.ingress.certResolver }}
-
   - |
     apiVersion: traefik.io/v1alpha1
     kind: Middleware
@@ -85,7 +77,6 @@ extraManifests:
       namespace: {{ .Release.Namespace }}
     spec:
       compress: {}
-
   - |
     apiVersion: traefik.io/v1alpha1
     kind: Middleware
