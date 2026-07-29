@@ -1,6 +1,6 @@
 {
   "name": "editable-blog",
-  "version": "0.37.4",
+  "version": "0.37.5",
   "private": true,
   "scripts": {
     "dev": "vite dev",
