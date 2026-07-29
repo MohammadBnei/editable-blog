@@ -9,7 +9,7 @@ bun install     # install deps
 bun run dev     # dev server (vite)
 bun run build   # prerenders the whole site to build/, then generates
                 # sitemap.xml/robots.txt/rss.xml (postbuild)
-bun run preview # serve build/ locally with `serve`, same as production
+bun run preview # serve build/ locally with server.js, same as production
 bun run lint    # prettier --check + eslint
 bun run format  # prettier --write (also runs as husky pre-commit hook)
 bun run release # release-it (bumps version, writes CHANGELOG.md)
@@ -69,12 +69,16 @@ a real `200 ok` response by whatever serves `build/`. k8s's liveness/readiness
 probes hit it directly.
 
 **Deployment**: `Dockerfile` builds with `bun run build` (produces a fully
-static `build/` directory) and serves it with `bun x serve build -l 3000` —
-no Node/Bun server process handles requests, `serve` is a plain static file
-server. (Don't add `-s`/single-page mode: with everything prerendered, that
-flag makes `serve` silently fall back to `index.html` for any path it
-doesn't recognize immediately, including `/healthz` — this broke the health
-check once already.) GitHub Actions (`.github/workflows/docker.yml`,
+static `build/` directory) and serves it with `server.js`, a small
+zero-dependency Bun static file server (replaced the `serve` npm package —
+resolves a request to an exact file in `build/`, then `<path>.html` for
+clean route URLs, then `404.html`; logs one JSON line
+(`{level, message, time}`) via `Bun.serve`'s `error` hook only when a
+request actually throws, no per-request access logging). Don't add
+SPA/index.html fallback behavior for unrecognized paths: that previously
+broke `/healthz` when using `serve -s`, since it silently served
+`index.html` instead of the real health check file. GitHub Actions
+(`.github/workflows/docker.yml`,
 `release.yml`) → Kustomize image bump (`k8s/`) → Argo CD sync, unchanged
 from before this pivot; nothing content-related happens in CI beyond the
 Docker build.
