@@ -20,6 +20,14 @@ export default defineConfig([
     }
   },
   {
+    files: ['server.js'],
+    languageOptions: {
+      globals: {
+        Bun: 'readonly'
+      }
+    }
+  },
+  {
     files: ['**/*.svelte'],
     languageOptions: {
       parserOptions: {

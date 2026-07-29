@@ -16,11 +16,10 @@ FROM node:22-alpine AS runner
 
 COPY --from=builder /usr/local/bin/bun /usr/local/bin/bun
 
-COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/build /app/build
-COPY --from=builder /app/package.json /app
+COPY --from=builder /app/server.js /app
 
 
 WORKDIR /app
 ENV NODE_ENV=production
-CMD ["bun", "x", "serve", "build", "-l", "3000"]
+CMD ["bun", "server.js"]
