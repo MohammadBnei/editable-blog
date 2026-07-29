@@ -60,9 +60,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-push
     if: github.event_name == 'push'
-    defaults:
-      run:
-        working-directory: k8s
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -75,11 +72,9 @@ jobs:
         id: info
         uses: jaywcjlove/github-action-package@v2.0.0
 
-      - uses: imranismail/setup-kustomize@v2
-
-      - name: Update kustomize image version
+      - name: Update helm values image tag
         run: |
-          kustomize edit set image ${{ env.IMAGE_NAME }}:${{ steps.info.outputs.version }}
+          yq -i '.image.tag = "${{ steps.info.outputs.version }}"' helm/values.yaml
 
       - name: git config
         run: |
@@ -88,6 +83,6 @@ jobs:
 
       - name: git push
         run: |
-          git add .
-          git commit -m "Chore: update kustomize image version to ${{ steps.info.outputs.version }}"
+          git add helm/values.yaml
+          git commit -m "Chore: update helm image tag to ${{ steps.info.outputs.version }}"
           git push
