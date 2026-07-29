@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.37.0](https://github.com/MohammadBnei/editable-blog/compare/0.36.1...0.37.0) (2026-07-29)
+
+
+### Features
+
+* replace serve with a JSON-error-logging Bun static server ([cb9b9ed](https://github.com/MohammadBnei/editable-blog/commit/cb9b9ed24d28665a80057f15fb9bb77770e7befd))
+
 ## [0.36.1](https://github.com/MohammadBnei/editable-blog/compare/0.36.0...0.36.1) (2026-07-28)
 
 # [0.36.0](https://github.com/MohammadBnei/editable-blog/compare/0.35.0...0.36.0) (2026-07-27)
