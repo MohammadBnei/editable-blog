@@ -49,9 +49,20 @@ jobs:
       # Deliberately not jaywcjlove/github-action-package like docker.yml
       # uses: that resolves from github.com at job time, and one of the
       # points of this pipeline is to stop depending on the WAN mid-build.
+      #
+      # jq, not `node -p`: this runner is a build box and has no Node
+      # runtime. `node -p` did not fail the step when it was missing — the
+      # command substitution just returned empty, and the failure surfaced
+      # far downstream as `tag registry.bnei.lan:5000/editable-blog::
+      # invalid reference format`. set -euo pipefail plus an explicit
+      # emptiness check so the next such gap fails where it happens.
       - name: Read version from package.json
         id: info
-        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+        run: |
+          set -euo pipefail
+          version=$(jq -r '.version' package.json)
+          [ -n "$version" ] && [ "$version" != "null" ] || { echo "no .version in package.json"; exit 1; }
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Registry login
         # --tls-verify=false because the registry is plain HTTP: there is no
