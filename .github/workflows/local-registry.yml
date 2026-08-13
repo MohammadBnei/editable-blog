@@ -69,8 +69,17 @@ jobs:
         # IngressRoute and no certificate, since Let's Encrypt cannot issue
         # for `.lan`. Anonymous *reads* are open (that is how the nodes pull
         # without credentials); pushing requires this login.
+        #
+        # Every buildah call goes through sudo, and they must all agree:
+        # rootless buildah in this unprivileged LXC only gets a single UID
+        # mapping (newuidmap is not permitted), so any image chowning to a
+        # second UID dies with "insufficient UIDs or GIDs available in user
+        # namespace". Real root is why the builder is an LXC at all. Mixing
+        # them would also split the auth file — login writes under
+        # /run/containers/<uid>/auth.json, so a rootless login is invisible
+        # to a rootful push.
         run: |
-          echo "${{ secrets.REGISTRY_PASSWORD }}" | buildah login \
+          echo "${{ secrets.REGISTRY_PASSWORD }}" | sudo buildah login \
             --tls-verify=false \
             --username "${{ secrets.REGISTRY_USERNAME }}" \
             --password-stdin "$REGISTRY"
@@ -86,7 +95,7 @@ jobs:
           # pod — no /dev/fuse, no user namespaces, no seccomp relaxation.
           # Both are set on the Deployment; repeated here so the build fails
           # loudly rather than silently escalating if that ever changes.
-          buildah bud \
+          sudo buildah bud \
             --isolation chroot \
             --storage-driver vfs \
             --format docker \
@@ -95,7 +104,7 @@ jobs:
             .
           build_end=$(date +%s)
           for tag in "$VERSION" latest; do
-            buildah push --tls-verify=false --storage-driver vfs \
+            sudo buildah push --tls-verify=false --storage-driver vfs \
               "$REGISTRY/$IMAGE_NAME:$tag"
           done
           end=$(date +%s)
@@ -127,4 +136,4 @@ jobs:
       # long-lived (EPHEMERAL=false), so nothing else cleans up after it.
       - name: Clean up build storage
         if: always()
-        run: buildah rmi --all --force --storage-driver vfs || true
+        run: sudo buildah rmi --all --force --storage-driver vfs || true
