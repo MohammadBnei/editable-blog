@@ -3,8 +3,21 @@
 # ukubi-cluster Stage 1 platform validation before the Freebox cutover.
 
 image:
-  repository: mohammaddocker/editable-blog
-  tag: "0.37.8"
+  # Cut over to the in-cluster registry (infra-bootstrap ADR-0034). Built on
+  # the build-runner LXC and pushed over the LAN; nodes pull over gigabit
+  # instead of a residential downlink, and containerd is configured to trust
+  # this plain-HTTP `.lan` host (Let's Encrypt cannot issue for `.lan`, so
+  # there is no ingress and no certificate).
+  #
+  # The tag moves with the repository on purpose: the local registry has
+  # 0.37.9, never 0.37.8, so flipping only the repository would pull a tag
+  # that does not exist there.
+  #
+  # Both docker.yml and local-registry.yml trigger on tag pushes, so every
+  # released tag lands in Docker Hub *and* here — which keeps docker.yml's
+  # values-bump job correct and makes reverting this one line sufficient.
+  repository: registry.bnei.lan:5000/editable-blog
+  tag: "0.37.9"
 service:
   port: 3000
 ingress:
