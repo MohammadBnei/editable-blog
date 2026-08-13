@@ -1,0 +1,119 @@
+# Builds this image inside ukubi-cluster and pushes it to the in-cluster
+# registry (infra-bootstrap ADR-0034), instead of on a GitHub-hosted runner
+# pushing to Docker Hub.
+#
+# Runs ALONGSIDE docker.yml rather than replacing it, on purpose. docker.yml
+# is what currently deploys the blog; until this path has proven itself end
+# to end, breaking it would take the site down to validate an optimisation.
+# Once helm/values.yaml's image.repository points at the local registry,
+# docker.yml becomes the redundant one and can go.
+#
+# Why this is on a self-hosted runner and not ubuntu-latest: the registry is
+# LAN-only (`.lan` is a name Let's Encrypt cannot issue for, so there is no
+# public ingress). A GitHub-hosted runner cannot reach it — and even if it
+# could, it would be pushing layers *up* a residential uplink, which is the
+# slow direction and the thing this whole change exists to stop doing.
+name: Build and push to ukubi registry
+
+on:
+  # The point of workflow_dispatch here: it lets the loop be measured
+  # without cutting a release. Comparing this against docker.yml's
+  # wall-clock is the actual test of whether self-hosting bought anything.
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+
+env:
+  REGISTRY: registry.bnei.lan:5000
+  IMAGE_NAME: editable-blog
+
+jobs:
+  build-push:
+    # NOT `ukubi` — that label belongs to the runner holding a ServiceAccount
+    # token with `create jobs` in vos/vos-dev. This one has no cluster access
+    # at all, which is exactly why builds belong on it (ADR-0034).
+    runs-on: [self-hosted, ukubi-build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Not baked into the runner image: one apt-get was not worth a build
+      # pipeline and its own chicken-and-egg. EPHEMERAL=false keeps the pod
+      # alive between jobs, so this is a no-op after the first run.
+      - name: Ensure buildah
+        run: command -v buildah || (sudo apt-get update -qq && sudo apt-get install -y -qq buildah)
+
+      # Deliberately not jaywcjlove/github-action-package like docker.yml
+      # uses: that resolves from github.com at job time, and one of the
+      # points of this pipeline is to stop depending on the WAN mid-build.
+      - name: Read version from package.json
+        id: info
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Registry login
+        # --tls-verify=false because the registry is plain HTTP: there is no
+        # IngressRoute and no certificate, since Let's Encrypt cannot issue
+        # for `.lan`. Anonymous *reads* are open (that is how the nodes pull
+        # without credentials); pushing requires this login.
+        run: |
+          echo "${{ secrets.REGISTRY_PASSWORD }}" | buildah login \
+            --tls-verify=false \
+            --username "${{ secrets.REGISTRY_USERNAME }}" \
+            --password-stdin "$REGISTRY"
+
+      - name: Build and push
+        id: build
+        env:
+          VERSION: ${{ steps.info.outputs.version }}
+        run: |
+          set -euo pipefail
+          start=$(date +%s)
+          # chroot isolation + vfs storage keep this an ordinary unprivileged
+          # pod — no /dev/fuse, no user namespaces, no seccomp relaxation.
+          # Both are set on the Deployment; repeated here so the build fails
+          # loudly rather than silently escalating if that ever changes.
+          buildah bud \
+            --isolation chroot \
+            --storage-driver vfs \
+            --format docker \
+            -t "$REGISTRY/$IMAGE_NAME:$VERSION" \
+            -t "$REGISTRY/$IMAGE_NAME:latest" \
+            .
+          build_end=$(date +%s)
+          for tag in "$VERSION" latest; do
+            buildah push --tls-verify=false --storage-driver vfs \
+              "$REGISTRY/$IMAGE_NAME:$tag"
+          done
+          end=$(date +%s)
+          echo "build_seconds=$((build_end - start))" >> "$GITHUB_OUTPUT"
+          echo "push_seconds=$((end - build_end))"    >> "$GITHUB_OUTPUT"
+          echo "total_seconds=$((end - start))"       >> "$GITHUB_OUTPUT"
+
+      # ADR-0034's verification V10 asks for a number, not an impression:
+      # a latency claim with no measurement cannot be falsified. Compare
+      # total_seconds against docker.yml's run on the same commit.
+      - name: Timing summary
+        run: |
+          {
+            echo "### ukubi registry build"
+            echo ""
+            echo "| stage | seconds |"
+            echo "|---|---|"
+            echo "| build | ${{ steps.build.outputs.build_seconds }} |"
+            echo "| push  | ${{ steps.build.outputs.push_seconds }} |"
+            echo "| **total** | **${{ steps.build.outputs.total_seconds }}** |"
+            echo ""
+            echo "Image: \`$REGISTRY/$IMAGE_NAME:${{ steps.info.outputs.version }}\`"
+            echo ""
+            echo "Compare against docker.yml (GitHub-hosted → Docker Hub) on the same commit."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # vfs copies layers rather than stacking them, so leftover build
+      # containers are expensive on node ephemeral storage. The pod is
+      # long-lived (EPHEMERAL=false), so nothing else cleans up after it.
+      - name: Clean up build storage
+        if: always()
+        run: buildah rmi --all --force --storage-driver vfs || true
