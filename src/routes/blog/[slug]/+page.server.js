@@ -3,7 +3,11 @@ import { error } from '@sveltejs/kit';
 
 export const entries = async () => {
   const posts = await getAllContent();
-  return posts.filter(item => item.mainDirectory === 'blog').map(post => ({ slug: post.slug }));
+  // `directory`, not `mainDirectory`: the latter is 'blog' for everything
+  // under content/blog/**, so subdirectories (blog/fr, blog/weekly) would be
+  // prerendered here at /blog/<slug> too — a 404 that fails the build for any
+  // slug without an English twin. Each subdirectory has its own route.
+  return posts.filter(item => item.directory === 'blog').map(post => ({ slug: post.slug }));
 };
 
 export const load = async ({ params }) => {
