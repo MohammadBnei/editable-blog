@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.41.0](https://github.com/MohammadBnei/editable-blog/compare/0.40.1...0.41.0) (2026-08-17)
+
+
+### Features
+
+* **weekly:** a /blog/weekly section and the skill that fills it ([5535127](https://github.com/MohammadBnei/editable-blog/commit/5535127c47dff23225f06a51ab5e93b6e2359e51))
+
 ## [0.40.1](https://github.com/MohammadBnei/editable-blog/compare/0.40.0...0.40.1) (2026-08-17)
 
 
