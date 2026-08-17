@@ -10,12 +10,16 @@ bun run dev     # dev server (vite)
 bun run build   # prerenders the whole site to build/, then generates
                 # sitemap.xml/robots.txt/rss.xml (postbuild)
 bun run preview # serve build/ locally with server.js, same as production
+bun run test    # bun's built-in test runner over src/**/*.test.js
 bun run lint    # prettier --check + eslint
 bun run format  # prettier --write (also runs as husky pre-commit hook)
 bun run release # release-it (bumps version, writes CHANGELOG.md)
 ```
 
-There is no test suite, no database, and no admin login in this repo.
+There is no database and no admin login in this repo. Tests exist only for the
+handful of pure helpers that have logic worth breaking (currently
+`src/lib/posts.js`), and they run on Bun's built-in runner — no vitest, no
+playwright, no test framework dependency. Components and routes are not tested.
 
 ## Architecture
 
@@ -58,6 +62,16 @@ Each content-backed route follows the same shape: `+page.server.js` calls
 a new content type means copying that pattern (see `src/routes/blog/[slug]/`
 or `src/routes/portfolio/[slug]/`), not inventing a new content-loading
 mechanism.
+
+**Listing posts**: `$lib/posts.js` holds the shared helpers — `formatDate`,
+the `SORTS` comparators, and `filterAndSort`. Reuse them instead of inlining
+another date sort. `formatDate` exists because `gray-matter`'s YAML loader
+turns an unquoted `date: 2025-09-29` into a real JS `Date`, which stringifies
+in a template as `Mon Sep 29 2025 00:00:00 GMT+0000 (…)` — never interpolate
+`metadata.date` directly. Because `adapter-static` prerenders everything and
+there is no server at runtime, the default sort happens in `+page.server.js`
+(so the HTML is correct with JS disabled) while the sort control and search
+box on `/blog` are client-side `$derived` over the data already shipped.
 
 **i18n**: UI/navigation is English-only (no lang cookie, no language
 switcher). Only blog posts are bilingual, via the `content/blog/fr/`
