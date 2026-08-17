@@ -1,5 +1,13 @@
 # Changelog
 
+# [0.38.0](https://github.com/MohammadBnei/editable-blog/compare/0.37.9...0.38.0) (2026-08-17)
+
+
+### Features
+
+* **content:** sequenced retro spine for infra-bootstrap + agent-fleet, and part 3 ([84edec5](https://github.com/MohammadBnei/editable-blog/commit/84edec5505f907fabc965061fd36758e547182d6))
+* pull from the in-cluster registry ([cbd13e7](https://github.com/MohammadBnei/editable-blog/commit/cbd13e7fb385fbb75fb4a6d224c7224acb9d1a1e))
+
 ## [0.37.9](https://github.com/MohammadBnei/editable-blog/compare/0.37.8...0.37.9) (2026-07-29)
 
 ## [0.37.8](https://github.com/MohammadBnei/editable-blog/compare/0.37.7...0.37.8) (2026-07-29)
