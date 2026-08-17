@@ -1,12 +1,12 @@
 ---
 title: Running a fleet of Claude agents on my own cluster
 description: I gave my home Kubernetes cluster a fleet of Claude agents. The first design — one long-lived pod per repo, worktrees inside it — quietly rotted for three weeks before I deleted the whole thing.
-date: 2026-08-17
+date: 2026-08-18
 ---
 
 ## Introduction
 
-Two earlier posts covered how this cluster came to exist: [building it from blank machines](/blog/road-to-self-hosted-kubernetes-cluster), and then [removing the single point of failure in front of it](/blog/how-i-reached-high-availability). Both end at the same place — a self-hosted Kubernetes cluster that serves my things reliably, and that I still have to operate by hand.
+Three earlier posts covered how this cluster came to exist: [building it from blank machines](/blog/road-to-self-hosted-kubernetes-cluster), [removing the single point of failure in front of it](/blog/how-i-reached-high-availability), and then [tearing the whole thing down and rebuilding it declaratively on Proxmox](/blog/rebuilding-my-cluster-on-proxmox). They all end at the same place — a self-hosted Kubernetes cluster that serves my things reliably, and that I still have to operate by hand.
 
 This post is about what I built on top of that, and it is a different kind of story. Not a build log with a happy ending, but a design I got wrong, ran for three weeks, and then deleted almost entirely. The deletion is the interesting part.
 

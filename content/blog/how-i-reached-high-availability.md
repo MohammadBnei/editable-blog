@@ -79,4 +79,4 @@ My mission was clear: eliminate it. The tool for the job was MetalLB, and the ta
 
 ---
 
-**Part 3 is up:** [Running a fleet of Claude agents on my own cluster](/blog/running-a-fleet-of-claude-agents-on-my-cluster) — what I built on top of this cluster once it stopped falling over, and the design I deleted to get there.
+**Part 3 is up:** [Rebuilding my cluster on Proxmox, and making GitOps tell the truth](/blog/rebuilding-my-cluster-on-proxmox) — I tore this cluster down and rebuilt it declaratively, then spent ten weeks finding out how many things report themselves healthy while being wrong.
