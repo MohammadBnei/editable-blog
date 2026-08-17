@@ -6,6 +6,7 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "bun server.js",
+    "test": "bun test",
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
     "release": "release-it",

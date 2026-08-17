@@ -1,4 +1,6 @@
 <script>
+  import { formatDate } from '$lib/posts.js';
+
   let { post } = $props();
   let isInterview = $derived(post.metadata.format === 'interview');
 
@@ -42,7 +44,7 @@
     <p class="mb-2 font-mono text-xs font-bold uppercase tracking-wide text-primary">Q&amp;A</p>
   {/if}
   <h1 class="mb-2 font-mono text-4xl font-extrabold tracking-tight">{post.metadata.title}</h1>
-  <div class="font-mono text-base-content/70">{post.metadata.date}</div>
+  <div class="font-mono text-base-content/70">{formatDate(post.metadata.date)}</div>
 </header>
 
 <div class="space-y-6 pb-12">

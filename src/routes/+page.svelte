@@ -1,4 +1,6 @@
 <script>
+  import { formatDate } from '$lib/posts.js';
+
   let { data } = $props();
   let { latestPost } = $derived(data);
 </script>
@@ -31,7 +33,7 @@
         <span class="h-3 w-3 rounded-full bg-base-300"></span>
       </div>
       <div class="text-primary">$ latest_post --show</div>
-      <div class="mt-3 text-base-content/70">{latestPost.metadata.date}</div>
+      <div class="mt-3 text-base-content/70">{formatDate(latestPost.metadata.date)}</div>
       <a
         href={latestPost.url}
         class="mt-1 block text-base-content transition-colors hover:text-primary"

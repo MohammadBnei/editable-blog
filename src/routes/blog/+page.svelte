@@ -1,19 +1,47 @@
 <script>
+  import { filterAndSort, formatDate } from '$lib/posts.js';
   import { langPref } from '$lib/stores/lang.svelte.js';
 
   let { data } = $props();
   let { posts, frPosts } = $derived(data);
-  let shown = $derived(langPref.value === 'fr' ? frPosts : posts);
+  let query = $state('');
+  let sort = $state('newest');
+
+  // Posts arrive already sorted newest-first from the load function, so the
+  // prerendered page is correct before this ever runs.
+  let available = $derived(langPref.value === 'fr' ? frPosts : posts);
+  let shown = $derived(filterAndSort(available, { query, sort }));
 </script>
 
 <svelte:head>
   <title>Articles - bnei.dev</title>
 </svelte:head>
 
-<h1 class="mb-10 font-mono text-4xl font-extrabold tracking-tight">Latest Articles</h1>
+<h1 class="mb-6 font-mono text-4xl font-extrabold tracking-tight">Latest Articles</h1>
+
+<div class="mb-10 flex flex-col gap-3 sm:flex-row">
+  <input
+    type="search"
+    bind:value={query}
+    placeholder="Search articles…"
+    aria-label="Search articles"
+    class="input font-mono sm:flex-1"
+  />
+  <select bind:value={sort} aria-label="Sort articles" class="select font-mono sm:w-56">
+    <option value="newest">Newest first</option>
+    <option value="oldest">Oldest first</option>
+    <option value="title">Title A–Z</option>
+  </select>
+</div>
 
 {#if shown.length === 0}
-  <p class="font-mono text-base-content/70">No French articles yet — check back soon.</p>
+  <p class="font-mono text-base-content/70">
+    {#if query.trim()}
+      No articles match “{query}”.
+    {:else}
+      No French articles yet — check back soon.
+    {/if}
+  </p>
 {/if}
 
 <div class="grid gap-4">
@@ -24,7 +52,7 @@
         class="block rounded-box border border-base-300 bg-base-200 p-6 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg"
       >
         <div class="mb-2 flex items-center gap-2 font-mono text-sm text-base-content/70">
-          <span>{post.metadata.date || 'No date'}</span>
+          <span>{formatDate(post.metadata.date) || 'No date'}</span>
           {#if post.metadata.format === 'interview'}
             <span
               class="rounded-field border border-primary/40 px-1.5 py-0.5 text-[0.65rem] uppercase tracking-wide text-primary"
