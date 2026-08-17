@@ -27,6 +27,7 @@
   "rss": {
     "enabled": true,
     "contentMode": "full",
-    "maxItems": 100
+    "maxItems": 100,
+    "excludeDirectories": ["notes"]
   }
 }
