@@ -9,33 +9,52 @@
       (post.metadata.qa ?? []).some(turn => turn.aHtml?.includes('class="mermaid'))
   );
 
+  // mermaid and svg-pan-zoom are lazy chunks, and mermaid loads one more
+  // chunk per diagram type inside run(). A single lost fetch used to leave
+  // the raw <pre> source on the page for good — silently, since nothing
+  // caught the rejection. Retry once, then say so in the console.
+  async function renderMermaid() {
+    const [{ default: mermaid }, { default: svgPanZoom }] = await Promise.all([
+      import('mermaid'),
+      import('svg-pan-zoom')
+    ]);
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: document.documentElement.dataset.theme === 'notebook-dark' ? 'dark' : 'default'
+    });
+    await mermaid.run({ querySelector: '.mermaid:not([data-processed])' });
+    // :not([data-panzoom]) so a retry, which re-runs this whole function,
+    // cannot attach a second pan-zoom instance to an SVG that already has one.
+    document.querySelectorAll('.mermaid svg:not([data-panzoom])').forEach(svg => {
+      svg.dataset.panzoom = 'true';
+      // mermaid sets an inline max-width matching the diagram's
+      // natural size, which would otherwise keep the SVG (and so
+      // svg-pan-zoom's sizing/controls) pinned to a small corner
+      // instead of filling the container.
+      svg.style.maxWidth = 'none';
+      svgPanZoom(svg, {
+        controlIconsEnabled: true,
+        fit: true,
+        center: true,
+        minZoom: 0.5,
+        maxZoom: 10
+      });
+    });
+  }
+
   $effect(() => {
-    if (hasMermaid) {
-      Promise.all([import('mermaid'), import('svg-pan-zoom')]).then(
-        ([{ default: mermaid }, { default: svgPanZoom }]) => {
-          mermaid.initialize({
-            startOnLoad: false,
-            theme: document.documentElement.dataset.theme === 'notebook-dark' ? 'dark' : 'default'
-          });
-          mermaid.run({ querySelector: '.mermaid' }).then(() => {
-            document.querySelectorAll('.mermaid svg').forEach(svg => {
-              // mermaid sets an inline max-width matching the diagram's
-              // natural size, which would otherwise keep the SVG (and so
-              // svg-pan-zoom's sizing/controls) pinned to a small corner
-              // instead of filling the container.
-              svg.style.maxWidth = 'none';
-              svgPanZoom(svg, {
-                controlIconsEnabled: true,
-                fit: true,
-                center: true,
-                minZoom: 0.5,
-                maxZoom: 10
-              });
-            });
-          });
-        }
-      );
-    }
+    if (!hasMermaid) return;
+    renderMermaid().catch(() =>
+      // One retry, after a beat: the realistic failure is a chunk request
+      // dropped on a phone connection, not a broken diagram.
+      setTimeout(
+        () =>
+          renderMermaid().catch(err =>
+            console.error('mermaid failed to load, diagrams left as source', err)
+          ),
+        1000
+      )
+    );
   });
 </script>
 

@@ -14,38 +14,57 @@ function resolveSafePath(pathname) {
   return candidate;
 }
 
-async function tryFile(path) {
-  const file = Bun.file(path);
-  return (await file.exists()) ? new Response(file) : null;
+// Hashed build assets are safe to cache forever — the filename changes when
+// the content does. Everything else (HTML routes, /healthz, static files)
+// must revalidate, or a deploy leaves clients holding an index page that
+// points at chunk filenames the server no longer has. That failure mode is
+// silent: a dynamic import 404s and the feature it lazy-loads just never
+// appears.
+export function cacheControl(pathname) {
+  return pathname.startsWith('/_app/immutable/')
+    ? 'public, max-age=31536000, immutable'
+    : 'no-cache';
 }
 
-Bun.serve({
-  port: 3000,
-  async fetch(req) {
-    const { pathname } = new URL(req.url);
-    const target = resolveSafePath(pathname);
-    if (!target) return new Response('Bad Request', { status: 400 });
+async function tryFile(path, pathname) {
+  const file = Bun.file(path);
+  return (await file.exists())
+    ? new Response(file, { headers: { 'Cache-Control': cacheControl(pathname) } })
+    : null;
+}
 
-    let res = await tryFile(target);
-    if (res) return res;
+if (import.meta.main) {
+  Bun.serve({
+    port: 3000,
+    async fetch(req) {
+      const { pathname } = new URL(req.url);
+      const target = resolveSafePath(pathname);
+      if (!target) return new Response('Bad Request', { status: 400 });
 
-    if (!target.endsWith('.html')) {
-      res = await tryFile(`${target}.html`);
+      let res = await tryFile(target, pathname);
       if (res) return res;
+
+      if (!target.endsWith('.html')) {
+        res = await tryFile(`${target}.html`, pathname);
+        if (res) return res;
+      }
+
+      return new Response(Bun.file(NOT_FOUND_FILE), {
+        status: 404,
+        headers: { 'Cache-Control': 'no-cache' }
+      });
+    },
+    error(err) {
+      console.error(
+        JSON.stringify({
+          level: 'error',
+          message: err instanceof Error ? err.message : String(err),
+          time: new Date().toISOString()
+        })
+      );
+      return new Response('Internal Server Error', { status: 500 });
     }
+  });
 
-    return new Response(Bun.file(NOT_FOUND_FILE), { status: 404 });
-  },
-  error(err) {
-    console.error(
-      JSON.stringify({
-        level: 'error',
-        message: err instanceof Error ? err.message : String(err),
-        time: new Date().toISOString()
-      })
-    );
-    return new Response('Internal Server Error', { status: 500 });
-  }
-});
-
-console.log(`serving ${BUILD_DIR} on :3000`);
+  console.log(`serving ${BUILD_DIR} on :3000`);
+}
