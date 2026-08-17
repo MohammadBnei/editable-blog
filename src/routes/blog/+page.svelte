@@ -17,7 +17,12 @@
   <title>Articles - bnei.dev</title>
 </svelte:head>
 
-<h1 class="mb-6 font-mono text-4xl font-extrabold tracking-tight">Latest Articles</h1>
+<div class="mb-6 flex flex-wrap items-baseline justify-between gap-2">
+  <h1 class="font-mono text-4xl font-extrabold tracking-tight">Latest Articles</h1>
+  <a href="/blog/weekly" class="font-mono text-sm font-medium text-primary hover:underline"
+    >Weekly rundowns &rarr;</a
+  >
+</div>
 
 <div class="mb-10 flex flex-col gap-3 sm:flex-row">
   <input

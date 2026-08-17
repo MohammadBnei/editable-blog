@@ -6,7 +6,10 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**.md'
+      # Root-level docs only. '**.md' would also ignore content/**.md, and
+      # publishing a post here *is* a markdown-only commit — it would cut no
+      # release, push no tag, and never rebuild the image.
+      - '*.md'
       - '**.yml'
       - '**.yaml'
       - 'package.json'
