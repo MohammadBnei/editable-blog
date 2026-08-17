@@ -76,3 +76,7 @@ My mission was clear: eliminate it. The tool for the job was MetalLB, and the ta
 - **Know Your Tools' Hidden Quirk:** Understand the default behaviors of your infrastructure tools. Vagrant's automatic management network (`eth0`) creating a competing default route was the hidden antagonist in our debugging journey.
 
 - **Trust But Verify, Always:** Don't assume. Don't assume a `LoadBalancer` IP will change automatically. Don't assume your router isn't interfering. Don't assume a `ping` failure means ARP is broken. Test and get concrete data for every assumption.
+
+---
+
+**Part 3 is up:** [Running a fleet of Claude agents on my own cluster](/blog/running-a-fleet-of-claude-agents-on-my-cluster) — what I built on top of this cluster once it stopped falling over, and the design I deleted to get there.
