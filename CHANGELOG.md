@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.40.1](https://github.com/MohammadBnei/editable-blog/compare/0.40.0...0.40.1) (2026-08-17)
+
+
+### Bug Fixes
+
+* **blog:** retry the mermaid chunk load, and cache the immutable assets ([724b935](https://github.com/MohammadBnei/editable-blog/commit/724b9359d9aa32c50966a4bb26300811386e644b))
+
 # [0.40.0](https://github.com/MohammadBnei/editable-blog/compare/0.39.0...0.40.0) (2026-08-17)
 
 
