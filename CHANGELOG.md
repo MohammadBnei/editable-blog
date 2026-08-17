@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.40.0](https://github.com/MohammadBnei/editable-blog/compare/0.39.0...0.40.0) (2026-08-17)
+
+
+### Features
+
+* **blog:** sort posts by date with sort and search controls ([06dd437](https://github.com/MohammadBnei/editable-blog/commit/06dd4371e744b2caf6f3fc1cd200f86232bb319e))
+
 # [0.39.0](https://github.com/MohammadBnei/editable-blog/compare/0.38.0...0.39.0) (2026-08-17)
 
 
