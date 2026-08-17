@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.39.0](https://github.com/MohammadBnei/editable-blog/compare/0.38.0...0.39.0) (2026-08-17)
+
+
+### Features
+
+* **content:** part 3 covers the platform rebuild, fleet post becomes part 4 ([e6eaea2](https://github.com/MohammadBnei/editable-blog/commit/e6eaea2d991d534181ce181b83e6332c477b647b))
+
 # [0.38.0](https://github.com/MohammadBnei/editable-blog/compare/0.37.9...0.38.0) (2026-08-17)
 
 
