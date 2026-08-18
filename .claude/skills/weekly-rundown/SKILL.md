@@ -116,3 +116,17 @@ the session instead of assuming the post is live.
   that repo was quiet.
 - Do not open a PR for the rundown, and do not push anything else to `main`
   while you are there.
+
+## How this runs weekly, and the one way it silently stops
+
+The cadence is a fleet `schedules` row (agent-fleet PR #194), not anything in
+this repo: repo `editable-blog`, `CRON_TZ=Europe/Paris 0 9 * * MON`, prompt
+"Run the weekly-rundown skill." It files a proposal; a human opening that
+proposal is what starts the session. That gate is deliberate — `gh` always
+asks for permission, so a human has to be present anyway.
+
+**Archive the session when the rundown is published.** A proposal holds its
+dedup key until the session it created is archived. Leave one open and the
+next week collapses into "skipped: previous run still open" — the schedule
+looks healthy and no rundown appears. If a week is missing, check for an
+un-archived session before suspecting the schedule.
