@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.42.0](https://github.com/MohammadBnei/editable-blog/compare/0.41.1...0.42.0) (2026-08-18)
+
+
+### Features
+
+* **weekly-rundown:** read the knowledge journal for the window ([#13](https://github.com/MohammadBnei/editable-blog/issues/13)) ([2214459](https://github.com/MohammadBnei/editable-blog/commit/2214459f81cba276d64f70506fbffaad88a2b3ee)), closes [MohammadBnei/agent-fleet#198](https://github.com/MohammadBnei/agent-fleet/issues/198)
+
 ## [0.41.1](https://github.com/MohammadBnei/editable-blog/compare/0.41.0...0.41.1) (2026-08-18)
 
 
