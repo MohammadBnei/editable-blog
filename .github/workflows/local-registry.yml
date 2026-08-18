@@ -91,20 +91,22 @@ jobs:
         run: |
           set -euo pipefail
           start=$(date +%s)
-          # chroot isolation + vfs storage keep this an ordinary unprivileged
-          # pod — no /dev/fuse, no user namespaces, no seccomp relaxation.
-          # Both are set on the Deployment; repeated here so the build fails
-          # loudly rather than silently escalating if that ever changes.
+          # chroot isolation only. The storage driver is deliberately NOT
+          # named here: it is pinned to overlay on the build box itself, so
+          # this build, the cleanup below and the weekly prune timer cannot
+          # end up on different stores. (This once said vfs "keeps this an
+          # ordinary unprivileged pod" — true of the in-cluster attempt that
+          # ADR-0034 abandoned, meaningless on a real-root LXC, and it cost
+          # ~20% of build time for nothing.)
           sudo buildah bud \
             --isolation chroot \
-            --storage-driver vfs \
             --format docker \
             -t "$REGISTRY/$IMAGE_NAME:$VERSION" \
             -t "$REGISTRY/$IMAGE_NAME:latest" \
             .
           build_end=$(date +%s)
           for tag in "$VERSION" latest; do
-            sudo buildah push --tls-verify=false --storage-driver vfs \
+            sudo buildah push --tls-verify=false \
               "$REGISTRY/$IMAGE_NAME:$tag"
           done
           end=$(date +%s)
@@ -131,9 +133,18 @@ jobs:
             echo "Compare against docker.yml (GitHub-hosted → Docker Hub) on the same commit."
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # vfs copies layers rather than stacking them, so leftover build
-      # containers are expensive on node ephemeral storage. The pod is
-      # long-lived (EPHEMERAL=false), so nothing else cleans up after it.
-      - name: Clean up build storage
+      # Drop only THIS build's image, never `rmi --all`. The build box is
+      # shared with agent-fleet's runner now, and `--all` evicts that repo's
+      # base-image cache too — golang:1.26 alone is ~900MB to re-pull over the
+      # WAN. A weekly timer on the box prunes what is genuinely dangling.
+      #
+      # No --storage-driver either: it is pinned to overlay in
+      # /etc/containers/storage.conf by infra-bootstrap's
+      # build-runner-configure.yml, so builds, this cleanup and the prune timer
+      # all read one setting. This used to force vfs, inherited from ADR-0034's
+      # abandoned in-cluster attempt where it was genuinely required.
+      - name: Clean up this build's images
         if: always()
-        run: sudo buildah rmi --all --force --storage-driver vfs || true
+        run: |
+          sudo buildah rmi "$REGISTRY/$IMAGE_NAME:${{ steps.info.outputs.version }}" || true
+          sudo buildah rmi "$REGISTRY/$IMAGE_NAME:latest" || true
