@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.41.1](https://github.com/MohammadBnei/editable-blog/compare/0.41.0...0.41.1) (2026-08-18)
+
+
+### Performance Improvements
+
+* **ci:** drop the vfs storage-driver flag, and stop evicting the shared cache ([#12](https://github.com/MohammadBnei/editable-blog/issues/12)) ([ab428a2](https://github.com/MohammadBnei/editable-blog/commit/ab428a242f41ab0dbb367469869108f834de7851))
+
 # [0.41.0](https://github.com/MohammadBnei/editable-blog/compare/0.40.1...0.41.0) (2026-08-17)
 
 
