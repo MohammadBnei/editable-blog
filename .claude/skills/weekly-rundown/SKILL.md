@@ -3,7 +3,8 @@ name: weekly-rundown
 description: >
   Write the weekly rundown of Mohammad's work across his repos — merged PRs,
   new ADRs, what stalled — as a markdown file under content/blog/weekly/,
-  from GitHub CLI data plus agent-read repo state. Trigger: "weekly rundown",
+  from GitHub CLI data, the session journal, and agent-read repo state.
+  Trigger: "weekly rundown",
   "write this week's rundown", "/weekly-rundown", or the scheduled
   editable-blog proposal that says to run this skill.
 ---
@@ -49,7 +50,42 @@ gh api "repos/<repo>/commits?since=<since>T00:00:00Z&path=docs/adr" \
 a human opened the proposal that started this session, so a human is there to
 answer.
 
-### 3. Read the state, don't just list titles
+### 3. Read the journal for the window
+
+`gh` only sees what became a PR or an issue. The knowledge journal is where
+sessions record gotchas, dead ends and deliberately-not-fixed things — the
+material for "what stalled" that exists nowhere else, across every repo in the
+fleet, not only the three above.
+
+One call. No `repo` (all repos), no `query` (newest-first over the window
+rather than ranked against a term you had to guess):
+
+```
+journal_search(since: "<YYYY-MM-DD>", limit: 100)
+```
+
+Every row is something a session chose to write — pod and session lifecycle
+events are no longer journaled (agent-fleet ADR-0055), so there is nothing to
+filter out and no `eventType` to select on.
+
+The result is byte-capped (~15 KB). If the response carries a notice that
+entries were dropped, do not accept the short answer — a truncated week and a
+quiet week look identical. Walk the window backwards in slices instead:
+
+```
+journal_search(since: "<YYYY-MM-DD>", until: "<earliest createdAt you got>", limit: 100)
+```
+
+Notes:
+
+- Add `query` only to chase something specific a PR or ADR raised. For the
+  rundown itself, no query is the point.
+- `repo` takes the **bare** name (`agent-fleet`, not `MohammadBnei/agent-fleet`,
+  which matches nothing). You rarely want it here.
+- A journal entry is a claim, not a fact. If it contradicts `gh`, `gh` wins for
+  what shipped and the journal wins for why.
+
+### 4. Read the state, don't just list titles
 
 Spawn one `Explore` subagent per repo with the PR/ADR list from step 2 and ask
 it what changed and *why* — reading ADR bodies and PR descriptions, not just
@@ -59,7 +95,7 @@ subagent output is compacted, raw file dumps are not.
 The ADRs are where the reasoning lives. A week with a new ADR is usually a
 week with a decision worth a paragraph.
 
-### 4. Write it
+### 5. Write it
 
 `content/blog/weekly/<YYYY-MM-DD>.md` (the Monday-or-later date the rundown
 covers up to), with the same three frontmatter keys every post here uses, in
@@ -79,8 +115,9 @@ Body, roughly 300–600 words:
   number. Link the PRs.
 - **What was decided** — new ADRs, one line each on the actual trade-off.
 - **What stalled** — open PRs older than the window, issues filed and not
-  touched, anything started and abandoned. This section is the point of the
-  whole exercise; if it is empty, say so explicitly rather than dropping it.
+  touched, anything started and abandoned, and whatever the journal recorded as
+  skipped, deferred or knowingly broken. This section is the point of the whole
+  exercise; if it is empty, say so explicitly rather than dropping it.
 - **Numbers** — merged PR count and net lines, one line. Do not build a table.
 
 Style: match the existing posts (`content/blog/*.md`) — plain, first-person
@@ -91,7 +128,7 @@ Mermaid is available (see `src/lib/cms/content-processor.js`) but a weekly
 rundown rarely needs a diagram. Only add one if the week genuinely changed a
 shape.
 
-### 5. Ship it
+### 6. Ship it
 
 Commit straight to `main` — this is the one flow in this repo that does not
 open a PR:
