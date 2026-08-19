@@ -30,7 +30,7 @@ result and should be written as one. Never pad it.
 ### 1. Fix the window
 
 Seven days back from today, `YYYY-MM-DD`. Every query below uses that date;
-state it in the post so a reader knows what the numbers cover.
+state it in the post so a reader knows what the rundown covers.
 
 ### 2. Pull the facts with `gh`
 
@@ -38,7 +38,7 @@ Per repo:
 
 ```bash
 gh pr list --repo <repo> --state merged --search "merged:>=<since>" \
-  --json number,title,mergedAt,additions,deletions,url
+  --json number,title,mergedAt,url
 gh pr list --repo <repo> --state open --json number,title,createdAt,isDraft,url
 gh issue list --repo <repo> --state open --search "created:>=<since>" \
   --json number,title,createdAt,url
@@ -118,11 +118,22 @@ Body, roughly 300–600 words:
   touched, anything started and abandoned, and whatever the journal recorded as
   skipped, deferred or knowingly broken. This section is the point of the whole
   exercise; if it is empty, say so explicitly rather than dropping it.
-- **Numbers** — merged PR count and net lines, one line. Do not build a table.
+- **What it cost** — the trial and error underneath the week: what had to be
+  repaired twice, what was reverted, what shipped and then had to be undone,
+  what got deleted and why. One paragraph, and it is the other half of the
+  point of this post.
 
 Style: match the existing posts (`content/blog/*.md`) — plain, first-person
 about the work, no hype, no emoji, no "exciting". Deletion counts as progress
 and should be reported as such.
+
+**Never prove the week with activity counters.** No merged-PR counts, commit
+counts, ADR counts, lines added or removed, no per-repo `+x/−y`. They measure
+typing, not judgement, and a week of 100 repairs to a design that should not
+have existed reads as a good week only if you count. Write what was tried and
+what it cost instead. Link individual PRs freely — a link is a citation, a
+tally is a scoreboard. Numbers about the *system* (deploy time, failure rate,
+how many defects sat in one broken path) are evidence and stay.
 
 Mermaid is available (see `src/lib/cms/content-processor.js`) but a weekly
 rundown rarely needs a diagram. Only add one if the week genuinely changed a

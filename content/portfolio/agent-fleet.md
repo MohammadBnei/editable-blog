@@ -39,18 +39,35 @@ is allowed to touch what.
 The split is not tidiness. It is the answer to one question asked repeatedly:
 if this component is compromised or simply wrong, what is the worst it can do?
 
-## What it cost to get right
+## The design I got wrong
 
-215 merged pull requests, 755 commits, 57 architecture decision records, and a
-version number that reached 4.10.0 in under a month.
+The first version gave each repository one long-lived pod and ran every
+session as a git worktree inside it. Each argument for that was real: keep
+dependencies warm between tasks, share one clone instead of paying for a
+fresh one, put a queue with leases and heartbeats in front so no task is ever
+lost when a pod dies.
 
-The largest single change was a deletion. The first design gave each
-repository one long-lived pod and ran sessions as git worktrees inside it.
-That rotted quietly for three weeks — a queue, a lease-and-heartbeat state
-machine, worktree lifecycle, branch naming, a recipe system — until one pull
-request removed all of it in favour of one session, one pod, one shared home.
-Seven decision records were superseded at once, and around 21,000 lines went
-away.
+It rotted quietly for three weeks, and the tell was the shape of the repairs rather
+than how many there were. The cleanup job meant to reclaim dead worktrees had
+never once removed anything in production — it ran, reported success, deleted
+nothing. The log viewer had six independent defects stacked in a single path
+nobody looked at until they urgently needed it. A session died because the
+image had no `ps`. Three separate bugs were mis-reporting whether a session
+was alive, which is the worst class: the work is fine, but you can no longer
+trust what you are looking at.
+
+Every one of those fixes was locally correct, and not one of them made me
+re-ask whether the thing being repaired needed to exist. The queue was never
+contended. The lease machine recovered work that was never lost. The status
+column had eight values and one of them had no writer anywhere in the
+codebase. I had built a scheduler for a workload that did not need
+scheduling, then spent weeks maintaining the scheduler.
+
+The replacement was a single change that deleted far more than it added:
+one session, one pod, one shared home, no queue, liveness reconciled against
+Kubernetes because Kubernetes already knows. The agent runs its own
+`git checkout -b`, like a person would. Several earlier decision records were
+superseded at once, and roughly a fifth of the repository stopped existing.
 
 The write-up below is about that arc specifically, because it is the most
 useful thing I learned building this.

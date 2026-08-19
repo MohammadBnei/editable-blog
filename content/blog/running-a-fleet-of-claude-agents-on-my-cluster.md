@@ -12,7 +12,7 @@ This post is about what I built on top of that, and it is a different kind of st
 
 The thing is called `agent-fleet`. It runs Claude Code agents as Kubernetes workloads on my own hardware: one pod per working session, each with a real clone of a real repository, each able to build, test, commit and open a pull request. I talk to them through a dashboard. They do not share a machine with my laptop, they do not depend on my laptop being awake, and when one of them wedges itself, it dies and the cluster notices.
 
-Ten weeks of work, across two repositories: 144 merged pull requests in the platform repo, 183 in the fleet repo, 88 architecture decision records between them. I am not going to walk through all of it. I want to describe one arc — the shape the fleet started as, why that shape rotted, and what replaced it — because it is the most useful thing I learned, and because I keep seeing the same mistake in my own designs.
+It took two repositories and a whole summer, and I am not going to walk through all of it. I want to describe one arc — the shape the fleet started as, why that shape rotted, and what replaced it — because it is the most useful thing I learned, and because I keep seeing the same mistake in my own designs.
 
 ## What the fleet actually is
 
