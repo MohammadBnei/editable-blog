@@ -32,17 +32,17 @@ n'existe que dans ma tête.
 
 ## Comment elle a vraiment été conçue
 
-En refusant. Sept des douze premières décisions d'architecture sont des
-refus : pas de Vagrant, pas de Flatcar, pas de service mesh, pas de
-multi-région, pas de plan de reprise après sinistre pour la forme, pas de
-Postgres managé, pas d'hyperviseur piloté en GitOps, pas de gestionnaire de
-secrets promu autorité de certification.
+En refusant. Les premières décisions d'architecture sont surtout des refus, et
+ils sont plus nombreux que les choix : pas de Vagrant, pas de Flatcar, pas de
+service mesh, pas de multi-région, pas de plan de reprise après sinistre pour
+la forme, pas de Postgres managé, pas d'hyperviseur piloté en GitOps, pas de
+gestionnaire de secrets promu autorité de certification.
 
-Écrire un refus coûte autant qu'écrire un choix et fait gagner bien plus de
+La plupart ont été essayés, ou à moitié construits, avant d'être refusés.
+Écrire le refus coûte autant qu'écrire un choix et fait gagner bien plus de
 temps ensuite, parce que la prochaine personne à avoir l'idée — très souvent
-moi, trois semaines plus tard — tombe sur le raisonnement au lieu du silence.
-
-40 décisions écrites, 183 pull requests fusionnées, 441 commits à ce jour.
+moi, quelques semaines plus tard — tombe sur le raisonnement au lieu du
+silence, et ne repasse pas son week-end à le redécouvrir.
 
 ## Ce que je referais en priorité
 

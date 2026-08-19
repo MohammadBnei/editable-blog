@@ -32,16 +32,17 @@ head.
 
 ## How it was actually designed
 
-By refusing things. Seven of the first twelve architecture decision records
-are rejections: no Vagrant, no Flatcar, no service mesh, no multi-region, no
-disaster-recovery theatre, no managed Postgres, no GitOps-managed hypervisor,
-no using the secrets manager as a certificate authority.
+By refusing things. The early architecture decision records are mostly
+rejections, and they outnumber the choices: no Vagrant, no Flatcar, no service
+mesh, no multi-region, no disaster-recovery theatre, no managed Postgres, no
+GitOps-managed hypervisor, no using the secrets manager as a certificate
+authority.
 
-Writing down a rejection costs the same as writing down a choice and saves
+Most of those were tried, or at least half-built, before they were refused.
+Writing down the rejection costs the same as writing down a choice and saves
 considerably more time later, because the next person to have the idea — very
-often me, three weeks on — finds the reasoning instead of the silence.
-
-40 decision records, 183 merged pull requests, 441 commits so far.
+often me, a few weeks on — finds the reasoning instead of the silence, and
+does not spend the weekend rediscovering it.
 
 ## The part I would not skip again
 

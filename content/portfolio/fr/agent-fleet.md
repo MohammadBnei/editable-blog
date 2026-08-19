@@ -41,19 +41,38 @@ Cette séparation n'est pas une question de propreté. C'est la réponse à une
 question posée pour chaque composant : s'il est compromis, ou simplement
 défaillant, quel est le pire qu'il puisse faire ?
 
-## Ce qu'il a fallu
+## La conception que j'ai ratée
 
-215 pull requests fusionnées, 755 commits, 57 décisions d'architecture
-écrites, et un numéro de version arrivé à 4.10.0 en moins d'un mois.
+La première version donnait à chaque repository un pod permanent et exécutait
+chaque session comme un worktree git à l'intérieur. Chacun des arguments était
+réel : garder les dépendances chaudes entre deux tâches, partager un seul
+clone au lieu d'en payer un neuf à chaque fois, mettre devant une file
+d'attente avec baux et heartbeats pour qu'aucune tâche ne soit perdue si un
+pod meurt.
 
-Le plus gros changement fut une suppression. La première conception donnait à
-chaque repository un pod permanent et exécutait les sessions comme des worktrees
-git à l'intérieur. Elle s'est dégradée en silence pendant trois semaines — une
-file d'attente, une machine à états de bail et de heartbeat, un cycle de vie
-de worktrees, une convention de branches, un système de recettes — jusqu'à ce
-qu'une pull request supprime tout cela au profit d'un modèle plus simple : une
-session, un pod, un espace de travail partagé. Sept décisions ont été
-remplacées d'un coup, et environ 21 000 lignes supprimées.
+Elle s'est dégradée en silence pendant trois semaines, et le signal était la
+forme des réparations, pas leur nombre. Le nettoyage censé récupérer les
+worktrees morts n'avait jamais rien supprimé en production — il tournait,
+annonçait un succès, ne supprimait rien. Le lecteur de logs cumulait six
+défauts indépendants dans un seul chemin que personne ne regardait avant d'en
+avoir un besoin urgent. Une session est morte parce que l'image n'avait pas
+`ps`. Trois bugs distincts se trompaient sur l'état vivant ou non d'une
+session, ce qui est la pire catégorie : le travail continue, mais on ne peut
+plus faire confiance à ce qu'on lit.
+
+Chacun de ces correctifs était localement juste, et aucun ne m'a fait
+redemander si la chose réparée devait exister. La file n'a jamais été
+contendue. La machine à baux récupérait un travail qui n'était jamais perdu.
+La colonne `status` avait huit valeurs, dont une que rien n'écrivait nulle
+part dans le code. J'avais construit un ordonnanceur pour une charge qui n'en
+demandait pas, puis passé des semaines à maintenir l'ordonnanceur.
+
+Le remplacement fut un seul changement qui a supprimé bien plus qu'il n'a
+ajouté : une session, un pod, un espace de travail partagé, aucune file, et
+l'état vivant réconcilié avec Kubernetes, puisque Kubernetes le sait déjà.
+L'agent fait son propre `git checkout -b`, comme le ferait une personne.
+Plusieurs décisions antérieures ont été remplacées d'un coup, et près d'un
+cinquième du repository a cessé d'exister.
 
 L'article lié raconte cette évolution en détail. C'est ce que j'ai appris de
 plus utile en construisant ce système.

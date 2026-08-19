@@ -1,6 +1,6 @@
 ---
 title: Rebuilding my cluster on Proxmox, and making GitOps tell the truth
-description: I tore down the home Kubernetes cluster from the first two posts and rebuilt it on three Proxmox hosts. Ten weeks, 144 pull requests, and a long argument with ArgoCD about what "in sync" means.
+description: I tore down the home Kubernetes cluster from the first two posts and rebuilt it on three Proxmox hosts, declared end to end — and then spent the rest of the summer arguing with ArgoCD about what "in sync" actually means.
 date: 2026-08-17
 ---
 
@@ -10,7 +10,7 @@ The first two posts in this series were about a cluster I built by hand: [three 
 
 So on the fourth of June I started again, with one rule: **nothing gets configured by hand**. The hosts come from Terraform, the cluster comes from kubespray, everything running on it comes from git, and if it is not written down it does not exist.
 
-Ten weeks later that is true. 144 merged pull requests, 36 architecture decision records, and a machine that mostly runs itself. This post is what I learned getting there — and because most of it was learned the hard way, it is heavier on failures than on architecture diagrams.
+It is true now: the machine mostly runs itself, and the parts of it I understand least are the parts I wrote down most carefully. This post is what I learned getting there — and because nearly all of it was learned the hard way, by building the wrong thing first, it is heavier on failures than on architecture diagrams.
 
 ## The shape
 
