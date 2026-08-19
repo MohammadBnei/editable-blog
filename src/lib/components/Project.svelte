@@ -1,5 +1,6 @@
 <script>
   import { formatDate } from '$lib/posts.js';
+  import { hasMermaid, hydrateMermaid } from '$lib/mermaid.js';
 
   let { project, lang = 'en' } = $props();
 
@@ -25,6 +26,11 @@
   let t = $derived(LABELS[lang] ?? LABELS.en);
   let meta = $derived(project.metadata);
   let archived = $derived(meta.status === 'archived');
+
+  $effect(() => {
+    if (!hasMermaid(project.content)) return;
+    return hydrateMermaid();
+  });
 </script>
 
 <header class="mb-10">

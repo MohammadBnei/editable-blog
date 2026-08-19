@@ -112,7 +112,12 @@ date: <YYYY-MM-DD>
 Body, roughly 300–600 words:
 
 - **What shipped** — grouped by repo, by what it does for Mohammad, not by PR
-  number. Link the PRs.
+  number. Link the PRs. Name the mechanism, not only the feature: which
+  component changed, which protocol or primitive it now uses, what it
+  replaced. "Console login moved to OIDC" is a headline; "the console
+  federates login to authentik and `CoreService` now authenticates callers
+  with the session's own rotating lease instead of a shared credential" is
+  the report. Read the diff or the ADR rather than paraphrasing a PR title.
 - **What was decided** — new ADRs, one line each on the actual trade-off.
 - **What stalled** — open PRs older than the window, issues filed and not
   touched, anything started and abandoned, and whatever the journal recorded as

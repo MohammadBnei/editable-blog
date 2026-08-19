@@ -124,10 +124,23 @@ For each post you decide to draft:
    work"). Numbers about the *system* — deploy time, failure rate, how many
    defects were stacked in one broken path — are results and stay. Linking a
    PR as the citation for a claim is fine; counting them is not.
-3. **Light polish** each answer used: trim rambling/filler, fix grammar,
+3. **Write the technical layer, not the logo.** This is a technical blog:
+   naming a technology and moving on ("ConnectRPC", "Patroni", "Kubebuilder")
+   is a badge, not a description. For each one that matters to the story,
+   say what speaks to what, over which protocol, in which direction, and
+   what it replaced — plus the caveat that makes it honest (the capability
+   that is nominal, the flag that is off). **Verify against the source
+   repository, never against the transcript alone**: an interview answer is
+   a claim, the code is the fact, and the two disagree more often than is
+   comfortable. If a detail cannot be sourced, leave it out.
+4. **Draw the shape.** If the branch has more than one moving part, the post
+   gets a Mermaid diagram — one idea per diagram, labelled edges. This
+   constrains the format choice below rather than the other way round: a
+   diagram only renders on the *prose* path, never inside a `qa:` answer.
+5. **Light polish** each answer used: trim rambling/filler, fix grammar,
    keep the user's actual voice and phrasing — don't rewrite it into
    generic blog voice.
-4. **Pick the format:**
+6. **Pick the format:**
    - Default: `format: interview` + `qa:` list, matching
      `content/blog/interview-example.md` — the "journal between me and
      this blog" shape, good for a dialogue-driven piece.
@@ -140,10 +153,10 @@ For each post you decide to draft:
      compilation, while prose posts go through the full markdown pipeline
      (`transformMermaidBlocks` etc.) — a diagram only ever renders on the
      prose path.
-5. **Write** `~/Code/editable-website/content/blog/<slug>.md` with
+7. **Write** `~/Code/editable-website/content/blog/<slug>.md` with
    frontmatter matching whichever example above (`title`, `description`,
    `date`, plus `format`/`qa` if using that shape).
-6. **Tell the user** briefly which post(s) you drafted and why you
+8. **Tell the user** briefly which post(s) you drafted and why you
    split/combined them that way — an editorial note, not a permission
    request. Nothing is public until they `git commit` it; that commit step
    *is* the review gate, this skill doesn't need its own.
@@ -207,7 +220,7 @@ review to a fresh agent that only sees the written record.
    least useful entry before it grows past that.
 3. Tell the user, briefly, what changed in the skill and why (cite the
    transcript moment that triggered it) — or say nothing happened, if
-   nothing did. This is an editorial note like §3.6, not a permission
+   nothing did. This is an editorial note like §3.8, not a permission
    request; the file is easy to hand-edit or revert if a lesson turns out
    wrong.
 
