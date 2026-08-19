@@ -18,8 +18,8 @@
     langPref.hydrate();
   });
 
-  const isPostPage = $derived(/^\/blog\/(fr\/)?[^/]+$/.test(page.url.pathname));
-  const currentLang = $derived(page.url.pathname.startsWith('/blog/fr/') ? 'fr' : 'en');
+  const isPostPage = $derived(/^\/(blog|portfolio)\/(fr\/)?[^/]+$/.test(page.url.pathname));
+  const currentLang = $derived(/^\/(blog|portfolio)\/fr\//.test(page.url.pathname) ? 'fr' : 'en');
   const translationUrl = $derived(page.data?.translationUrl ?? null);
   const activeLang = $derived(isPostPage ? currentLang : langPref.value);
 

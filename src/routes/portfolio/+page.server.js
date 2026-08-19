@@ -1,12 +1,20 @@
 import { getAllContent, getContentByUrl } from '$lib/cms/content-processor.js';
+import { SORTS } from '$lib/posts.js';
 
 export const load = async () => {
   const allContent = await getAllContent();
-  const projects = allContent.filter(item => item.mainDirectory === 'portfolio');
-  const intro = await getContentByUrl('/pages/portfolio');
+
+  // `directory`, not `mainDirectory`: the latter is 'portfolio' for
+  // content/portfolio/fr/** too, which would list every project twice.
+  const projects = allContent.filter(item => item.directory === 'portfolio').sort(SORTS.newest);
+  const frProjects = allContent
+    .filter(item => item.directory === 'portfolio/fr')
+    .sort(SORTS.newest);
 
   return {
     projects,
-    intro
+    frProjects,
+    intro: await getContentByUrl('/pages/portfolio'),
+    frIntro: await getContentByUrl('/pages/fr/portfolio')
   };
 };
