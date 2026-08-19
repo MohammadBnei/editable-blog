@@ -25,20 +25,45 @@ challenges.
 
 ## Under it
 
-A single Go binary, deliberately. Gin for HTTP, gqlgen for the GraphQL API,
-and Clean Architecture through the middle: domain rules isolated from
-use-case orchestration, and both isolated from Postgres, Redis and JWT
-handling.
+A single Go binary, deliberately. Gin for HTTP, gqlgen for the GraphQL API —
+schema-first, so the resolvers are generated from the schema rather than the
+schema being inferred from Go structs — and Clean Architecture through the
+middle: domain rules isolated from use-case orchestration, and both isolated
+from Postgres, Redis and JWT handling.
+
+```mermaid
+flowchart LR
+    cl["client"] -->|"GraphQL"| gin["Gin + gqlgen resolvers"]
+    gin -->|"mutation"| cbus["command bus"]
+    gin -->|"query"| qbus["query bus"]
+    cbus --> uc["use cases"]
+    qbus --> uc
+    uc --> dom["domain rules"]
+    uc -->|"interfaces only"| repo["generic repository"]
+    repo --> infra["adapters: Postgres, Redis, JWT"]
+    cbus -.->|"span + metric"| obs["OpenTelemetry, Prometheus"]
+    qbus -.->|"span + metric"| obs
+```
 
 Commands and queries are separated over an in-process bus — a command mutates,
-a query reads, and neither reaches the other's code path. A generic repository
-gives every domain entity type-safe CRUD without a per-entity data layer, and
-Google Wire does the wiring at compile time, which mostly matters because it
-makes substituting an in-memory repository in a test trivial.
+a query reads, and neither reaches the other's code path. That split is what
+makes the observability free rather than a later instrumentation pass: the bus
+is a single choke point, so wrapping it emits a span and a metric for every
+operation in the system without a line of code in any use case.
+
+The repository is generic over the domain entity, which gives type-safe CRUD
+without writing a data layer per entity, and Google Wire does the dependency
+wiring at **compile** time — a generated function, not a runtime container, so
+a missing binding is a build error rather than a nil pointer on the first
+request that needs it. The practical payoff is in tests: substituting an
+in-memory repository for the Postgres one is one line at the injector, and
+nothing above it knows the difference.
 
 Structured JSON logging, Prometheus metrics and OpenTelemetry traces are
 emitted per command and query, and land in the platform's own observability
-stack rather than a bespoke one.
+stack — the same Loki, Prometheus and Grafana that everything else on the
+cluster reports to — rather than in a bespoke one that only this application
+knows how to read.
 
 It runs on the self-hosted cluster described elsewhere in this portfolio, on a
 GitOps workflow: merge, build, tag, and Argo CD reconciles. Deployments went

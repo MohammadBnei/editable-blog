@@ -54,7 +54,7 @@ That last one is the decision I would defend hardest, and it took the longest to
 
 ## What I rejected, and why that mattered
 
-Seven of the first twelve decision records in that repository are rejections: no Vagrant, no Flatcar, no Wireguard or Tailscale, no external managed Postgres, no multi-region or DR or service mesh, no GitOps-managed Proxmox, and no using the secrets manager as a certificate authority.
+Most of the first dozen decision records in that repository are rejections: no Vagrant, no Flatcar, no Wireguard or Tailscale, no external managed Postgres, no multi-region or DR or service mesh, no GitOps-managed Proxmox, and no using the secrets manager as a certificate authority.
 
 Writing down a rejection feels like bureaucracy until the third time you re-litigate the same idea at midnight. Each of those files is about a page, and each one exists because the idea is genuinely attractive and genuinely wrong _here_. A service mesh solves problems I do not have, at a complexity cost I would pay every day. Managed Postgres solves a problem I built this cluster specifically to own.
 

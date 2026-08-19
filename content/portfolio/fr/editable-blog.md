@@ -35,12 +35,47 @@ Publier, c'est un commit.
 
 ## Ce qu'il est aujourd'hui
 
-SvelteKit avec l'adaptateur statique, qui prérend chaque route à la
+SvelteKit avec `@sveltejs/adapter-static`, qui prérend chaque route à la
 compilation. Aucun rendu serveur à l'exécution, aucune base de données, aucune
-authentification. Le build produit du HTML statique, servi par cinquante
-lignes de Bun. Ces cinquante lignes ont remplacé un paquet npm qui renvoyait
-`index.html` pour tout chemin inconnu, ce qui cassait silencieusement la sonde
-de santé Kubernetes.
+authentification.
+
+```mermaid
+flowchart LR
+    md["content/**/*.md"] -->|"gray-matter"| meta["frontmatter → métadonnées"]
+    md -->|"compilation mdsvex\nremark-gfm, rehype-slug"| html["HTML"]
+    html -->|"transformLinks\ntransformMermaidBlocks"| body["post.content"]
+    meta --> load["+page.server.js"]
+    body --> load
+    load -->|"prérendu, crawl: true"| flat["build/*.html"]
+    flat -->|"postbuild"| idx["index pagefind, sitemap, RSS"]
+    flat --> srv["serveur Bun"]
+    srv -->|"fichier exact → .html → 404.html"| client["navigateur"]
+```
+
+La chaîne est assez courte pour tenir en tête. `gray-matter` sépare le
+frontmatter du corps ; `mdsvex` compile le corps avec `remark-gfm` pour les
+tableaux et `rehype-slug` pour les ancres de titres ; deux petites
+transformations réécrivent ensuite les liens relatifs et convertissent les
+blocs mermaid en `<pre class="mermaid">` nu, celui que `mermaid.run()` attend,
+puisque le bloc `language-mermaid` coloré produit par mdsvex n'est pas quelque
+chose que mermaid regarde. L'adaptateur tourne en `strict: true` : si une
+route cesse un jour d'être prérendable, le build échoue bruyamment au lieu de
+livrer en silence une coquille SPA vide, et `crawl: true` fait découvrir le
+nouveau contenu en suivant les liens plutôt qu'en maintenant une liste. La
+recherche est `pagefind`, qui indexe le HTML compilé après coup — un index
+statique, aucun service de recherche.
+
+Le service, c'est soixante-dix lignes de Bun. Une requête est résolue vers un
+fichier exact, puis vers `<chemin>.html` pour les URLs propres, puis vers
+`404.html` ; les assets hachés sous `/_app/immutable/` reçoivent un cache d'un
+an en `immutable` et tout le reste doit se revalider, sinon un déploiement
+laisse un navigateur avec une page d'index qui pointe vers des noms de chunks
+que le serveur n'a plus — une panne totalement silencieuse, puisque l'import
+dynamique renvoie un 404 et que la fonctionnalité chargée à la demande
+n'apparaît tout simplement jamais. Ce serveur a remplacé un paquet npm qui
+renvoyait `index.html` pour tout chemin inconnu, ce qui cassait silencieusement
+la sonde de santé Kubernetes, `/healthz` étant un vrai fichier statique et non
+une route.
 
 Le bilinguisme repose sur une convention de répertoires, pas sur un
 framework : les articles français vivent sous `fr/`, partagent leur slug avec

@@ -32,11 +32,45 @@ commit.
 
 ## What it is now
 
-SvelteKit with the static adapter, prerendering every route at build time.
-There is no server-side rendering at runtime, no database, and nothing to log
-into. The build produces flat HTML, and a fifty-line Bun server hands those
-files out — it replaced an npm package that helpfully served `index.html` for
-unknown paths and so quietly broke the Kubernetes health check.
+SvelteKit with `@sveltejs/adapter-static`, prerendering every route at build
+time. There is no server-side rendering at runtime, no database, and nothing
+to log into.
+
+```mermaid
+flowchart LR
+    md["content/**/*.md"] -->|"gray-matter"| meta["frontmatter → metadata"]
+    md -->|"mdsvex compile\nremark-gfm, rehype-slug"| html["HTML"]
+    html -->|"transformLinks\ntransformMermaidBlocks"| body["post.content"]
+    meta --> load["+page.server.js"]
+    body --> load
+    load -->|"prerender, crawl: true"| flat["build/*.html"]
+    flat -->|"postbuild"| idx["pagefind index, sitemap, RSS"]
+    flat --> srv["Bun server"]
+    srv -->|"exact file → .html → 404.html"| client["browser"]
+```
+
+The pipeline is short enough to hold in your head. `gray-matter` splits
+frontmatter from body; `mdsvex` compiles the body with `remark-gfm` for tables
+and `rehype-slug` for heading anchors; two small transforms then rewrite
+relative links and turn mermaid fences into the bare `<pre class="mermaid">`
+that `mermaid.run()` expects, since the highlighted `language-mermaid` block
+mdsvex emits is not something mermaid will look at. The adapter runs with
+`strict: true`, so if a route ever stops being prerenderable the build fails
+loudly instead of quietly shipping an empty SPA shell, and `crawl: true` means
+new content is discovered by following links rather than by maintaining a
+list. Search is `pagefind`, which indexes the built HTML after the fact —
+a static index, no search service.
+
+Serving is seventy lines of Bun. A request resolves to an exact file, then to
+`<path>.html` for clean URLs, then to `404.html`; hashed assets under
+`/_app/immutable/` get a one-year `immutable` cache header and everything else
+must revalidate, because a deploy otherwise leaves a browser holding an index
+page that points at chunk filenames the server no longer has — a failure that
+is completely silent, since a dynamic import 404s and the feature it was
+lazy-loading simply never appears. That server replaced an npm package which
+helpfully served `index.html` for unknown paths and so quietly broke the
+Kubernetes health check, `/healthz` being a real static file rather than a
+route.
 
 Bilingual by directory convention rather than by framework: French posts live
 under `fr/`, share a slug with their English twin, and the language toggle
