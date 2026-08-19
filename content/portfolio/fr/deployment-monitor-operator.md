@@ -21,12 +21,12 @@ Le contrôleur réconcilie chaque `DeploymentMonitor` avec l'état réel du
 cluster, et tout changement correspondant aux critères d'un moniteur produit
 un e-mail formaté.
 
-Il existe parce que je voulais comprendre les opérateurs en en écrivant un qui
-fasse quelque chose de réel, plutôt qu'en lisant des explications sur la
-boucle de réconciliation. La leçon qui est restée n'est pas l'échafaudage des
-CRD — c'est la vitesse à laquelle « prévenir à chaque changement » devient du
-bruit, et la part de la conception d'un opérateur qui consiste à décider à
-quoi ne pas réagir.
+Je l'ai écrit pour comprendre les opérateurs en en construisant un qui fasse
+quelque chose de réel, plutôt qu'en lisant des explications sur la boucle de
+réconciliation. Ce que j'en retiens n'est pas la génération de code des CRD :
+c'est la vitesse à laquelle « prévenir à chaque changement » devient du bruit,
+et la part de la conception d'un opérateur qui consiste à décider à quoi ne
+pas réagir.
 
-Archivé : remplacé par de vraies alertes sur la plateforme. Alertmanager
-atteint Discord, et atteint de plus en plus un agent plutôt qu'un humain.
+Archivé : remplacé par les alertes de la plateforme. Alertmanager notifie
+Discord, et de plus en plus un agent plutôt qu'un humain.

@@ -18,10 +18,10 @@ ce qui l'entoure :
 - **Un contrat, pas seulement des endpoints.** Entièrement décrite en OpenAPI,
   avec une documentation interactive générée depuis la même source.
 - **Fermée par défaut.** Authentification basique et limitation de débit
-  configurable, parce qu'un relais de recherche ouvert sur Internet est le
-  budget de scraping de quelqu'un d'autre.
+  configurable : un relais de recherche ouvert sur Internet sert vite de
+  proxy de scraping gratuit à n'importe qui.
 - **Observable dès la première requête.** Un middleware émet des logs JSON
-  structurés avec statut, latence et chemin — sans passe d'instrumentation
+  structurés avec statut, latence et chemin — sans étape d'instrumentation
   séparée.
 - **Une image minimale.** Build multi-étapes, la couche finale ne contient que
   le binaire compilé.

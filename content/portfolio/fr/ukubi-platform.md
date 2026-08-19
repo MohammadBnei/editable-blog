@@ -34,7 +34,7 @@ n'existe que dans ma tête.
 
 En refusant. Sept des douze premières décisions d'architecture sont des
 refus : pas de Vagrant, pas de Flatcar, pas de service mesh, pas de
-multi-région, pas de théâtre autour de la reprise après sinistre, pas de
+multi-région, pas de plan de reprise après sinistre pour la forme, pas de
 Postgres managé, pas d'hyperviseur piloté en GitOps, pas de gestionnaire de
 secrets promu autorité de certification.
 
@@ -44,11 +44,11 @@ moi, trois semaines plus tard — tombe sur le raisonnement au lieu du silence.
 
 40 décisions écrites, 183 pull requests fusionnées, 441 commits à ce jour.
 
-## Ce que je ne sauterais pas une deuxième fois
+## Ce que je referais en priorité
 
-Faire dire la vérité à la couche de livraison. Argo CD affichait « in sync »
-pendant que la production lisait tranquillement une branche de développement,
-parce que `targetRevision` valait `HEAD` à des endroits que personne n'avait
-regardés. Une couche qui ment de façon convaincante est pire qu'une couche qui
-échoue bruyamment, et retrouver tous ces cas a pris plus longtemps que
-construire le cluster en dessous.
+Rendre la couche de livraison fiable. Argo CD affichait « in sync » alors que
+la production lisait une branche de développement, parce que `targetRevision`
+valait `HEAD` à des endroits que personne n'avait vérifiés. Un outil qui
+affiche un état faux de façon convaincante est plus dangereux qu'un outil qui
+échoue franchement, et retrouver tous ces cas a pris plus de temps que
+construire le cluster lui-même.

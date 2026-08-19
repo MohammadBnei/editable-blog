@@ -1,21 +1,20 @@
 ---
 title: Flotte d'agents
-description: Des agents Claude Code exécutés comme des charges Kubernetes sur mes propres machines — un pod par session, chacun avec un vrai clone, chacun capable d'ouvrir sa propre pull request.
+description: Des agents Claude Code exécutés comme des workloads Kubernetes sur mes propres machines — un pod par session, chacun avec une copie de travail complète du dépôt, chacun capable d'ouvrir sa propre pull request.
 date: 2026-08-19
 stack: [Go, TypeScript, Kubernetes, ConnectRPC, PostgreSQL, React, Bun]
 writeup: /blog/running-a-fleet-of-claude-agents-on-my-cluster
 ---
 
-Je voulais des agents de code qui ne vivent pas sur mon portable. Non pas
-parce que le portable est lent, mais parce qu'un agent qui meurt quand je
-referme l'écran n'est pas une infrastructure — c'est un onglet de terminal
-avec des ambitions.
+Je voulais des agents de code qui ne tournent pas sur mon ordinateur
+portable. Non pas parce que cette machine est lente, mais parce qu'un agent
+qui s'arrête quand je referme l'écran n'est pas une infrastructure.
 
-`agent-fleet` exécute des sessions Claude Code comme des charges Kubernetes
-sur du matériel qui m'appartient. Un pod par session, chacun avec un vrai
-clone d'un vrai dépôt, chacun capable de compiler, tester, committer et ouvrir
-une pull request. Je leur parle depuis une console. Quand l'un se bloque, il
-meurt et le cluster s'en aperçoit.
+`agent-fleet` exécute des sessions Claude Code comme des workloads Kubernetes
+sur du matériel qui m'appartient. Un pod par session, chacun avec une copie de
+travail complète d'un dépôt réel, chacun capable de compiler, tester,
+committer et ouvrir une pull request. Je leur parle depuis une console. Quand
+l'un se bloque, il s'arrête et le cluster le détecte.
 
 ## Forme
 
@@ -32,15 +31,15 @@ règle stricte sur qui a le droit de toucher à quoi.
   il tourne, il ouvre sa pull request, il s'arrête.
 - **sidecar** — un second conteneur dans chaque pod, qui expose des outils sur
   localhost et garde exactement une connexion sortante vers core.
-- **executor** — un intermédiaire Go avec un seul RPC `Exec(argv)` et une
-  liste blanche en lecture, pour qu'un pod qui a besoin de regarder le cluster
-  n'ait jamais à détenir de quoi le modifier.
+- **executor** — un relais Go avec un seul RPC `Exec(argv)` et une liste
+  blanche en lecture, pour qu'un pod qui doit consulter le cluster n'ait
+  jamais à détenir de quoi le modifier.
 - **console** — une SPA React, compilée dans le binaire de core plutôt que
   déployée comme un service à part.
 
-Cette séparation n'est pas de la propreté. C'est la réponse à une question
-posée en boucle : si ce composant est compromis, ou simplement faux, quel est
-le pire qu'il puisse faire ?
+Cette séparation n'est pas une question de propreté. C'est la réponse à une
+question posée pour chaque composant : s'il est compromis, ou simplement
+défaillant, quel est le pire qu'il puisse faire ?
 
 ## Ce qu'il a fallu
 
@@ -49,12 +48,12 @@ le pire qu'il puisse faire ?
 
 Le plus gros changement fut une suppression. La première conception donnait à
 chaque dépôt un pod permanent et exécutait les sessions comme des worktrees
-git à l'intérieur. Ça a pourri en silence pendant trois semaines — une file
-d'attente, une machine à états de bail et de heartbeat, un cycle de vie de
-worktrees, une convention de branches, un système de recettes — jusqu'à ce
-qu'une pull request supprime tout cela au profit d'une session, un pod, une
-maison partagée. Sept décisions ont été remplacées d'un coup, et environ
-21 000 lignes ont disparu.
+git à l'intérieur. Elle s'est dégradée en silence pendant trois semaines — une
+file d'attente, une machine à états de bail et de heartbeat, un cycle de vie
+de worktrees, une convention de branches, un système de recettes — jusqu'à ce
+qu'une pull request supprime tout cela au profit d'un modèle plus simple : une
+session, un pod, un espace de travail partagé. Sept décisions ont été
+remplacées d'un coup, et environ 21 000 lignes supprimées.
 
-L'article ci-dessous raconte précisément cet arc, parce que c'est la chose la
-plus utile que j'ai apprise en construisant tout ça.
+L'article lié raconte cette évolution en détail. C'est ce que j'ai appris de
+plus utile en construisant ce système.

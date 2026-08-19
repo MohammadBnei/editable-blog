@@ -17,11 +17,11 @@ On enregistre un rêve en le tapant ou en le dictant, via la reconnaissance
 vocale du navigateur, parce que le moment réaliste pour faire cela se situe
 trente secondes après le réveil et que taper est déjà trop demander.
 
-Le modèle renvoie ensuite une lecture et un jeu de symboles. Cette lecture
-n'est pas unique : on choisit le cadre. Jungien, à la recherche des archétypes
-et de l'ombre. Freudien, à la recherche du refoulé et du conflit. Un résumé
-simple, quand on ne veut que les thèmes. Ou une lecture islamique, ancrée dans
-l'herméneutique propre à cette tradition.
+Le modèle renvoie ensuite une interprétation et une liste de symboles.
+L'interprétation n'est pas unique : on choisit le cadre d'analyse. Jungien,
+pour les archétypes et l'ombre. Freudien, pour le refoulé et le conflit. Un
+résumé simple, quand on ne veut que les thèmes. Ou une lecture islamique,
+ancrée dans l'herméneutique propre à cette tradition.
 
 À partir de là, c'est une conversation — on peut questionner l'interprétation,
 insister sur un symbole, ou demander ce que le modèle ferait du même rêve
@@ -34,7 +34,7 @@ survit une semaine.
 ## La partie ingrate
 
 Un système de crédits. Chaque analyse et chaque tour de conversation coûte un
-appel au modèle, et un projet personnel avec une facture ouverte est un projet
-personnel qu'on finit par éteindre. Les utilisateurs ont un quota quotidien ;
-l'application reste abordable à faire tourner, ce qui est la seule raison pour
-laquelle elle tourne encore.
+appel au modèle, et un projet personnel à la facture non plafonnée finit par
+être éteint. Les utilisateurs ont un quota quotidien ; le coût
+d'exploitation reste borné, ce qui est la seule raison pour laquelle
+l'application tourne encore.

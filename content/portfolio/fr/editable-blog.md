@@ -8,19 +8,21 @@ liveLink: 'https://blog.bnei.dev/'
 ---
 
 Le site que vous êtes en train de lire. Il a commencé comme un petit CMS —
-Postgres pour le contenu, n8n pour la traduction et la publication sociale, un
-éditeur derrière un login — et il n'a plus rien de tout cela.
+Postgres pour le contenu, n8n pour la traduction et la publication sur les
+réseaux sociaux, un éditeur derrière une authentification — et il n'a plus
+rien de tout cela.
 
 ## Pourquoi il a perdu la majeure partie de son architecture
 
-L'éditeur était le problème. Chacune de ses fonctionnalités supposait que je
-voudrais écrire dans une zone de texte d'un navigateur, et je ne l'ai pas fait
-une seule fois. J'écris dans mon éditeur, dans le dépôt, à côté du reste. La
-base stockait donc du markdown né sous forme de fichier, le login protégeait
-un éditeur que personne n'ouvrait, et le workflow de traduction était une file
-d'attente pour un travail que je faisais à la main de toute façon.
+L'éditeur était le problème. Chacune de ses fonctionnalités supposait que
+j'écrirais dans un champ de texte du navigateur, ce que je n'ai jamais fait.
+J'écris dans mon éditeur, dans le dépôt, à côté du reste du code. La base
+stockait donc du markdown qui existait déjà sous forme de fichier,
+l'authentification protégeait un éditeur que personne n'ouvrait, et le
+workflow de traduction était une file d'attente pour un travail que je faisais
+à la main de toute façon.
 
-Tout est parti. Ce qui l'a remplacé est un répertoire :
+Tout cela a été supprimé et remplacé par une arborescence de fichiers :
 
 ```
 content/blog/<slug>.md        → /blog/<slug>
@@ -34,24 +36,24 @@ Publier, c'est un commit.
 ## Ce qu'il est aujourd'hui
 
 SvelteKit avec l'adaptateur statique, qui prérend chaque route à la
-compilation. Aucun rendu serveur à l'exécution, aucune base de données, et
-rien où se connecter. Le build produit du HTML plat, servi par cinquante
-lignes de Bun — qui ont remplacé un paquet npm serviable au point de renvoyer
-`index.html` pour les chemins inconnus, cassant ainsi silencieusement la sonde
+compilation. Aucun rendu serveur à l'exécution, aucune base de données, aucune
+authentification. Le build produit du HTML statique, servi par cinquante
+lignes de Bun. Ces cinquante lignes ont remplacé un paquet npm qui renvoyait
+`index.html` pour tout chemin inconnu, ce qui cassait silencieusement la sonde
 de santé Kubernetes.
 
-Bilingue par convention de répertoire plutôt que par framework : les articles
-français vivent sous `fr/`, partagent leur slug avec leur jumeau anglais, et
-le sélecteur de langue navigue entre les deux ou dit simplement que la
-traduction n'existe pas encore.
+Le bilinguisme repose sur une convention de répertoires, pas sur un
+framework : les articles français vivent sous `fr/`, partagent leur slug avec
+leur équivalent anglais, et le sélecteur de langue navigue de l'un à l'autre
+ou indique que la traduction n'existe pas encore.
 
-Le design est une tension entre deux polices — mono pour tout ce qui est code,
-métadonnée ou étiquette, serif pour tout ce qui se lit vraiment — avec une
-seule couleur d'accent, et jamais une seconde.
+Le design tient en deux polices — mono pour le code, les métadonnées et les
+étiquettes, serif pour le texte qui se lit en continu — et une seule couleur
+d'accent.
 
 ## Livraison
 
-GitHub Actions construit l'image à la fusion, le tag est mis à jour dans les
-manifestes, et Argo CD déploie sur mon propre cluster. Les images viennent
-d'un registre interne au cluster plutôt que d'un registre public : un
-déploiement ne dépend pas du quota de quelqu'un d'autre.
+GitHub Actions construit l'image à la fusion de la pull request, le tag est
+mis à jour dans les manifestes, et Argo CD déploie sur mon propre cluster. Les
+images viennent d'un registre interne au cluster : un déploiement ne dépend
+pas des limites de débit d'un registre public.
