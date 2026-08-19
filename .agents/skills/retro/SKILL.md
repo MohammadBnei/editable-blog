@@ -114,10 +114,20 @@ For each post you decide to draft:
    answers for that branch — weave what was built, why, and how it felt
    into a narrative throughline. Not a cold technical review, not a dry
    Q&A checklist recitation.
-2. **Light polish** each answer used: trim rambling/filler, fix grammar,
+2. **Never prove the work with activity counters.** No merged-PR counts,
+   commit counts, ADR counts, lines added or removed, no version number
+   offered as an achievement — even when the transcript hands them to you on
+   a plate. They measure typing, not judgement. Write what was tried, why it
+   looked right at the time, what it cost when it was wrong, and what got
+   deleted. Elapsed time is fine when it carries the story ("it rotted for
+   three weeks before I saw why"), never as a scoreboard ("ten weeks of
+   work"). Numbers about the *system* — deploy time, failure rate, how many
+   defects were stacked in one broken path — are results and stay. Linking a
+   PR as the citation for a claim is fine; counting them is not.
+3. **Light polish** each answer used: trim rambling/filler, fix grammar,
    keep the user's actual voice and phrasing — don't rewrite it into
    generic blog voice.
-3. **Pick the format:**
+4. **Pick the format:**
    - Default: `format: interview` + `qa:` list, matching
      `content/blog/interview-example.md` — the "journal between me and
      this blog" shape, good for a dialogue-driven piece.
@@ -130,10 +140,10 @@ For each post you decide to draft:
      compilation, while prose posts go through the full markdown pipeline
      (`transformMermaidBlocks` etc.) — a diagram only ever renders on the
      prose path.
-4. **Write** `~/Code/editable-website/content/blog/<slug>.md` with
+5. **Write** `~/Code/editable-website/content/blog/<slug>.md` with
    frontmatter matching whichever example above (`title`, `description`,
    `date`, plus `format`/`qa` if using that shape).
-5. **Tell the user** briefly which post(s) you drafted and why you
+6. **Tell the user** briefly which post(s) you drafted and why you
    split/combined them that way — an editorial note, not a permission
    request. Nothing is public until they `git commit` it; that commit step
    *is* the review gate, this skill doesn't need its own.
@@ -197,7 +207,7 @@ review to a fresh agent that only sees the written record.
    least useful entry before it grows past that.
 3. Tell the user, briefly, what changed in the skill and why (cite the
    transcript moment that triggered it) — or say nothing happened, if
-   nothing did. This is an editorial note like §3.5, not a permission
+   nothing did. This is an editorial note like §3.6, not a permission
    request; the file is easy to hand-edit or revert if a lesson turns out
    wrong.
 
