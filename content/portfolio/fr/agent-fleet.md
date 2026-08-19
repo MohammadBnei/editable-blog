@@ -1,19 +1,19 @@
 ---
 title: Flotte d'agents
-description: Des agents Claude Code exécutés comme des workloads Kubernetes sur mes propres machines — un pod par session, chacun avec une copie de travail complète du dépôt, chacun capable d'ouvrir sa propre pull request.
+description: Des agents Claude Code exécutés comme des workloads Kubernetes sur mes propres machines — un pod par session, chacun avec un clone complet du repository, chacun capable d'ouvrir sa propre pull request.
 date: 2026-08-19
 stack: [Go, TypeScript, Kubernetes, ConnectRPC, PostgreSQL, React, Bun]
 writeup: /blog/running-a-fleet-of-claude-agents-on-my-cluster
 ---
 
-Je voulais des agents de code qui ne tournent pas sur mon ordinateur
-portable. Non pas parce que cette machine est lente, mais parce qu'un agent
-qui s'arrête quand je referme l'écran n'est pas une infrastructure.
+Je voulais des agents de code qui ne tournent pas sur mon PC. Non pas parce
+que le PC est lent, mais parce qu'un agent qui s'arrête quand je referme
+l'écran n'est pas une infrastructure.
 
 `agent-fleet` exécute des sessions Claude Code comme des workloads Kubernetes
-sur du matériel qui m'appartient. Un pod par session, chacun avec une copie de
-travail complète d'un dépôt réel, chacun capable de compiler, tester,
-committer et ouvrir une pull request. Je leur parle depuis une console. Quand
+sur du matériel qui m'appartient. Un pod par session, chacun avec un clone
+complet d'un repository réel, chacun capable de compiler, tester, committer et
+ouvrir une pull request. Je leur parle depuis une console. Quand
 l'un se bloque, il s'arrête et le cluster le détecte.
 
 ## Forme
@@ -47,7 +47,7 @@ défaillant, quel est le pire qu'il puisse faire ?
 écrites, et un numéro de version arrivé à 4.10.0 en moins d'un mois.
 
 Le plus gros changement fut une suppression. La première conception donnait à
-chaque dépôt un pod permanent et exécutait les sessions comme des worktrees
+chaque repository un pod permanent et exécutait les sessions comme des worktrees
 git à l'intérieur. Elle s'est dégradée en silence pendant trois semaines — une
 file d'attente, une machine à états de bail et de heartbeat, un cycle de vie
 de worktrees, une convention de branches, un système de recettes — jusqu'à ce

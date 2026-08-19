@@ -16,7 +16,7 @@ rien de tout cela.
 
 L'éditeur était le problème. Chacune de ses fonctionnalités supposait que
 j'écrirais dans un champ de texte du navigateur, ce que je n'ai jamais fait.
-J'écris dans mon éditeur, dans le dépôt, à côté du reste du code. La base
+J'écris dans mon éditeur, dans le repository, à côté du reste du code. La base
 stockait donc du markdown qui existait déjà sous forme de fichier,
 l'authentification protégeait un éditeur que personne n'ouvrait, et le
 workflow de traduction était une file d'attente pour un travail que je faisais

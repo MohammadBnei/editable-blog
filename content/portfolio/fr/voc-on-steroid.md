@@ -32,7 +32,7 @@ la gestion des JWT.
 
 Les commandes et les requêtes sont séparées sur un bus en mémoire : une
 commande modifie l'état, une requête le lit, et aucune n'emprunte le chemin de
-l'autre. Un `repository` générique donne à chaque entité du domaine un CRUD
+l'autre. Un repository générique donne à chaque entité du domaine un CRUD
 typé sans couche de données dédiée, et Google Wire fait le câblage à la
 compilation — ce qui compte surtout parce qu'un test peut alors substituer une
 implémentation en mémoire.

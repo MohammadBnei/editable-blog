@@ -27,7 +27,7 @@ ce qui l'entoure :
   le binaire compilé.
 - **Déployée comme tout le reste.** Manifestes Kustomize, versionnage
   sémantique dérivé des messages de commit, un tag d'image poussé par la CI,
-  et Argo CD qui réconcilie le cluster avec le dépôt.
+  et Argo CD qui réconcilie le cluster avec le repository.
 
-Archivé : le déploiement n'existe plus et l'endpoint ne répond plus. Le dépôt
-reste un exemple compact de la chaîne complète.
+Archivé : le déploiement n'existe plus et l'endpoint ne répond plus. Le
+repository reste un exemple compact de la chaîne complète.
