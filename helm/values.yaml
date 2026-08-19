@@ -17,7 +17,7 @@ image:
   # released tag lands in Docker Hub *and* here — which keeps docker.yml's
   # values-bump job correct and makes reverting this one line sufficient.
   repository: registry.bnei.lan:5000/editable-blog
-  tag: "0.43.0"
+  tag: "0.43.1"
 service:
   port: 3000
 ingress:
