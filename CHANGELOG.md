@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.43.0](https://github.com/MohammadBnei/editable-blog/compare/0.42.1...0.43.0) (2026-08-19)
+
+
+### Features
+
+* **portfolio:** bilingual portfolio, and entries for the platform and the fleet ([#14](https://github.com/MohammadBnei/editable-blog/issues/14)) ([6b3071c](https://github.com/MohammadBnei/editable-blog/commit/6b3071cf4f5b580a86c392743837b59b3f379381))
+
 ## [0.42.1](https://github.com/MohammadBnei/editable-blog/compare/0.42.0...0.42.1) (2026-08-19)
 
 # [0.42.0](https://github.com/MohammadBnei/editable-blog/compare/0.41.1...0.42.0) (2026-08-18)
