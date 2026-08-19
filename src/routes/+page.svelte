@@ -19,10 +19,16 @@
       I write about code and life, in English and French.
     </p>
 
-    <a href="/blog" class="btn btn-primary rounded-field gap-2">
-      Read my posts
-      <span aria-hidden="true">&rarr;</span>
-    </a>
+    <div class="flex flex-wrap gap-3">
+      <a href="/blog" class="btn btn-primary rounded-field gap-2">
+        Read my posts
+        <span aria-hidden="true">&rarr;</span>
+      </a>
+      <a href="/portfolio" class="btn btn-outline rounded-field gap-2">
+        See my work
+        <span aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
   </div>
 
   {#if latestPost}
