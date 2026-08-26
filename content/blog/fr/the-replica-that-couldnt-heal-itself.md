@@ -43,6 +43,20 @@ Je connaissais le correctif avant de commencer. Postgres a une réponse à ça d
 
 Le segment dont `.205` avait besoin est sur la timeline 31. Il existait. Il était dans le repo de `.207`, que `.205` n'a aucun moyen de lire. Un `restore_command` sur `.205` aurait interrogé une archive ne contenant aucun WAL de timeline 31 — et il aurait eu l'air parfaitement configuré en le faisant.
 
+```mermaid
+flowchart LR
+    subgraph before["avant — un repo par nœud, et aucun chemin entre les deux"]
+        L1["pg .207, leader"] --> R1["/pg/backup sur .207, timeline 31"]
+        P1["pg .205, réplica, veut 0000001F0000003200000078"] --> R2["/pg/backup sur .205, timeline 30 seulement"]
+        P1 -.->|"le segment voulu est ici, et il ne peut pas lire ce repo"| R1
+    end
+
+    subgraph after["après — un seul repo, les deux nœuds"]
+        L2["pg .207, leader"] -->|"archive-push"| G["Garage S3, bucket pg-backup"]
+        P2["pg .205, réplica"] -->|"archive-get"| G
+    end
+```
+
 Une cause racine, trois conséquences, et une seule était celle que j'étais venu chercher :
 
 1. **Les sauvegardes ne survivent pas au nœud qui les héberge.** `.205` vit sur `server1`, resté [isolé du LAN pendant 23 h 40](/blog/rebuilding-my-cluster-on-proxmox) la veille, quand son uplink USB est sorti de son bridge sans que rien ne l'y remette. Perdre cette VM, c'est perdre toutes les sauvegardes qu'elle contient. C'est un problème de durabilité déguisé en système de sauvegarde.
@@ -143,6 +157,20 @@ J'ai vérifié plutôt que deviné, parce que toutes les explications évidentes
 - Et pourtant le fichier du réplica ne contenait que l'en-tête de Pigsty.
 
 Quelque chose a réécrit ce fichier après Pigsty, et sur un standby, ce qui possède les paramètres de recovery, c'est Patroni. `pg_parameters` écrit dans `postgresql.auto.conf` ; Patroni réécrit `postgresql.auto.conf` sur un standby ; Patroni passe en dernier.
+
+```mermaid
+sequenceDiagram
+    participant A as Ansible / Pigsty
+    participant LC as .207 postgresql.auto.conf
+    participant RC as .205 postgresql.auto.conf
+    participant PT as Patroni, sur le standby
+
+    A->>LC: écrit restore_command
+    A->>RC: écrit restore_command
+    Note over LC,RC: les deux fichiers réécrits, les deux mtimes à jour, PLAY RECAP vert
+    PT->>RC: réécrit auto.conf, il possède les paramètres de recovery ici
+    Note over RC: restore_command disparu, il ne reste que l'en-tête de Pigsty
+```
 
 **`pg_parameters` n'est pas un endroit fiable pour ce qu'un réplica doit honorer.** Le bon endroit, c'est la config DCS de Patroni :
 

@@ -43,6 +43,20 @@ It would have fixed nothing, and finding out why is the actual result of this wh
 
 The segment `.205` needed is on timeline 31. It existed. It was sitting in `.207`'s repository, which `.205` has no way to read. A `restore_command` on `.205` would have queried an archive containing no timeline-31 WAL at all — and it would have looked completely configured while doing it.
 
+```mermaid
+flowchart LR
+    subgraph before["before — one repo per node, and no path between them"]
+        L1["pg .207, leader"] --> R1["/pg/backup on .207, timeline 31"]
+        P1["pg .205, replica, wants 0000001F0000003200000078"] --> R2["/pg/backup on .205, timeline 30 only"]
+        P1 -.->|"the segment it needs is in here, and it cannot read this"| R1
+    end
+
+    subgraph after["after — one repository, both nodes"]
+        L2["pg .207, leader"] -->|"archive-push"| G["Garage S3, bucket pg-backup"]
+        P2["pg .205, replica"] -->|"archive-get"| G
+    end
+```
+
 One root cause, three consequences, and only one of them was the one I came in looking for:
 
 1. **The backups don't survive the node holding them.** `.205` lives on `server1`, which had been [isolated from the LAN for 23 hours and 40 minutes](/blog/rebuilding-my-cluster-on-proxmox) the previous day when its USB uplink dropped out of its bridge and nothing put it back. Losing that VM loses every backup on it. That is a durability problem wearing a backup system's clothes.
@@ -143,6 +157,20 @@ I checked rather than guessed at why, because the obvious explanations were all 
 - Yet the replica's file contained nothing but Pigsty's header.
 
 Something rewrote that file after Pigsty did, and on a standby the thing that owns recovery parameters is Patroni. `pg_parameters` writes `postgresql.auto.conf`; Patroni rewrites `postgresql.auto.conf` on a standby; Patroni goes last.
+
+```mermaid
+sequenceDiagram
+    participant A as Ansible / Pigsty
+    participant LC as .207 postgresql.auto.conf
+    participant RC as .205 postgresql.auto.conf
+    participant PT as Patroni, on the standby
+
+    A->>LC: writes restore_command
+    A->>RC: writes restore_command
+    Note over LC,RC: both files rewritten, both mtimes updated, PLAY RECAP green
+    PT->>RC: rewrites auto.conf, it owns recovery parameters here
+    Note over RC: restore_command gone, only Pigsty's header remains
+```
 
 **`pg_parameters` is not a reliable home for anything a replica must honour.** The correct home is Patroni's own DCS config:
 
