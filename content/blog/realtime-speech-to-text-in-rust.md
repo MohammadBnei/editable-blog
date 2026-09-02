@@ -247,13 +247,14 @@ Two details make it worse than an ordinary bug. The consumer that never had the 
 
 The other three, briefly, because the pattern is the point rather than the parade:
 
-- **Chunks were 768 ms, not 560.** The client shipped its whole buffer, which crossed the threshold at 12288 samples — not a multiple of the encoder chunk, so the server also held a remainder until the next request. About 1.4 seconds and irregular, against a smooth 650. It looked like "streaming is just laggier than it should be", and it was found by measuring rather than reading. ([#9](https://github.com/MohammadBnei/ukubi-stt/pull/9))
+- **Chunks were 768 ms, not 560.** The client shipped its whole buffer, which crossed the threshold at 12288 samples — not a multiple of the encoder chunk, so the server also held a remainder until the next request. About 1.4 seconds and irregular, against a smooth 650 ms. It looked like "streaming is just laggier than it should be", and it was found by measuring rather than reading. ([#9](https://github.com/MohammadBnei/ukubi-stt/pull/9))
 - **One Stop in thirty-five lost its ending**, plus every Stop pressed before speaking. The tail flush can legitimately carry zero samples, and the server was rejecting empty audio before looking at `last` — so the close failed, the recognizer leaked until the idle sweep, and the tail never flushed. One in thirty-five is exactly the frequency that gets dismissed as the model dropping a word. An empty final chunk is a valid close. ([#9](https://github.com/MohammadBnei/ukubi-stt/pull/9))
 - **The first words of each sentence were missing.** This arrived as a user report, not from instrumentation. Clicking Record fetched the module, built an `AudioContext`, compiled a worklet and only _then_ opened the microphone; the start of the sentence landed in that gap. The trap is in the obvious fix: a context built outside a user gesture starts **suspended**, and a suspended context runs no worklet — so a naive prewarm looks live and records pure silence, which is strictly worse, because nothing errors. ([#15](https://github.com/MohammadBnei/ukubi-stt/pull/15))
 
 A sixth belongs in the same family even though it is not a chunk bug. The browser test page was completely inert for four consecutive releases: an `import` was added without deleting the byte-identical local copy it duplicated, and a duplicate declaration is a _parse_ error, so the module died before running a single line. It survived because the only check against that page was that `/` returned 200 — which it did the whole time. The HTML was served perfectly; the JavaScript inside it never parsed. There is a syntax check in CI now, because the file is `include_str!`'d into the binary and a syntax error otherwise compiles and ships. ([#23](https://github.com/MohammadBnei/ukubi-stt/pull/23))
 
-Six for six, every one invisible to the check that was nominally covering it.
+That is six, counting the parse error — and every one of them was invisible to
+the check nominally covering it.
 
 ## What got deleted
 

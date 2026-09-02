@@ -11,7 +11,7 @@ Un binaire Rust, une seule méthode gRPC. Il prend du PCM 16 kHz brut et renvoie
 du texte environ 560 ms derrière la voix, sur une RTX 2070 SUPER épinglée à un
 seul node de mon cluster auto-hébergé. Deux de mes applications s'en servent :
 `dream-analyst`, où l'on dicte un rêve au lieu de le taper, et la console
-`agent-fleet`, où je dicte mes prompts aux agents. Du dépôt vide aux deux
+`agent-fleet`, où je dicte mes prompts aux agents. Du repo vide aux deux
 consumers en production : trois jours.
 
 ## La première chose écrite n'était pas le service
@@ -30,9 +30,9 @@ depuis le conteneur, les transcriptions étaient justes, tous les indicateurs
 
 C'est la panne contre laquelle tout le design est construit : pas un crash,
 mais l'exécution qui renvoie la bonne réponse, dans la bonne forme, par le
-mauvais chemin. C'est aussi pour ça que `decode_seconds` est dans le format de
-wire plutôt que dans un log serveur — le chiffre qui révèle la panne appartient
-à chaque appelant.
+mauvais chemin. C'est aussi pour ça que `decode_seconds` est dans le wire
+format plutôt que dans une ligne de log côté serveur — le chiffre qui révèle la
+panne appartient à chaque appelant.
 
 ## Trois modèles, une seule carte
 
