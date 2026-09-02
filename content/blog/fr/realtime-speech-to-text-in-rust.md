@@ -23,7 +23,7 @@ ExecutionProvider::Cuda => builder.with_execution_providers([
 
 `error_on_failure()` est sur le provider **CPU**. Si CUDA n'arrive pas à s'initialiser, ONNX Runtime retombe sur le CPU, et le modèle se charge, transcrit et renvoie un texte entièrement correct, sans rien dans les logs qui se lise comme une erreur.
 
-Les commentaires du repo parlent d'un fallback « roughly 30x slower », et je l'ai répété un moment avant d'aller vérifier. Ce chiffre est hérité de la réputation de la librairie et n'a jamais été mesuré sur cette machine — et les deux runs du gate ci-dessous, qui calculent leur real-time factor de la même façon depuis le même self-test, donnent un écart d'environ **deux fois**. C'est la version inconfortable, et c'est la plus importante : un facteur trente se remarque tout seul. Un facteur deux, sur un chemin qui reste douze fois plus rapide que la parole, non.
+Mon README dit que ce fallback est « roughly 30x slower », et je l'ai répété ici pendant deux versions avant d'aller voir d'où sortait le chiffre. Il vient du premier commit du repo — un commit dont le message dit lui-même « nothing here has been compiled », écrit avant qu'il y ait un binaire à lancer, et a fortiori un GPU pour le lancer. Rien ne l'a mesuré depuis. C'est un ordre de grandeur plausible, et ce n'est pas une preuve.
 
 Donc à la première exécution réelle, sur du vrai matériel, l'assertion a fait son travail :
 
@@ -35,7 +35,7 @@ real-time factor     : 0.081
 GATE FAILED: GPU memory grew by only 0 MiB (< 128 MiB)
 ```
 
-Un real-time factor de 0,081, c'est douze fois plus rapide que la parole. Les transcriptions étaient justes. `nvidia-smi` répondait depuis le conteneur, donc la RuntimeClass, le device plugin et la resource request GPU étaient tous corrects. Tous les signaux disponibles disaient que le service était sain. Il décodait sur le CPU, et je l'aurais livré comme ça.
+Un real-time factor de 0,081, c'est douze fois plus rapide que la parole — mesuré sur trois secondes d'un balayage sinusoïdal synthétique, avec trois cœurs CPU disponibles, soit à peu près le cas le plus favorable qu'un fallback CPU puisse espérer. Les transcriptions étaient justes. `nvidia-smi` répondait depuis le conteneur, donc la RuntimeClass, le device plugin et la resource request GPU étaient tous corrects. Tous les signaux disponibles disaient que le service était sain. Il décodait sur le CPU, et je l'aurais livré comme ça.
 
 C'est la panne contre laquelle tout ce système est construit, et ce n'est pas un crash. Les crashes sont faciles : quelque chose passe au rouge et on va voir. Là, c'est l'autre chose : l'exécution qui renvoie la bonne réponse, dans la bonne forme, avec tous les voyants au vert, par le mauvais chemin. La suite de ce billet, c'est ce qu'il faut pour attraper ça, en Rust, sur un seul GPU, et ce que ça m'a coûté d'apprendre.
 
@@ -109,17 +109,19 @@ Le détail qui aggrave est le bon. `ort-sys` ne copie pas ces fichiers sous Unix
 
 Avant tout ça, trois builds sont morts d'affilée, chacun parce que j'avais corrigé le précédent : un `libssl-dev` manquant, puis un mismatch de glibc en voulant le corriger, puis PEP 668 qui refuse `pip3 install` sur la base plus récente. La seule leçon transférable est la première : `cargo clippy` était vert en CI depuis le début, parce que l'image de runner GitHub embarque `libssl-dev`. Un check de compilation hébergé ne peut pas vérifier l'environnement de build de l'image. Il ne vérifie que le code.
 
-Les deux bugs de provider corrigés :
+Les deux bugs de provider corrigés, le gate est passé, et c'est seulement là que j'ai écrit le proto. Le moteur était la seule hypothèse non vérifiée du design, et le wire format streaming est précisément l'artefact qu'un changement de moteur invalide.
 
-```
-gpu.used before load : 4 MiB
-model loaded in      : 6.2s
-gpu.used after warmup: 1843 MiB (delta 1839 MiB)
-real-time factor     : 0.041
-GATE PASSED: CUDA engaged (1839 MiB resident), RTF 0.041
-```
+### Une correction que j'ai dû faire à ce post
 
-C'est seulement là que j'ai écrit le proto. Le moteur était la seule hypothèse non vérifiée du design, et le wire format streaming est précisément l'artefact qu'un changement de moteur invalide.
+Le paragraphe ci-dessus se terminait par un bloc de log, cité depuis mon README sous le titre « Pass looks like: », avec un delta de 1839 MiB et un real-time factor de 0,041. Je l'ai retiré : en écrivant ce post je suis allé vérifier d'où il venait, et ce n'est le log de rien du tout.
+
+Ce bloc n'apparaît que dans un seul commit — le premier du repo, celui-là même dont le message dit que rien n'avait encore été compilé. C'est une esquisse de ce qu'un run réussi afficherait, écrite avant que le code existe. Le bloc en échec plus haut dans ce post, lui, est réel, transcrit d'un vrai échec du gate. Les deux ne sont donc pas deux runs. C'est une mesure et une supposition, à quelques paragraphes l'une de l'autre, impossibles à distinguer en police monospace.
+
+Deux éléments du repo le confirment indépendamment. L'esquisse annonce un delta de 1839 MiB, alors que les commentaires du code enregistrent le modèle batch à 3367 MiB — presque du simple au double. Et le run en échec chargeait en 2,4 s contre 6,2 s pour l'esquisse, or un chargement _plus rapide_ est exactement ce à quoi ressemble un contexte CUDA jamais créé.
+
+Le gate est bien passé. Une ligne de log du vrai run est citée dans une pull request ultérieure, et tout ce qui suit en dépend. Mais personne n'a jamais recollé la vraie sortie par-dessus le placeholder, donc celui qui a été inventé est toujours dans le README, là où un lecteur le prend pour une preuve — et je l'ai cité ici comme preuve, deux fois, avant d'aller vérifier.
+
+J'aurais pu supprimer le bloc sans rien dire. C'est une meilleure illustration que tout ce que j'aurais pu inventer : voici un post sur un système construit pour attraper les résultats qui ont l'air justes, et son propre auteur a publié pendant deux versions un chiffre qui avait l'air juste. L'habitude ne vient pas gratuitement avec l'argument.
 
 ## Ce que Rust a réellement apporté
 
