@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.44.0](https://github.com/MohammadBnei/editable-blog/compare/0.43.8...0.44.0) (2026-09-02)
+
+
+### Features
+
+* **linkedin:** gated LinkedIn drafts section, portfolio item, and French translations ([#20](https://github.com/MohammadBnei/editable-blog/issues/20)) ([9bc0ae7](https://github.com/MohammadBnei/editable-blog/commit/9bc0ae7fe27ac29bba4e45eb8218980cae08c6a5)), closes [#1](https://github.com/MohammadBnei/editable-blog/issues/1)
+
 ## [0.43.8](https://github.com/MohammadBnei/editable-blog/compare/0.43.7...0.43.8) (2026-09-02)
 
 ## [0.43.7](https://github.com/MohammadBnei/editable-blog/compare/0.43.6...0.43.7) (2026-09-02)
