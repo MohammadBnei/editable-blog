@@ -21,6 +21,8 @@
   const isPostPage = $derived(/^\/(blog|portfolio)\/(fr\/)?[^/]+$/.test(page.url.pathname));
   const currentLang = $derived(/^\/(blog|portfolio)\/fr\//.test(page.url.pathname) ? 'fr' : 'en');
   const translationUrl = $derived(page.data?.translationUrl ?? null);
+  // Everything except the gated drafts. See the data-pagefind-body comment below.
+  const isIndexable = $derived(!page.url.pathname.startsWith('/linkedin'));
   const activeLang = $derived(isPostPage ? currentLang : langPref.value);
 
   afterNavigate(() => {
@@ -228,7 +230,16 @@
     </div>
   {/snippet}
 
-  <main class="mx-auto w-full max-w-[var(--content-w)] flex-1 px-4 py-12">
+  <!-- data-pagefind-body flips Pagefind to an allowlist: once ANY page carries it, every
+       page without it is skipped entirely. That is the only mechanism that keeps /linkedin
+       out of the index. `data-pagefind-ignore` is NOT enough — it strips the element's
+       content but still indexes the page, so the URL and the <title> stay in the public
+       index, which is a plain HTTP asset the Traefik gate does not cover.
+       Verified by running `pagefind --site build` and decoding the fragments. -->
+  <main
+    class="mx-auto w-full max-w-[var(--content-w)] flex-1 px-4 py-12"
+    data-pagefind-body={isIndexable ? '' : undefined}
+  >
     {@render children()}
   </main>
 

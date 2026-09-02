@@ -92,9 +92,18 @@ more". If not, the hook is buried and the fix is at the top, not the bottom.
 
 `content/linkedin/` is excluded from the RSS feed (`site.config.json`), the
 sitemap and robots.txt (`scripts/generate-seo-files.js`), and the search index
-(`data-pagefind-ignore` in `src/routes/linkedin/+layout.svelte`), and the
-`/linkedin` prefix is gated by authentik's shared
-`default/authentik-forwardauth` Traefik middleware (`helm/values.yaml`).
+(the conditional `data-pagefind-body` on `<main>` in
+`src/routes/+layout.svelte`), and the `/linkedin` prefix is gated by
+authentik's shared `default/authentik-forwardauth` Traefik middleware
+(`helm/values.yaml`).
+
+The search-index one is worth understanding before you trust it. The obvious
+mechanism, `data-pagefind-ignore` on the page, does **not** work: it strips the
+element's content but Pagefind still indexes the page and falls back to the
+`<title>`, so every draft's URL and headline stayed in a public asset. What
+works is `data-pagefind-body`, because once any page carries it Pagefind skips
+every page that does not. If you add another private section, copy that, and
+then run `pagefind --site build` and read the fragments rather than assuming.
 
 Four separate mechanisms, because each covers a different way out of the build
 and none of them covers another — auth on the route does nothing about a

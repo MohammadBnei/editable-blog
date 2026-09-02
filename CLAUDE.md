@@ -64,8 +64,10 @@ apply there).
   without it the chart's own unauthenticated host route wins and serves
   these with a 200), and excluded from RSS
   (`site.config.json`), the sitemap and robots.txt
-  (`scripts/generate-seo-files.js`), and the Pagefind index
-  (`data-pagefind-ignore` in `src/routes/linkedin/+layout.svelte`). Those are
+  (`scripts/generate-seo-files.js`), and the Pagefind index (the conditional
+  `data-pagefind-body` on `<main>` in `src/routes/+layout.svelte`, which flips
+  Pagefind to an allowlist — `data-pagefind-ignore` alone does **not** work,
+  it strips the content but still indexes the URL and `<title>`). Those are
   four separate mechanisms because each covers a different exit from the
   build — auth on the route does nothing about a search index that is itself
   a public asset. Written by the `linkedin-post` skill. The pages are still

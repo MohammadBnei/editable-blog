@@ -11,11 +11,16 @@
   let body = $state(null);
   let text = $state('');
   let copied = $state(false);
+  let copyError = $state(false);
 
   // The pasteable text is the RENDERED text, not the markdown source: LinkedIn has no
   // markdown, so what you want on the clipboard is exactly what innerText gives — paragraphs
   // separated by blank lines, no syntax. This is also why no raw-markdown plumbing exists.
+  //
+  // post.content is read explicitly so the effect re-runs on navigation between drafts;
+  // tracking `body` alone would keep the previous draft's text when the node is reused.
   $effect(() => {
+    post.content;
     if (body) text = body.innerText.trim();
   });
 
@@ -23,9 +28,16 @@
   let over = $derived(chars > MAX_CHARS);
 
   async function copy() {
-    await navigator.clipboard.writeText(text);
-    copied = true;
-    setTimeout(() => (copied = false), 2000);
+    // navigator.clipboard is undefined outside a secure context — e.g. over plain HTTP on
+    // the LAN — where an uncaught rejection made the button silently do nothing.
+    try {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+      copyError = false;
+      setTimeout(() => (copied = false), 2000);
+    } catch {
+      copyError = true;
+    }
   }
 </script>
 
@@ -53,10 +65,15 @@
   <button class="btn btn-primary btn-sm" onclick={copy} disabled={!text}>
     {copied ? 'Copied' : 'Copy'}
   </button>
-  <span class="font-mono text-sm" class:text-error={over} class:text-base-content-70={!over}>
+  <span class="font-mono text-sm {over ? 'text-error' : 'text-base-content/70'}">
     {chars} / {MAX_CHARS}
     {#if over}— too long for LinkedIn{/if}
   </span>
+  {#if copyError}
+    <span class="font-mono text-sm text-error">
+      Clipboard unavailable — select the text below and copy manually.
+    </span>
+  {/if}
 </div>
 
 {#if text}
@@ -72,6 +89,9 @@
   </section>
 {/if}
 
-<article class="prose prose-lg max-w-none whitespace-pre-line" bind:this={body}>
+<!-- No whitespace-pre-line here. The body is already <p> blocks, and pre-line made
+     innerText emit five newlines between paragraphs — which went straight to the
+     clipboard, inflated the character count and shortened the fold preview. -->
+<article class="prose prose-lg max-w-none" bind:this={body}>
   {@html post.content}
 </article>
