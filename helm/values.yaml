@@ -110,6 +110,19 @@ extraManifests:
     # `sveltekit-cors` are this site's chain, and they are listed before the auth middleware
     # deliberately: cheapest rejection first, auth last.
     #
+    # TRAP 3 — auth last is the right order, but it means every middleware ahead of
+    # `authentik-forwardauth` gets to rewrite the request first, and the one header that
+    # decides which authentik application answers is `X-Forwarded-Host`. The middleware
+    # carries `trustForwardHeader: true`, so whatever is in that header when the chain
+    # reaches it is what authentik matches on. `sveltekit-cors` used to overwrite it with
+    # an un-templated placeholder and this route answered 404, empty-bodied, with no log
+    # line on the authentik side at all — see the comment on that middleware below. It
+    # fails CLOSED, so it is not a leak, but it is invisible: nothing in either repo
+    # reports it. The one check that catches both TRAP 1 (200, fails open) and this one
+    # (404, fails closed) is the same one line — it must print 302:
+    #
+    #   curl -so /dev/null -w '%{http_code}\n' https://blog.bnei.dev/linkedin
+    #
     # Both hosts are covered, because bnei.dev also routes here (see the root-domain route
     # above). Gating only blog.bnei.dev would leave every draft readable at the bare domain.
     #
@@ -164,7 +177,20 @@ extraManifests:
           - DELETE
         customRequestHeaders:
           X-Forwarded-Proto: "https"
-          X-Forwarded-Host: "{{ "{{ .Host }}" }}"
+          # DO NOT ADD AN `X-Forwarded-Host` OVERRIDE HERE. There used to be
+          # one, set to a Go-template placeholder for the request host.
+          # Traefik v3 does not template customRequestHeaders — that was a v1
+          # feature — so the header was set to those literal seven characters.
+          # Harmless for this site's own server (adapter-static; server.js
+          # never reads a forwarded header), but this middleware runs BEFORE
+          # authentik-forwardauth on the /linkedin route, and that middleware
+          # has `trustForwardHeader: true`: it passes the incoming value
+          # straight through. authentik then looked up an application for a
+          # host spelled with curly braces, found none, and answered 404 with
+          # an empty body — which reads as "authentik has no app for
+          # blog.bnei.dev" and cost infra-bootstrap#240 to chase down.
+          # Traefik's own entrypoint already sets this header to the real
+          # Host; overriding it only ever made it wrong.
         accessControlAllowOriginList:
           - "https://bnei.dev"
           - "https://blog.bnei.dev"
