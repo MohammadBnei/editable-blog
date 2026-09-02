@@ -21,7 +21,9 @@ ExecutionProvider::Cuda => builder.with_execution_providers([
 ])?
 ```
 
-`error_on_failure()` is on the **CPU** provider. If CUDA fails to initialise, ONNX Runtime falls through to CPU, and the model loads, transcribes, and returns entirely correct text — roughly thirty times slower, with nothing in the logs that reads as an error.
+`error_on_failure()` is on the **CPU** provider. If CUDA fails to initialise, ONNX Runtime falls through to CPU, and the model loads, transcribes, and returns entirely correct text, with nothing in the logs that reads as an error.
+
+My README says that fallback is "roughly 30x slower", and I repeated it here for two drafts before checking where the number came from. It comes from the repository's first commit — a commit whose own message says "nothing here has been compiled", written before there was a binary to run, let alone a GPU to run it on. Nothing has measured it since. It is a plausible figure, and it is not evidence.
 
 So on the first real run, on real hardware, the assertion did its job:
 
@@ -33,7 +35,7 @@ real-time factor     : 0.081
 GATE FAILED: GPU memory grew by only 0 MiB (< 128 MiB)
 ```
 
-A real-time factor of 0.081 is twelve times faster than speech. The transcripts were right. `nvidia-smi` answered from inside the container, so the RuntimeClass, the device plugin and the GPU resource request were all correct. Every signal available said the service was healthy. It was decoding on the CPU, and I would have shipped it that way.
+A real-time factor of 0.081 is twelve times faster than speech — measured on three seconds of a synthetic sine sweep, with three CPU cores available, which is about the friendliest case a CPU fallback ever gets. The transcripts were right. `nvidia-smi` answered from inside the container, so the RuntimeClass, the device plugin and the GPU resource request were all correct. Every signal available said the service was healthy. It was decoding on the CPU, and I would have shipped it that way.
 
 That is the failure this whole system is designed against, and it is not a crash. Crashes are easy — something goes red and you go and look. This is the other thing: the run that returns the right answer, in the right shape, with every indicator green, by the wrong route. The rest of this post is what it takes to catch that, in Rust, on one GPU, and what it cost to learn.
 
@@ -82,7 +84,7 @@ There are two traps stacked in front of a working CUDA session, and the second o
 
 So the check is a memory delta: read `nvidia-smi`, load the model, run a warmup decode, read it again, and refuse to start if the difference is under 128 MiB. Not zero — `nvidia-smi` reports whole-GPU usage, and a few MiB of noise from something else on the card must not count as success. A real load is about 3.4 GiB, so the threshold has enormous margin.
 
-On failure it crashes the process. That was a decision, not laziness: a CrashLoopBackOff is loud and attributable, and a Ready pod decoding thirty times slow is the failure this service is most likely to suffer and least likely to have noticed. Downtime was already accepted here — single replica, single node — so crashing costs nothing that was ever promised.
+On failure it crashes the process. That was a decision, not laziness: a CrashLoopBackOff is loud and attributable, and a Ready pod quietly decoding on the wrong device is the failure this service is most likely to suffer and least likely to have noticed. Downtime was already accepted here — single replica, single node — so crashing costs nothing that was ever promised.
 
 The warmup is not just for the assertion, either. The first decode pays lazy CUDA context creation and cuDNN algorithm selection, so doing it at startup is also what stops the first real user paying for it.
 
@@ -107,17 +109,19 @@ The compounding detail is the good one. `ort-sys` does not copy those files on U
 
 Before any of that, three builds died in a row, each because I had fixed the last: a missing `libssl-dev`, then a glibc mismatch when I moved to fix it, then PEP 668 refusing `pip3 install` on the newer base. The one transferable lesson is the first: `cargo clippy` had been green in CI the entire time, because GitHub's runner image ships `libssl-dev`. A hosted compile check cannot verify the image's own build environment. It only verifies the code.
 
-With both provider bugs fixed:
+With both provider bugs fixed, the gate passed, and only then did I write the proto. The engine was the one unverified assumption in the design, and the streaming wire format is precisely the artefact an engine swap invalidates.
 
-```
-gpu.used before load : 4 MiB
-model loaded in      : 6.2s
-gpu.used after warmup: 1843 MiB (delta 1839 MiB)
-real-time factor     : 0.041
-GATE PASSED: CUDA engaged (1839 MiB resident), RTF 0.041
-```
+### A correction I had to make to this post
 
-Only then did I write the proto. The engine was the one unverified assumption in the design, and the streaming wire format is precisely the artefact an engine swap invalidates.
+The paragraph above used to end with a log block, quoted from my README under the heading "Pass looks like:", showing a 1839 MiB delta and a real-time factor of 0.041. I removed it, because while writing this I went to check where it came from and it is not a log of anything.
+
+That block appears in exactly one commit — the first one in the repository, the same commit whose message says nothing had been compiled yet. It is a sketch of what a passing run would print, written before the code existed. The failing block earlier in this post is real, transcribed from an actual gate failure. So the two are not two runs. They are a measurement and a guess, sitting a few paragraphs apart, indistinguishable in a monospace font.
+
+Two things in the repo confirm it independently. The placeholder claims a 1839 MiB delta, while the code's own comments record the batch model at 3367 MiB — off by about half. And the failing run loaded in 2.4 s against the sketch's 6.2 s, where a _faster_ load is exactly what never creating a CUDA context looks like.
+
+The gate did pass. There is a log line from the real run quoted in a later pull request, and everything downstream depends on it having passed. But nobody ever pasted the output back over the placeholder, so the invented one is still sitting in the README where a reader takes it for evidence — and I quoted it here as evidence, twice, before checking.
+
+I could have deleted the block and said nothing. It is a better illustration than anything I could invent: this is a post about a system built to catch results that look right, and its own author published a number that looked right for two drafts. The habit does not come free with the argument.
 
 ## What Rust actually bought
 
@@ -247,13 +251,14 @@ Two details make it worse than an ordinary bug. The consumer that never had the 
 
 The other three, briefly, because the pattern is the point rather than the parade:
 
-- **Chunks were 768 ms, not 560.** The client shipped its whole buffer, which crossed the threshold at 12288 samples — not a multiple of the encoder chunk, so the server also held a remainder until the next request. About 1.4 seconds and irregular, against a smooth 650. It looked like "streaming is just laggier than it should be", and it was found by measuring rather than reading. ([#9](https://github.com/MohammadBnei/ukubi-stt/pull/9))
+- **Chunks were 768 ms, not 560.** The client shipped its whole buffer, which crossed the threshold at 12288 samples — not a multiple of the encoder chunk, so the server also held a remainder until the next request. About 1.4 seconds and irregular, against a smooth 650 ms. It looked like "streaming is just laggier than it should be", and it was found by measuring rather than reading. ([#9](https://github.com/MohammadBnei/ukubi-stt/pull/9))
 - **One Stop in thirty-five lost its ending**, plus every Stop pressed before speaking. The tail flush can legitimately carry zero samples, and the server was rejecting empty audio before looking at `last` — so the close failed, the recognizer leaked until the idle sweep, and the tail never flushed. One in thirty-five is exactly the frequency that gets dismissed as the model dropping a word. An empty final chunk is a valid close. ([#9](https://github.com/MohammadBnei/ukubi-stt/pull/9))
 - **The first words of each sentence were missing.** This arrived as a user report, not from instrumentation. Clicking Record fetched the module, built an `AudioContext`, compiled a worklet and only _then_ opened the microphone; the start of the sentence landed in that gap. The trap is in the obvious fix: a context built outside a user gesture starts **suspended**, and a suspended context runs no worklet — so a naive prewarm looks live and records pure silence, which is strictly worse, because nothing errors. ([#15](https://github.com/MohammadBnei/ukubi-stt/pull/15))
 
 A sixth belongs in the same family even though it is not a chunk bug. The browser test page was completely inert for four consecutive releases: an `import` was added without deleting the byte-identical local copy it duplicated, and a duplicate declaration is a _parse_ error, so the module died before running a single line. It survived because the only check against that page was that `/` returned 200 — which it did the whole time. The HTML was served perfectly; the JavaScript inside it never parsed. There is a syntax check in CI now, because the file is `include_str!`'d into the binary and a syntax error otherwise compiles and ships. ([#23](https://github.com/MohammadBnei/ukubi-stt/pull/23))
 
-Six for six, every one invisible to the check that was nominally covering it.
+That is six, counting the parse error — and every one of them was invisible to
+the check nominally covering it.
 
 ## What got deleted
 

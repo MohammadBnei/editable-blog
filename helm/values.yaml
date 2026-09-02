@@ -52,9 +52,9 @@ resources:
 # project, same as pgweb's pgweb-p9-hy grant.
 infisical:
   enabled: true
-  projectSlug: "editable-blog-555c"
+  projectSlug: 'editable-blog-555c'
   envSlug: staging
-  secretsPath: "/"
+  secretsPath: '/'
   secretName: managed-editable-blog-secret
   autoReload: true
 # bnei.dev bare domain also routed to the blog on the legacy cluster.
@@ -76,6 +76,64 @@ extraManifests:
           middlewares:
             - name: compress
             - name: sveltekit-cors
+          services:
+            - kind: Service
+              name: {{ .Release.Name }}
+              port: {{ .Values.service.port }}
+      tls:
+        certResolver: {{ .Values.ingress.certResolver }}
+  - |
+    # /linkedin holds unpublished drafts, and is the only non-public path on this site.
+    # It needs its own IngressRoute because the chart's `ingress.middlewares` applies to a
+    # whole host and this has to be scoped to a prefix — the same shape wedding-2026 uses
+    # for /admin, which is where both of the traps below were first written down.
+    #
+    # DEPENDS ON `providers.kubernetesCRD.allowCrossNamespace: true` in the cluster's
+    # Traefik values (it is set — gitops/platform/values/traefik/values.yaml:62). If that
+    # is ever turned off, Traefik refuses the cross-namespace middleware ref and builds no
+    # router at all, so the chart's own unauthenticated host route serves /linkedin. That
+    # fails OPEN and there is no signal for it in this repo; the check is the curl below.
+    #
+    # The gate is authentik's shared `default/authentik-forwardauth`, defined in
+    # infra-bootstrap's gitops/bootstrap/authentik-forwardauth-middleware.yaml. If sign-in
+    # loops, suspect authentik's Base URL system setting, which proxy providers build their
+    # redirect URLs from — wedding-2026's docs/runbook-authentik-identity.md §8.
+    #
+    # TRAP 1 — `priority: 100` is load-bearing, not decoration. Traefik's default priority
+    # is the RULE LENGTH, so Host(`blog.bnei.dev`) alone already scores in the twenties.
+    # Omit priority, or set a tidy small number, and the chart's own unauthenticated route
+    # wins the match: every /linkedin request is then served with a 200 and no auth.
+    #
+    # TRAP 2 — the baseline middlewares are repeated by hand. common-app-chart prepends its
+    # chain only to the IngressRoute the CHART renders; anything declared through
+    # extraManifests wires its own refs or silently sits outside them. `compress` and
+    # `sveltekit-cors` are this site's chain, and they are listed before the auth middleware
+    # deliberately: cheapest rejection first, auth last.
+    #
+    # Both hosts are covered, because bnei.dev also routes here (see the root-domain route
+    # above). Gating only blog.bnei.dev would leave every draft readable at the bare domain.
+    #
+    # This gates the URL, not the bytes: these pages are prerendered into the image like
+    # every other route, so anyone who can reach the pod directly or pull the image reads
+    # them. For unpublished drafts that is an accepted trade, not an oversight — but it is
+    # the reason nothing worse than embarrassing should ever live here.
+    apiVersion: traefik.io/v1alpha1
+    kind: IngressRoute
+    metadata:
+      name: {{ .Release.Name }}-linkedin-gated
+      namespace: {{ .Release.Namespace }}
+    spec:
+      entryPoints:
+        - websecure
+      routes:
+        - kind: Rule
+          match: (Host(`{{ .Values.ingress.hostname }}`) || Host(`bnei.dev`)) && PathPrefix(`/linkedin`)
+          priority: 100
+          middlewares:
+            - name: compress
+            - name: sveltekit-cors
+            - name: authentik-forwardauth
+              namespace: default
           services:
             - kind: Service
               name: {{ .Release.Name }}

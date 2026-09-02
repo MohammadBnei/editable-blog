@@ -23,13 +23,28 @@ async function generateSEOFiles() {
     console.log('🚀 Generating SEO files...');
     console.log(`🔗 Using site URL: ${siteUrl}`);
 
-    // Generate sitemap using svelte-sitemap
+    // Generate sitemap using svelte-sitemap.
+    //
+    // `/linkedin` is gated at the edge, but the pages are prerendered into the image like
+    // every other route — so a sitemap entry would publish the URL of every draft to anyone
+    // who fetches sitemap.xml. Excluded here and disallowed in robots.txt below; the RSS
+    // exclusion lives in site.config.json and the search-index one is `data-pagefind-ignore`
+    // in src/routes/linkedin/+layout.svelte. Four places, because each covers a different
+    // way out of the build and none of them covers another.
+    // TWO ignore flags, not one, and this is not redundancy. `*` does not cross a slash:
+    // `-i "/linkedin*"` alone drops the index and leaves every draft page in the sitemap,
+    // which was verified by running it and finding
+    // https://blog.bnei.dev/linkedin/<slug> still listed. A comma-separated list is not
+    // supported either — it silently excludes nothing. Repeated flags is the form that works.
     console.log('📄 Generating sitemap...');
-    execSync(`npx svelte-sitemap --domain ${siteUrl}`, { stdio: 'inherit' });
+    execSync(`npx svelte-sitemap --domain ${siteUrl} -i "/linkedin*" -i "/linkedin/*"`, {
+      stdio: 'inherit'
+    });
 
     // Create robots.txt content
     const robotsContent = `User-agent: *
 Allow: /
+Disallow: /linkedin
 
 Sitemap: ${siteUrl}/sitemap.xml
 `;

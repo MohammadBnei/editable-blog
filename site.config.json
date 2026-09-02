@@ -28,6 +28,6 @@
     "enabled": true,
     "contentMode": "full",
     "maxItems": 100,
-    "excludeDirectories": ["notes", "portfolio"]
+    "excludeDirectories": ["notes", "portfolio", "linkedin"]
   }
 }

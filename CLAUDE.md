@@ -55,6 +55,25 @@ apply there).
   (frontmatter: `title`, `gitLink`, `liveLink`).
 - `content/pages/{resume,portfolio}.md` — single-page content (resume body,
   portfolio intro text), loaded by slug via `getContentByUrl('/pages/<slug>')`.
+- `content/linkedin/<slug>.md` — the LinkedIn version of a blog post, slug
+  matching the post it derives from (frontmatter adds `source`). Served at
+  `/linkedin/<slug>`, which is **the one non-public path on this site**:
+  gated by authentik's shared `default/authentik-forwardauth` Traefik
+  middleware via an extra `IngressRoute` in `helm/values.yaml` (note the
+  `priority: 100` there — Traefik's default priority is rule length, so
+  without it the chart's own unauthenticated host route wins and serves
+  these with a 200), and excluded from RSS
+  (`site.config.json`), the sitemap and robots.txt
+  (`scripts/generate-seo-files.js`), and the Pagefind index (the conditional
+  `data-pagefind-body` on `<main>` in `src/routes/+layout.svelte`, which flips
+  Pagefind to an allowlist — `data-pagefind-ignore` alone does **not** work,
+  it strips the content but still indexes the URL and `<title>`). Those are
+  four separate mechanisms because each covers a different exit from the
+  build — auth on the route does nothing about a search index that is itself
+  a public asset. Written by the `linkedin-post` skill. The pages are still
+  prerendered into the image, so the gate protects the URL, not the bytes.
+- `content/notes/` — written but never served; no route reads it. The
+  convention for anything that should not be published at all.
 
 Each content-backed route follows the same shape: `+page.server.js` calls
 `getAllContent`/`getContentByUrl`/`entries()` from the content-processor,
