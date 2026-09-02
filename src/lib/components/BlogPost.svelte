@@ -90,6 +90,11 @@
     {/if}
   {/each}
 </div>
-<article class="prose prose-lg mx-auto prose-a:text-primary">
-  {@html post.content}
-</article>
+<!-- An interview post renders only its qa turns; the body is ignored, per DESIGN.md's
+     "Signature element: the interview format". Without this guard the body rendered
+     underneath the transcript, so a post carrying both showed both. -->
+{#if !isInterview}
+  <article class="prose prose-lg mx-auto prose-a:text-primary">
+    {@html post.content}
+  </article>
+{/if}

@@ -123,21 +123,16 @@ Body, roughly 300–600 words:
   what got deleted and why. One paragraph, and it is the other half of the
   point of this post.
 
-Style: match the existing posts (`content/blog/*.md`) — plain, first-person
-about the work, no hype, no emoji, no "exciting". Deletion counts as progress
-and should be reported as such.
+Style: `.claude/skills/blog-voice.md`, which every skill writing to this blog
+reads first. It covers the voice, the counters rule, and the diagram guidance
+— a weekly rundown rarely needs a diagram, so only add one if the week
+genuinely changed a shape.
 
-**Never prove the week with activity counters.** No merged-PR counts, commit
-counts, ADR counts, lines added or removed, no per-repo `+x/−y`. They measure
-typing, not judgement, and a week of 100 repairs to a design that should not
-have existed reads as a good week only if you count. Write what was tried and
-what it cost instead. Link individual PRs freely — a link is a citation, a
-tally is a scoreboard. Numbers about the *system* (deploy time, failure rate,
-how many defects sat in one broken path) are evidence and stay.
-
-Mermaid is available (see `src/lib/cms/content-processor.js`) but a weekly
-rundown rarely needs a diagram. Only add one if the week genuinely changed a
-shape.
+One thing specific to this post: a rundown is the one format here where the
+angle is fixed in advance by the four sections below, so it does not run
+`new-blog-post`'s "Before you draft" gate. What it still owes the reader is
+the "what it cost" section — a rundown without it is an activity log, which is
+the exact thing the counters rule exists to prevent.
 
 ### 6. Ship it
 

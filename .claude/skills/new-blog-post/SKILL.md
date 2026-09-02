@@ -11,14 +11,45 @@ description: >
 Publishing a post in this repo means committing a markdown file — there is
 no admin UI or database (see `CLAUDE.md`). This skill scaffolds that file.
 
+**Read `.claude/skills/blog-voice.md` first.** It carries who reads this blog,
+what a post has to prove, and the rules that apply to every post here. This
+file only adds what is specific to writing a new one.
+
+## Before you draft
+
+Answer these three in writing, to the user, before any prose. They take a
+minute and they are the difference between a post and a pile of material.
+
+1. **What is the angle** — the one thing this argues? Not the subject. "A GPU
+   speech-to-text service in Rust" is a subject. "The failure worth designing
+   against is not crashing, it is succeeding on the wrong device" is an angle.
+   A subject produces a tour; only an angle can decide what to cut.
+2. **What does the reader take away**, in one sentence?
+3. **What gets cut** to make room for it? If nothing is being cut, the angle
+   is not doing any work yet.
+
+**Write the title from the angle, before the draft.** A title extracted from a
+good line discovered late is the reliable sign that the piece has no spine —
+and it will not survive the first person who reads it, because it describes a
+paragraph rather than the post.
+
+Match the existing titles: plain and descriptive
+(`how-i-reached-high-availability`, `rebuilding-my-cluster-on-proxmox`). The
+thesis goes in `description`, not in a clever `title`.
+
+For a substantial post, or when the material came from somewhere other than
+the writer's own memory, use the `architecture-interview` skill to settle the
+angle rather than guessing at it — one question at a time, until the three
+answers above are real.
+
 ## Steps
 
 1. Determine the title (ask the user if not given) and derive a slug:
    lowercase, spaces → hyphens, strip punctuation. Confirm the slug with the
    user if it's not obvious.
-2. Write `content/blog/<slug>.md` with frontmatter matching the existing
-   `content/blog/hello-world.md` pattern exactly — only these three keys,
-   in this order:
+2. Write `content/blog/<slug>.md` with frontmatter matching any existing post
+   (e.g. `content/blog/how-i-reached-high-availability.md`) exactly — only
+   these three keys, in this order:
    ```
    ---
    title: <title>
@@ -34,7 +65,9 @@ no admin UI or database (see `CLAUDE.md`). This skill scaffolds that file.
 3. Ask whether a French translation is wanted. If yes, write
    `content/blog/fr/<slug>.md` with the same three frontmatter keys
    (translated `title`/`description`) and translated body — see
-   `content/blog/fr/hello-world.md` for the existing pairing. This is a
+   `content/blog/fr/how-i-reached-high-availability.md` for an existing
+   pairing; the twin is found by slug alone, there is no `translationOf`
+   key. This is a
    distinct SvelteKit route (`src/routes/blog/fr/[slug]/`), not the same
    page as the English one, per CLAUDE.md's i18n section. If no, skip it —
    there's no fallback mechanism, an English-only post is fine.
@@ -51,6 +84,9 @@ long-form post in the cluster series uses at least one
 topology, a boundary, or an ordering and ships without one is the odd
 one out.
 
+The idiom, when to reach for one, and how to verify it actually rendered are
+in `.claude/skills/blog-voice.md`. What is specific to a new post:
+
 Write a plain ```mermaid fence in the body.
 `transformMermaidBlocks` in `src/lib/cms/content-processor.js` rewrites it
 to `<pre class="mermaid not-prose">`, and `BlogPost.svelte` lazy-loads
@@ -58,23 +94,12 @@ mermaid + svg-pan-zoom, themed from `data-theme`. Any diagram type works,
 not just `flowchart` — `sequenceDiagram` is the right choice for an
 ordering bug (who writes the file last).
 
-Match the existing idiom: quoted labels, `subgraph` for grouping,
-`-.->|"label"|` for the annotated dotted edge. No `classDef`, no inline
-colours — the theme handles it, and hardcoded colours break dark mode.
+**Mechanical caveat for `format: interview` posts**: the body is ignored —
+only `qa` renders. Put the fence in an `a:` field, not the body. Answers go
+through the same pipeline as a body (`compileQaTurns`,
+`src/lib/cms/content-processor.js`), so markdown and mermaid both work there.
 
-**Reach for one when the post turns on a shape**: before/after topology,
-who-can-reach-what, or the order in which two things write the same file.
-Skip it for a narrative that is genuinely just a sequence of events.
-
-**Mechanical caveat**: a diagram only renders on the prose path. With
-`format: interview`, `qa` answers go through the same pipeline, but the
-post *body* is ignored entirely — see `DESIGN.md`. Put the fence in an
-`a:` field, not the body, for interview-format posts.
-
-**Verify it rendered.** A parse failure leaves the raw `<pre>` on the page
-silently — nothing throws and the build still passes, so
-`grep 'class="mermaid'` on the built HTML proves only that the fence was
-matched, not that mermaid parsed it. Load the page and check:
+The one-liner to check in the browser:
 
 ```js
 [...document.querySelectorAll('pre.mermaid')].map(p => !!p.querySelector('svg'))
@@ -82,23 +107,7 @@ matched, not that mermaid parsed it. Load the page and check:
 
 ## Voice
 
-Match the existing posts in `content/blog/`: plain, first-person about the
-work, no hype, no emoji, no "exciting". Deletion counts as progress and
-should be reported as such.
-
-Write the trial and error, not the activity. **Never prove the work with
-counters** — no merged-PR counts, commit counts, lines added or removed.
-They measure typing, not judgement. Link individual PRs freely: a link is
-a citation, a tally is a scoreboard. Numbers about the *system* (deploy
-time, failure rate, how long a replica sat broken) are evidence and stay.
-
-The wrong turns are the most valuable material in a build-log post. What
-was tried and abandoned, what looked configured and did nothing, what the
-error message actually meant — keep those, and don't sand them into a
-tidy narrative where everything worked first time.
-
-(This section and `weekly-rundown`'s "Style" section say the same thing.
-If you change one, change the other.)
+In `.claude/skills/blog-voice.md`, once, for every skill that writes here.
 
 ## French translations
 

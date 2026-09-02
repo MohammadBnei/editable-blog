@@ -114,32 +114,32 @@ For each post you decide to draft:
    answers for that branch — weave what was built, why, and how it felt
    into a narrative throughline. Not a cold technical review, not a dry
    Q&A checklist recitation.
-2. **Never prove the work with activity counters.** No merged-PR counts,
-   commit counts, ADR counts, lines added or removed, no version number
-   offered as an achievement — even when the transcript hands them to you on
-   a plate. They measure typing, not judgement. Write what was tried, why it
-   looked right at the time, what it cost when it was wrong, and what got
-   deleted. Elapsed time is fine when it carries the story ("it rotted for
-   three weeks before I saw why"), never as a scoreboard ("ten weeks of
-   work"). Numbers about the *system* — deploy time, failure rate, how many
-   defects were stacked in one broken path — are results and stay. Linking a
-   PR as the citation for a claim is fine; counting them is not.
+2. **Follow `.claude/skills/blog-voice.md`** — the single copy of the rules
+   for everything published on this blog: who reads it, what a post has to
+   prove, and the counters rule (which matters most here, because a transcript
+   hands you version numbers and PR counts on a plate). That file lives in the
+   `editable-blog` repo under `.claude/`, not alongside this skill; read it
+   from there.
 3. **Light polish** each answer used: trim rambling/filler, fix grammar,
    keep the user's actual voice and phrasing — don't rewrite it into
    generic blog voice.
 4. **Pick the format:**
-   - Default: `format: interview` + `qa:` list, matching
-     `content/blog/interview-example.md` — the "journal between me and
-     this blog" shape, good for a dialogue-driven piece.
-   - Use plain prose instead (matching `content/blog/infra.md` /
-     `hello-world.md` — a normal markdown body, no `format`/`qa` fields)
-     when the piece needs an embedded Mermaid diagram or genuinely reads
-     better as flowing prose than as Q&A pairs. This matters mechanically,
-     not just stylistically: `BlogPost.svelte` renders `qa` answers as
-     plain `whitespace-pre-line` text with no markdown/mermaid
-     compilation, while prose posts go through the full markdown pipeline
-     (`transformMermaidBlocks` etc.) — a diagram only ever renders on the
-     prose path.
+   - Default: `format: interview` + `qa:` list — the "journal between me
+     and this blog" shape, good for a dialogue-driven piece. No post uses
+     it yet, so the reference is the frontmatter block in `DESIGN.md`
+     under "Signature element: the interview format", not an example file.
+     Note the body is ignored for these posts: only `qa` renders.
+   - Use plain prose instead (a normal markdown body, no `format`/`qa`
+     fields — every post currently in `content/blog/` is this shape)
+     when the piece genuinely reads better as flowing prose than as Q&A
+     pairs.
+     This choice is stylistic, not mechanical. `compileQaTurns` in
+     `src/lib/cms/content-processor.js` puts each `a:` field through the
+     same pipeline as a post body, so markdown and Mermaid both render
+     inside an answer — put the fence in an `a:` field, not the body.
+     (An earlier version of this skill claimed `qa` answers rendered as
+     plain text with no compilation, and that a diagram only worked on the
+     prose path. That stopped being true when `compileQaTurns` landed.)
 5. **Write** `~/Code/editable-website/content/blog/<slug>.md` with
    frontmatter matching whichever example above (`title`, `description`,
    `date`, plus `format`/`qa` if using that shape).
