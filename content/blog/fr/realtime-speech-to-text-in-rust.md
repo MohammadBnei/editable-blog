@@ -21,7 +21,9 @@ ExecutionProvider::Cuda => builder.with_execution_providers([
 ])?
 ```
 
-`error_on_failure()` est sur le provider **CPU**. Si CUDA n'arrive pas à s'initialiser, ONNX Runtime retombe sur le CPU, et le modèle se charge, transcrit et renvoie un texte entièrement correct — environ trente fois plus lentement, sans rien dans les logs qui se lise comme une erreur.
+`error_on_failure()` est sur le provider **CPU**. Si CUDA n'arrive pas à s'initialiser, ONNX Runtime retombe sur le CPU, et le modèle se charge, transcrit et renvoie un texte entièrement correct, sans rien dans les logs qui se lise comme une erreur.
+
+Les commentaires du repo parlent d'un fallback « roughly 30x slower », et je l'ai répété un moment avant d'aller vérifier. Ce chiffre est hérité de la réputation de la librairie et n'a jamais été mesuré sur cette machine — et les deux runs du gate ci-dessous, qui calculent leur real-time factor de la même façon depuis le même self-test, donnent un écart d'environ **deux fois**. C'est la version inconfortable, et c'est la plus importante : un facteur trente se remarque tout seul. Un facteur deux, sur un chemin qui reste douze fois plus rapide que la parole, non.
 
 Donc à la première exécution réelle, sur du vrai matériel, l'assertion a fait son travail :
 
@@ -82,7 +84,7 @@ Il y a deux pièges empilés devant une session CUDA qui marche, et le second ca
 
 Le check est donc un delta de mémoire : lire `nvidia-smi`, charger le modèle, lancer un decode de warmup, relire, et refuser de démarrer si la différence est sous 128 MiB. Pas zéro — `nvidia-smi` rapporte l'usage de tout le GPU, et quelques MiB de bruit venus d'autre chose sur la carte ne doivent pas compter comme un succès. Un vrai chargement fait environ 3,4 GiB : le seuil a une marge énorme.
 
-En cas d'échec, ça crashe le process. C'était une décision, pas de la paresse : un CrashLoopBackOff est bruyant et attribuable, alors qu'un pod Ready qui décode trente fois trop lentement est la panne la plus probable de ce service et la moins susceptible d'être remarquée. L'indisponibilité était déjà acceptée ici — un seul replica, un seul node — donc crasher ne coûte rien qui ait jamais été promis.
+En cas d'échec, ça crashe le process. C'était une décision, pas de la paresse : un CrashLoopBackOff est bruyant et attribuable, alors qu'un pod Ready qui décode tranquillement sur le mauvais device est la panne la plus probable de ce service et la moins susceptible d'être remarquée. L'indisponibilité était déjà acceptée ici — un seul replica, un seul node — donc crasher ne coûte rien qui ait jamais été promis.
 
 Le warmup ne sert pas qu'à l'assertion. Le premier decode paie la création paresseuse du contexte CUDA et la sélection d'algorithme cuDNN ; le faire au démarrage, c'est aussi ce qui évite au premier vrai utilisateur de la payer.
 

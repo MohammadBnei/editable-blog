@@ -19,8 +19,8 @@ consumers en production : trois jours.
 C'était une assertion. `parakeet-rs` enregistre l'execution provider CUDA
 d'ONNX Runtime avec le provider CPU derrière — donc si CUDA n'arrive pas à
 s'initialiser, le modèle se charge quand même, transcrit quand même, et renvoie
-un texte parfaitement correct environ trente fois plus lentement, sans une
-seule ligne de log qui ressemble à une erreur. Le binaire lit donc la mémoire
+un texte parfaitement correct — seulement deux fois plus lentement sur cette
+machine, sans une seule ligne de log qui ressemble à une erreur. Le binaire lit donc la mémoire
 GPU avant le chargement du modèle et après un decode de warmup, et crashe au
 démarrage si le chiffre n'a pas bougé.
 

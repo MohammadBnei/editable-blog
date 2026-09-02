@@ -18,8 +18,9 @@ days.
 
 It was an assertion. `parakeet-rs` registers the ONNX Runtime CUDA provider
 with the CPU provider behind it — so if CUDA fails to initialise, the model
-still loads, still transcribes, and returns entirely correct text about thirty
-times slower, with nothing in the logs that reads as an error. So the binary
+still loads, still transcribes, and returns entirely correct text — only about
+twice as slow on this hardware, with nothing in the logs that reads as an
+error. So the binary
 reads GPU memory before loading the model and after a warmup decode, and
 crashes on boot if the number did not move.
 

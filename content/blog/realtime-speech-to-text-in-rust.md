@@ -21,7 +21,9 @@ ExecutionProvider::Cuda => builder.with_execution_providers([
 ])?
 ```
 
-`error_on_failure()` is on the **CPU** provider. If CUDA fails to initialise, ONNX Runtime falls through to CPU, and the model loads, transcribes, and returns entirely correct text — roughly thirty times slower, with nothing in the logs that reads as an error.
+`error_on_failure()` is on the **CPU** provider. If CUDA fails to initialise, ONNX Runtime falls through to CPU, and the model loads, transcribes, and returns entirely correct text, with nothing in the logs that reads as an error.
+
+The repo's own comments call that fallback "roughly 30x slower", and I repeated it for a while before checking. It is inherited from the library's reputation and was never measured on this hardware — and the two gate runs below, which compute their real-time factor the same way from the same self-test, put the gap at about **two times**. That is the uncomfortable version, and it is the more important one: a thirty-fold slowdown announces itself. A two-fold one, on a path that is still twelve times faster than speech, does not.
 
 So on the first real run, on real hardware, the assertion did its job:
 
@@ -82,7 +84,7 @@ There are two traps stacked in front of a working CUDA session, and the second o
 
 So the check is a memory delta: read `nvidia-smi`, load the model, run a warmup decode, read it again, and refuse to start if the difference is under 128 MiB. Not zero — `nvidia-smi` reports whole-GPU usage, and a few MiB of noise from something else on the card must not count as success. A real load is about 3.4 GiB, so the threshold has enormous margin.
 
-On failure it crashes the process. That was a decision, not laziness: a CrashLoopBackOff is loud and attributable, and a Ready pod decoding thirty times slow is the failure this service is most likely to suffer and least likely to have noticed. Downtime was already accepted here — single replica, single node — so crashing costs nothing that was ever promised.
+On failure it crashes the process. That was a decision, not laziness: a CrashLoopBackOff is loud and attributable, and a Ready pod quietly decoding on the wrong device is the failure this service is most likely to suffer and least likely to have noticed. Downtime was already accepted here — single replica, single node — so crashing costs nothing that was ever promised.
 
 The warmup is not just for the assertion, either. The first decode pays lazy CUDA context creation and cuDNN algorithm selection, so doing it at startup is also what stops the first real user paying for it.
 

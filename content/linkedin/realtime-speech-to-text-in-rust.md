@@ -13,7 +13,9 @@ I spent three days building a realtime speech-to-text service in Rust — one bi
 
 That felt like paranoia until the first run on real hardware, when it failed.
 
-The library I depend on registers its CUDA provider with the failure check on the _CPU_ fallback instead. So when CUDA does not initialise, ONNX Runtime quietly drops to CPU and everything still works — correct text, roughly thirty times slower, nothing in the logs that reads as an error. `nvidia-smi` answered from inside the container. The device plugin was fine. The transcripts were right.
+The library I depend on registers its CUDA provider with the failure check on the _CPU_ fallback instead. So when CUDA does not initialise, ONNX Runtime quietly drops to CPU and everything still works — correct text, nothing in the logs that reads as an error. `nvidia-smi` answered from inside the container. The device plugin was fine. The transcripts were right.
+
+And it was only about twice as slow. That is the part that should worry you: a thirty-fold slowdown announces itself. A two-fold one, on a path still running twelve times faster than speech, is invisible to every latency check you would think to write.
 
 Two bugs, both in my Dockerfile, and I would have shipped past both of them.
 
