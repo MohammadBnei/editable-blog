@@ -1,6 +1,6 @@
 ---
-title: Twelve times realtime, entirely on the CPU
-description: I built a GPU speech-to-text service in Rust over three days. The first thing I wrote was not the service — it was an assertion that the GPU was being used at all, and on the first run it failed while every other signal said the thing was healthy.
+title: The failure that passes every check
+description: I built a GPU speech-to-text service in Rust over three days. Every bug I hit was invisible to the check that was supposed to cover it — starting with a model that ran correctly, twelve times faster than speech, and never touched the GPU.
 date: 2026-09-02
 ---
 
