@@ -124,11 +124,13 @@ For each post you decide to draft:
    keep the user's actual voice and phrasing — don't rewrite it into
    generic blog voice.
 4. **Pick the format:**
-   - Default: `format: interview` + `qa:` list, matching
-     `content/blog/interview-example.md` — the "journal between me and
-     this blog" shape, good for a dialogue-driven piece.
-   - Use plain prose instead (matching `content/blog/infra.md` /
-     `hello-world.md` — a normal markdown body, no `format`/`qa` fields)
+   - Default: `format: interview` + `qa:` list — the "journal between me
+     and this blog" shape, good for a dialogue-driven piece. No post uses
+     it yet, so the reference is the frontmatter block in `DESIGN.md`
+     under "Signature element: the interview format", not an example file.
+     Note the body is ignored for these posts: only `qa` renders.
+   - Use plain prose instead (a normal markdown body, no `format`/`qa`
+     fields — every post currently in `content/blog/` is this shape)
      when the piece genuinely reads better as flowing prose than as Q&A
      pairs.
      This choice is stylistic, not mechanical. `compileQaTurns` in

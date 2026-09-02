@@ -47,9 +47,9 @@ answers above are real.
 1. Determine the title (ask the user if not given) and derive a slug:
    lowercase, spaces → hyphens, strip punctuation. Confirm the slug with the
    user if it's not obvious.
-2. Write `content/blog/<slug>.md` with frontmatter matching the existing
-   `content/blog/hello-world.md` pattern exactly — only these three keys,
-   in this order:
+2. Write `content/blog/<slug>.md` with frontmatter matching any existing post
+   (e.g. `content/blog/how-i-reached-high-availability.md`) exactly — only
+   these three keys, in this order:
    ```
    ---
    title: <title>
@@ -65,7 +65,9 @@ answers above are real.
 3. Ask whether a French translation is wanted. If yes, write
    `content/blog/fr/<slug>.md` with the same three frontmatter keys
    (translated `title`/`description`) and translated body — see
-   `content/blog/fr/hello-world.md` for the existing pairing. This is a
+   `content/blog/fr/how-i-reached-high-availability.md` for an existing
+   pairing; the twin is found by slug alone, there is no `translationOf`
+   key. This is a
    distinct SvelteKit route (`src/routes/blog/fr/[slug]/`), not the same
    page as the English one, per CLAUDE.md's i18n section. If no, skip it —
    there's no fallback mechanism, an English-only post is fine.
@@ -92,12 +94,10 @@ mermaid + svg-pan-zoom, themed from `data-theme`. Any diagram type works,
 not just `flowchart` — `sequenceDiagram` is the right choice for an
 ordering bug (who writes the file last).
 
-**Mechanical caveat for `format: interview` posts**: `qa` answers go through
-the same pipeline as a body (`compileQaTurns`,
-`src/lib/cms/content-processor.js`), so a fence in an `a:` field renders. The
-body renders *as well* — `BlogPost.svelte` outputs `post.content`
-unconditionally, after the turns — so an interview post with both shows both.
-(`DESIGN.md` says the body is ignored. It is not; the doc is stale.)
+**Mechanical caveat for `format: interview` posts**: the body is ignored —
+only `qa` renders. Put the fence in an `a:` field, not the body. Answers go
+through the same pipeline as a body (`compileQaTurns`,
+`src/lib/cms/content-processor.js`), so markdown and mermaid both work there.
 
 The one-liner to check in the browser:
 

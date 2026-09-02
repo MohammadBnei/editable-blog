@@ -91,8 +91,11 @@ left-border. A `{ pause: "..." }` entry (no `q`/`a`) renders as a quiet
 hairline divider with a caption — for marking a break in a long interview,
 no animation. Regular posts (no `format` field) render their markdown
 body as prose, unchanged.
-See `content/blog/interview-example.md` for a working example, and the
-branch in `src/routes/blog/[slug]/+page.svelte`.
+No post uses this format yet, so the frontmatter block above is the
+reference rather than a file. The implementation is `compileQaTurns` in
+`src/lib/cms/content-processor.js` (which puts each `a` through the same
+markdown + mermaid pipeline as a body) and the `isInterview` branch in
+`src/lib/components/BlogPost.svelte` — not in a route file.
 
 ## Reading width
 
