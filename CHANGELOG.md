@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.44.1](https://github.com/MohammadBnei/editable-blog/compare/0.44.0...0.44.1) (2026-09-08)
+
+
+### Bug Fixes
+
+* **linkedin:** the gate 404s because sveltekit-cors rewrites X-Forwarded-Host ([#21](https://github.com/MohammadBnei/editable-blog/issues/21)) ([9254ef5](https://github.com/MohammadBnei/editable-blog/commit/9254ef518fa14dc2b026cbe04a11cdec5f78ae73))
+
 # [0.44.0](https://github.com/MohammadBnei/editable-blog/compare/0.43.8...0.44.0) (2026-09-02)
 
 
