@@ -27,6 +27,21 @@ on:
 env:
   REGISTRY: registry.bnei.lan:5000
   IMAGE_NAME: editable-blog
+  # Plaintext on purpose. A username is not a secret, and holding it as one cost
+  # agent-fleet a release: `secrets.REGISTRY_USERNAME` was never set on that repo, so
+  # buildah got `--username ""` and the build failed with "Must provide --username with
+  # --password-stdin". Only the password is a secret.
+  REGISTRY_USER: ci
+  # The registry password comes from the shared platform-commons project over OIDC, not
+  # from a repo secret (infra-bootstrap ADR-0049). One place to rotate it for every build
+  # repo. The identity is bound to an explicit repository allowlist plus
+  # event_name push/workflow_dispatch, which is what makes it safe for a tag-triggered
+  # build — a `ref` binding cannot work here, since Infisical matches claims exactly and
+  # tag refs cannot be enumerated.
+  INFISICAL_DOMAIN: https://infisical.bnei.dev
+  INFISICAL_PROJECT_SLUG: platform-commons-76pb
+  INFISICAL_ENV: dev
+  INFISICAL_IDENTITY_ID: 19807471-d73a-48d4-9e58-1dc34255ef77
 
 jobs:
   build-push:
@@ -34,9 +49,15 @@ jobs:
     # token with `create jobs` in vos/vos-dev. This one has no cluster access
     # at all, which is exactly why builds belong on it (ADR-0034).
     runs-on: [self-hosted, ukubi-build]
+    # id-token mints the OIDC token Infisical authenticates. Declaring any permissions
+    # block resets every other scope to none, so contents: read is restated — checkout
+    # below needs it and would 403 without it.
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -64,6 +85,28 @@ jobs:
           [ -n "$version" ] && [ "$version" != "null" ] || { echo "no .version in package.json"; exit 1; }
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
+      # Only REGISTRY_PASSWORD, not the whole environment. The identity can read all of
+      # platform-commons, so this is hygiene rather than a boundary — but it keeps the
+      # other shared values out of the build environment.
+      - name: Read the registry password from Infisical
+        uses: Infisical/secrets-action@v1.0.12
+        with:
+          method: oidc
+          identity-id: ${{ env.INFISICAL_IDENTITY_ID }}
+          oidc-audience: infisical.bnei.dev
+          domain: ${{ env.INFISICAL_DOMAIN }}
+          project-slug: ${{ env.INFISICAL_PROJECT_SLUG }}
+          env-slug: ${{ env.INFISICAL_ENV }}
+          secret-path: /
+          secret-name: REGISTRY_PASSWORD
+          export-type: env
+
+      # The action's README does not document log masking, and GitHub only auto-masks
+      # `secrets.*`. An unmasked Infisical value already leaked a token in cleartext in
+      # this estate once. Masks are idempotent, so this is harmless if it already did it.
+      - name: Mask the fetched password
+        run: echo "::add-mask::$REGISTRY_PASSWORD"
+
       - name: Registry login
         # --tls-verify=false because the registry is plain HTTP: there is no
         # IngressRoute and no certificate, since Let's Encrypt cannot issue
@@ -79,9 +122,11 @@ jobs:
         # /run/containers/<uid>/auth.json, so a rootless login is invisible
         # to a rootful push.
         run: |
-          echo "${{ secrets.REGISTRY_PASSWORD }}" | sudo buildah login \
+          set -euo pipefail
+          [ -n "${REGISTRY_PASSWORD:-}" ] || { echo "Infisical returned no REGISTRY_PASSWORD"; exit 1; }
+          printf '%s' "$REGISTRY_PASSWORD" | sudo buildah login \
             --tls-verify=false \
-            --username "${{ secrets.REGISTRY_USERNAME }}" \
+            --username "$REGISTRY_USER" \
             --password-stdin "$REGISTRY"
 
       - name: Build and push
