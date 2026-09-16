@@ -1,4 +1,13 @@
-name: Release It
+# One run, one release: push to main -> release (version + changelog) -> image build
+# -> values bump. This used to be three workflows chained by tag pushes, which is why it
+# needed a PAT: release-it's tag had to TRIGGER the image build, and a tag pushed with the
+# built-in GITHUB_TOKEN deliberately does not trigger workflows. Sequential jobs need no
+# trigger, so the PAT is gone and nothing in this repo holds one.
+#
+# That same GITHUB_TOKEN property is now load-bearing in the other direction: neither the
+# release commit nor the values bump retriggers this pipeline, so there is no loop. The
+# paths-ignore below is belt and braces on top of it.
+name: Release, build and deploy
 
 on:
   workflow_dispatch:
@@ -6,9 +15,9 @@ on:
     branches:
       - main
     paths-ignore:
-      # Root-level docs only. '**.md' would also ignore content/**.md, and
-      # publishing a post here *is* a markdown-only commit — it would cut no
-      # release, push no tag, and never rebuild the image.
+      # Root-level docs only. '**.md' would also ignore content/**.md, and publishing a
+      # post here *is* a markdown-only commit — it would cut no release, push no tag, and
+      # never rebuild the image.
       - '*.md'
       - '**.yml'
       - '**.yaml'
@@ -16,31 +25,50 @@ on:
     tags-ignore:
       - '*'
 
-# Concurrent releases: keep the newest, cancel the rest. The survivor releases
-# from main's tip, so it carries the cancelled runs' commits with it — one tag
-# covering the lot, rather than a queue of one-commit releases each rebuilding
-# an image the next one obsoletes.
+# Concurrent releases: keep the newest, cancel the rest. The survivor releases from main's
+# tip, so it carries the cancelled runs' commits with it — one tag covering the lot, rather
+# than a queue of one-commit releases each rebuilding an image the next one obsoletes.
 #
-# Without a group at all, two runs compute the same version from the same latest
-# tag, and the loser's push is rejected non-fast-forward after it has already
-# bumped package.json and made a local tag — that release is simply lost.
+# Without a group at all, two runs compute the same version from the same latest tag, and
+# the loser's push is rejected non-fast-forward after it has already bumped package.json and
+# made a local tag — that release is simply lost.
 #
-# Cancelling is only safe because the push is atomic: see git.pushArgs in
-# package.json. Everything before the push is local to the runner and dies with
-# it; the push itself is the one window where a kill could split branch from tag.
+# Cancelling is only safe because the push is atomic: see git.pushArgs in package.json.
+# Everything before the push is local to the runner and dies with it; the push itself is the
+# one window where a kill could split branch from tag.
 concurrency:
   group: release
   cancel-in-progress: true
 
+env:
+  REGISTRY: registry.bnei.lan:5000
+  IMAGE_NAME: editable-blog
+  # Plaintext on purpose. A username is not a secret, and holding it as one cost agent-fleet
+  # a release: the secret was never set on that repo, so buildah got `--username ""` and the
+  # build failed with "Must provide --username with --password-stdin".
+  REGISTRY_USER: ci
+  # The registry password comes from the shared platform-commons project over OIDC rather
+  # than a repo secret (infra-bootstrap ADR-0049): one place to rotate it for every build
+  # repo. The identity binds a repository allowlist plus event_name push/workflow_dispatch.
+  INFISICAL_DOMAIN: https://infisical.bnei.dev
+  INFISICAL_PROJECT_SLUG: platform-commons-76pb
+  INFISICAL_ENV: dev
+  INFISICAL_IDENTITY_ID: 19807471-d73a-48d4-9e58-1dc34255ef77
+
 jobs:
   release:
     runs-on: ubuntu-latest
+    # contents: write so release-it can push the version commit and the tag with the
+    # built-in token. Declaring any permissions block zeroes the rest, which is fine here.
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          token: ${{ secrets.PAT }}
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
@@ -56,4 +84,165 @@ jobs:
       - name: Run release-it
         run: git update-index --refresh && git diff-index --quiet HEAD || git reset --hard && bun run release
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Read from the file rather than jaywcjlove/github-action-package: that action
+      # resolves from github.com at job time, and the build job below runs on a box whose
+      # sudoers grants buildah and nothing else. jq is already there.
+      - name: Read the released version
+        id: version
+        run: |
+          set -euo pipefail
+          v=$(jq -er .version package.json)
+          [ -n "$v" ] || { echo "no version in package.json"; exit 1; }
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
+  build-push:
+    needs: release
+    # NOT `ukubi` — that label belongs to the runner holding a ServiceAccount token with
+    # `create jobs` in vos/vos-dev. This one has no cluster access at all, which is exactly
+    # why builds belong on it (ADR-0034).
+    runs-on: [self-hosted, ukubi-build]
+    # id-token mints the OIDC token Infisical authenticates. Declaring any permissions block
+    # resets every other scope to none, so contents: read is restated — checkout needs it.
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      # The tag release-it just made, not the commit that started this run: the version in
+      # package.json at that SHA is the one being built. Checking out `main` would race the
+      # next push.
+      - name: Checkout the released tag
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.release.outputs.version }}
+          fetch-depth: 0
+
+      # Not baked into the runner image: one apt-get was not worth a build pipeline and its
+      # own chicken-and-egg. EPHEMERAL=false keeps the runner alive between jobs, so this is
+      # a no-op after the first run. Note `sudo apt-get` only works for this — the sudoers
+      # entry on that box grants buildah and nothing else.
+      - name: Ensure buildah
+        run: command -v buildah || (sudo apt-get update -qq && sudo apt-get install -y -qq buildah)
+
+      # Only REGISTRY_PASSWORD, not the whole environment. The identity can read all of
+      # platform-commons, so this is hygiene rather than a boundary — but it keeps the other
+      # shared values out of the build environment.
+      - name: Read the registry password from Infisical
+        uses: Infisical/secrets-action@v1.0.12
+        with:
+          method: oidc
+          identity-id: ${{ env.INFISICAL_IDENTITY_ID }}
+          oidc-audience: infisical.bnei.dev
+          domain: ${{ env.INFISICAL_DOMAIN }}
+          project-slug: ${{ env.INFISICAL_PROJECT_SLUG }}
+          env-slug: ${{ env.INFISICAL_ENV }}
+          secret-path: /
+          secret-name: REGISTRY_PASSWORD
+          export-type: env
+
+      # GitHub only auto-masks `secrets.*`, and this action's README does not document
+      # masking. An unmasked Infisical value leaked a token in cleartext in this estate once.
+      - name: Mask the fetched password
+        run: echo "::add-mask::$REGISTRY_PASSWORD"
+
+      # --tls-verify=false: the registry is plain HTTP, because Let's Encrypt cannot issue
+      # for `.lan`. Anonymous *reads* are open (that is how the nodes pull without
+      # credentials); pushing requires this login.
+      #
+      # Every buildah call goes through sudo, and they must all agree: rootless buildah in
+      # this unprivileged LXC only gets a single UID mapping (newuidmap is not permitted), so
+      # any image chowning to a second UID dies with "insufficient UIDs or GIDs available in
+      # user namespace". Real root is why the builder is an LXC at all. Mixing them would
+      # also split the auth file — login writes under /run/containers/<uid>/auth.json, so a
+      # rootless login is invisible to a rootful push.
+      - name: Registry login
+        run: |
+          set -euo pipefail
+          [ -n "${REGISTRY_PASSWORD:-}" ] || { echo "Infisical returned no REGISTRY_PASSWORD"; exit 1; }
+          printf '%s' "$REGISTRY_PASSWORD" | sudo buildah login \
+            --tls-verify=false \
+            --username "$REGISTRY_USER" \
+            --password-stdin "$REGISTRY"
+
+      - name: Build and push
+        id: build
+        env:
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          start=$(date +%s)
+          # chroot isolation only. The storage driver is deliberately NOT named here: it is
+          # pinned to overlay on the build box itself, so this build, the cleanup below and
+          # the weekly prune timer cannot end up on different stores.
+          sudo buildah bud \
+            --isolation chroot \
+            --format docker \
+            -t "$REGISTRY/$IMAGE_NAME:$VERSION" \
+            -t "$REGISTRY/$IMAGE_NAME:latest" \
+            .
+          build_end=$(date +%s)
+          for tag in "$VERSION" latest; do
+            sudo buildah push --tls-verify=false "$REGISTRY/$IMAGE_NAME:$tag"
+          done
+          end=$(date +%s)
+          echo "build_seconds=$((build_end - start))" >> "$GITHUB_OUTPUT"
+          echo "push_seconds=$((end - build_end))"    >> "$GITHUB_OUTPUT"
+          echo "total_seconds=$((end - start))"       >> "$GITHUB_OUTPUT"
+
+      # ADR-0034's verification V10 asks for a number, not an impression. The Docker Hub
+      # workflow this used to be compared against is gone, so this is now an absolute
+      # measurement rather than a comparison — still worth having, since a regression in it
+      # is the first sign the build box is unwell.
+      - name: Timing summary
+        run: |
+          {
+            echo "### Local registry build"
+            echo
+            echo "| phase | seconds |"
+            echo "| --- | --- |"
+            echo "| build | ${{ steps.build.outputs.build_seconds }} |"
+            echo "| push | ${{ steps.build.outputs.push_seconds }} |"
+            echo "| total | ${{ steps.build.outputs.total_seconds }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Only this build's tags. NEVER `buildah rmi --all` — the box is shared with the other
+      # build repos and the base-image cache is the whole reason they live together.
+      - name: Clean up this build's images
+        if: always()
+        env:
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          for tag in "$VERSION" latest; do
+            sudo buildah rmi "$REGISTRY/$IMAGE_NAME:$tag" 2>/dev/null || true
+          done
+
+  deploy:
+    needs: [release, build-push]
+    runs-on: ubuntu-latest
+    # contents: write to push the values bump. This commit is what ArgoCD actually reads;
+    # the image existing in the registry is not a deployment.
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Update helm values image tag
+        run: yq -i '.image.tag = "${{ needs.release.outputs.version }}"' helm/values.yaml
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git add helm/values.yaml
+          git diff --cached --quiet && { echo "tag unchanged"; exit 0; }
+          git commit -m "chore: update helm image tag to ${{ needs.release.outputs.version }}"
+          # A content commit can land between the checkout above and this push; rebase
+          # rather than fail the release after the image is already in the registry.
+          git pull --rebase --autostash origin main
+          git push
