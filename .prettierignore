@@ -16,3 +16,11 @@ yarn.lock
 .agents
 .claude
 .mcp.json
+
+# Post content is data, not source — same reasoning as .agents/.claude above.
+# Prettier's YAML formatter rewrites markdown frontmatter, and on a `format: interview`
+# post it de-indents the `a: |` block scalars to the level of their own key, which makes
+# the frontmatter invalid YAML and the post unreadable. `npm run format` would do that
+# silently. Verified against prettier 3 with the repo's own config; an explicit `|2`
+# indicator and embeddedLanguageFormatting=off both fail to prevent it.
+content
