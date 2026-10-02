@@ -77,22 +77,27 @@ qa:
   - q: Question text
     a: Answer text, rendered as markdown (mermaid fences work too)
   - pause: Optional caption for a session break
+  - text: The writer's own narration between questions (markdown)
   - q: Another question
     a: Another answer
 ```
 
-When `format: interview` is set, the post body (markdown content) is
-**ignored** — only `qa` renders, as an annotated transcript. Each turn
+When `format: interview` is set, the post body (markdown content) is the
+**introduction**: it renders as prose above the transcript, like the
+standfirst of a printed interview, and nowhere else. An empty body renders
+nothing. Then `qa` renders as an annotated transcript. Each turn
 applies the site's own mono/serif duality: `q` is a small muted mono
 eyebrow (metadata voice), `a` is compiled through the same markdown +
 mermaid pipeline as a regular post body and rendered in the serif body
 face (reading voice), with the rust accent on the `A` label and the
 left-border. A `{ pause: "..." }` entry (no `q`/`a`) renders as a quiet
 hairline divider with a caption — for marking a break in a long interview,
-no animation. Regular posts (no `format` field) render their markdown
-body as prose, unchanged.
-No post uses this format yet, so the frontmatter block above is the
-reference rather than a file. The implementation is `compileQaTurns` in
+no animation. A `{ text: "..." }` entry is narration in the writer's
+voice — a bridge between sections of the conversation — and renders as
+plain prose outside the cards, so it never reads as an answer. Regular
+posts (no `format` field) render their markdown body as prose, unchanged.
+`content/blog/reading-the-quran-without-speaking-arabic.md` uses all of
+it. The implementation is `compileQaTurns` in
 `src/lib/cms/content-processor.js` (which puts each `a` through the same
 markdown + mermaid pipeline as a body) and the `isInterview` branch in
 `src/lib/components/BlogPost.svelte` — not in a route file.

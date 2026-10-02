@@ -66,9 +66,20 @@
   <div class="font-mono text-base-content/70">{formatDate(post.metadata.date)}</div>
 </header>
 
+<!-- An interview post's body is its introduction, read before the transcript. -->
+{#if isInterview && post.content.trim()}
+  <article class="prose prose-lg mx-auto mb-10 prose-a:text-primary">
+    {@html post.content}
+  </article>
+{/if}
+
 <div class="space-y-6 pb-12">
   {#each post.metadata.qa ?? [] as turn, i (i)}
-    {#if turn.pause}
+    {#if turn.textHtml}
+      <div class="prose prose-lg max-w-none py-2 prose-a:text-primary">
+        {@html turn.textHtml}
+      </div>
+    {:else if turn.pause}
       <div
         class="flex items-center gap-3 py-2 font-mono text-xs uppercase tracking-wide text-base-content/50"
       >
@@ -90,9 +101,9 @@
     {/if}
   {/each}
 </div>
-<!-- An interview post renders only its qa turns; the body is ignored, per DESIGN.md's
-     "Signature element: the interview format". Without this guard the body rendered
-     underneath the transcript, so a post carrying both showed both. -->
+<!-- An interview post's body already rendered above as its introduction, per DESIGN.md's
+     "Signature element: the interview format". Without this guard it would render a
+     second time underneath the transcript. -->
 {#if !isInterview}
   <article class="prose prose-lg mx-auto prose-a:text-primary">
     {@html post.content}

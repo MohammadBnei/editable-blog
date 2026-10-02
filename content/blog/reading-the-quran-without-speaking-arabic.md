@@ -35,6 +35,12 @@ qa:
 
   - pause: the aya that did it
 
+  - text: |
+      Most Arabic words are built from a root of three consonants. A pattern is laid over
+      the root to make a verb, a noun or an adjective, and the root keeps its family of
+      meanings through every word made from it. Wird shows that root under every word of
+      the Qur’an, along with the other places the same root appears.
+
   - q: Give me the first time a root changed an aya for you.
     a: |
       Al-Anbiyāʾ, 21:33.
@@ -93,6 +99,12 @@ qa:
 
   - pause: ten days
 
+  - text: |
+      The same discipline runs through the code. Nothing in Wird merges without passing a
+      gate: the Go and Flutter test suites, end-to-end journeys through the app, and
+      quality checks that decide by exit code rather than by opinion. That gate is what let
+      the work happen in the gaps of a honeymoon.
+
   - q: This was your honeymoon. How did building an app fit into it?
     a: |
       That was the beauty of it. The thinking part, the architecture, the design: an hour
@@ -108,4 +120,23 @@ qa:
       feedback loop. It is downloadable from its public site,
       [wird.bnei.dev](https://wird.bnei.dev), and the source is on
       [GitHub](https://github.com/MohammadBnei/wird).
+
+  - text: |
+      Two more conversations follow this one. The first takes a single aya apart, root by
+      root. The second is about the process: how an app went from an idea to testers in ten
+      days, built mostly from a phone.
 ---
+
+Mohammad Bnei does not speak Arabic. Like many Muslims, he reads the Qur’an
+through a translation, which means through somebody else’s decisions about what
+each word means.
+
+On the first day of his honeymoon he set out to read it differently, and ten
+days later he had Wird: a Qur’an app built for prayer. Every word opens onto its
+three-letter root. A prayer is prepared ahead, then recited one rakʿah at a
+time, without holding the phone. It is now with its first testers.
+
+This conversation is about why. Why build anything when good Qur’an apps exist.
+How someone who cannot read the language can trust what an app tells him a word
+means. And why, for him, taking a word apart to its root is the opposite of
+cutting it up.
