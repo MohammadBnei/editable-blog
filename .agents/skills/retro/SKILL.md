@@ -75,6 +75,19 @@ For each branch, in whatever order the conversation naturally goes:
   conversation — reference details already given rather than "tell me
   more." Follow up 2-3 times on an answer before moving on if there's
   clearly more underneath it.
+- **Push back like a journalist.** The best answers come from a question
+  the user has to defend against: an existing product that already does
+  this ("Tarteel exists — why build?"), a claim a hiring reader would
+  bristle at ("you call science cold"), or a tension inside their own
+  answer ("taking a word apart is cutting too"). Name the counterpoint
+  concretely; never ask "any challenges?".
+- **Check facts before they reach a draft.** When an answer states
+  something the repo or the web can confirm — a source used, a check that
+  runs, what a competitor does — look it up, then tell the user what holds
+  and what doesn't, and ask them to restate. A claim that is wrong in the
+  user's own mouth is still wrong on the page. Look up what you don't know
+  rather than answering from memory, and say plainly when a check was only
+  of public descriptions.
 - **Findings aren't rigid to the current branch** — if an answer belongs
   under a different (or new) branch, file it there; add a checklist entry
   if it's a new branch.
@@ -107,6 +120,11 @@ This is agentic, not a fixed per-branch rule. When a branch clearly wraps
   single combined post.
 - There's no required 1:1 branch→post mapping. A rich session might yield
   three posts; a narrow one might yield exactly one.
+- **A series needs an anchor.** When the material splits into several
+  posts (say: the content, and the process), the user may want a third
+  that ties them into one story — usually the *why*. The anchor still
+  needs its own claim; a post that only says "go read the other two" is a
+  table of contents. It goes first, and the portfolio item points to it.
 
 For each post you decide to draft:
 
@@ -122,21 +140,37 @@ For each post you decide to draft:
    from there.
 3. **Light polish** each answer used: trim rambling/filler, fix grammar,
    keep the user's actual voice and phrasing — don't rewrite it into
-   generic blog voice.
+   generic blog voice. Any sentence you add inside an answer is words put
+   in the user's mouth: list each one back to them for keep/change/cut.
 4. **Pick the format:**
    - Default: `format: interview` + `qa:` list — the "journal between me
-     and this blog" shape, good for a dialogue-driven piece. No post uses
-     it yet, so the reference is the frontmatter block in `DESIGN.md`
-     under "Signature element: the interview format", not an example file.
-     Note the body is ignored for these posts: only `qa` renders.
+     and this blog" shape, good for a dialogue-driven piece. Reference:
+     `content/blog/reading-the-quran-without-speaking-arabic.md`, and the
+     frontmatter block in `DESIGN.md` under "Signature element: the
+     interview format". Write it like a printed interview, in three
+     layers:
+     - **Intro** = the post body, rendered above the transcript. The
+       journalist's voice, third person ("Mohammad Bnei does not speak
+       Arabic."): who, what was built, the tension the conversation
+       explores. Two or three short paragraphs. Lead with the fact that
+       reframes everything else.
+     - **Transcript** = `q`/`a` turns. Questions are yours, sharpened to
+       the version that drew the answer; answers are the user's.
+     - **Narration** = `text:` turns, journalist's voice, rendered as
+       prose between the cards. Use one after a `pause:` to give the
+       reader context the next answers assume (what a root is, what the
+       gate checks), and one at the end for what follows (next posts in
+       the series, where to get the thing). Facts only, no opinions — the
+       opinions belong to the answers.
    - Use plain prose instead (a normal markdown body, no `format`/`qa`
      fields — every post currently in `content/blog/` is this shape)
      when the piece genuinely reads better as flowing prose than as Q&A
      pairs.
      This choice is stylistic, not mechanical. `compileQaTurns` in
      `src/lib/cms/content-processor.js` puts each `a:` field through the
-     same pipeline as a post body, so markdown and Mermaid both render
-     inside an answer — put the fence in an `a:` field, not the body.
+     same pipeline as a post body (and `text:` turns too), so markdown and
+     Mermaid both render inside an answer — put a diagram in the `a:` field
+     it explains.
      (An earlier version of this skill claimed `qa` answers rendered as
      plain text with no compilation, and that a diagram only worked on the
      prose path. That stopped being true when `compileQaTurns` landed.)
@@ -264,4 +298,10 @@ started: <date>
 Dated, one-line lessons from past sessions' §6 self-correction pass. Newest
 last. Keep this list short — consolidate or replace instead of stacking.
 
-(none yet)
+- 2026-10-02 (Wird series): the raw Q&A transcript alone read as unfinished
+  — the user asked for "an intro and body, like a real interview would".
+  Interview posts now get an intro body and `text:` narration (§3.4).
+- 2026-10-02 (Wird series): two answers carried claims the repo
+  contradicted or that hadn't been checked (a lexicon "used" whose text was
+  rejected for its licence; a competitor's features). Verifying live and
+  asking the user to restate kept both off the page (§2, fact checks).
