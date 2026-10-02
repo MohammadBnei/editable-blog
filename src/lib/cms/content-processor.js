@@ -127,7 +127,9 @@ const transformMermaidBlocks = html => {
 
 // Interview-format qa turns: compile each `a` through the same markdown
 // pipeline as a post body (so answers can use markdown + mermaid). `pause`
-// marker entries have no `a` and pass through untouched.
+// marker entries have no `a` and pass through untouched. A `text` entry is
+// the writer's own narration between questions: compiled the same way, but
+// rendered as prose outside the transcript cards.
 const compileQaTurns = async (qa, directory) => {
   const turns = [];
   for (const turn of qa) {
@@ -135,11 +137,11 @@ const compileQaTurns = async (qa, directory) => {
       turns.push(turn);
       continue;
     }
-    let aHtml = await processMarkdownWithMDSvex(turn.a ?? '');
+    let aHtml = await processMarkdownWithMDSvex(turn.a ?? turn.text ?? '');
     aHtml = removeFirstH1(aHtml);
     aHtml = transformLinks(aHtml, directory);
     aHtml = transformMermaidBlocks(aHtml);
-    turns.push({ q: turn.q, aHtml });
+    turns.push(turn.text !== undefined ? { textHtml: aHtml } : { q: turn.q, aHtml });
   }
   return turns;
 };

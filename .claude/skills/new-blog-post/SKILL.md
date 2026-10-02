@@ -94,8 +94,10 @@ mermaid + svg-pan-zoom, themed from `data-theme`. Any diagram type works,
 not just `flowchart` — `sequenceDiagram` is the right choice for an
 ordering bug (who writes the file last).
 
-**Mechanical caveat for `format: interview` posts**: the body is ignored —
-only `qa` renders. Put the fence in an `a:` field, not the body. Answers go
+**Mechanical caveat for `format: interview` posts**: the body is the
+introduction, rendered above the transcript; `text:` turns are narration
+between questions. A fence in the body or a `text:` turn renders, but a
+diagram usually belongs in the `a:` field it explains. Answers go
 through the same pipeline as a body (`compileQaTurns`,
 `src/lib/cms/content-processor.js`), so markdown and mermaid both work there.
 
