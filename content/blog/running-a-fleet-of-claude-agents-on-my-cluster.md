@@ -112,7 +112,7 @@ The part I misjudged worst was not the runtime. It was permissions.
 
 An agent that can run arbitrary commands on hardware I own needs a real boundary, and "real" turns out to mean "structural", not "an instruction in a prompt". My cluster's own guiding document puts this as a hierarchy I now believe in: a rule should ideally make the bad state impossible to represent; failing that, it should be checked automatically; and only as a last resort should it be prose an agent is trusted to comply with, or a question asked of a human.
 
-In practice the fleet asks. Every tool call an agent makes goes through a permission check, and the interesting ones surface in the dashboard as a decision I have to answer. A fixed list always asks regardless of mode — `git push`, `gh`, `rm`, `sudo`, `kubectl`, `curl`, `wget`, `env` — because those are the calls that reach outside the pod.
+In practice the fleet asks. Every tool call an agent makes goes through a permission check, and the interesting ones surface in the dashboard as a decision I have to answer. In the default mode a fixed list always asks — `git push`, `gh`, `rm`, `sudo`, `kubectl`, `curl`, `wget`, `env` — because those are the calls that reach outside the pod, and a target repository's own settings cannot switch them off. There is also an `auto` mode, which I turn on deliberately, behind a confirmation: in it the agent answers everything itself except `rm`, `sudo` and approving its own plan.
 
 Two problems with that, both instructive.
 
@@ -122,7 +122,7 @@ Second, and more embarrassing: the escape hatch was lying. There is a mode that 
 
 The fleet did not notice the refusal. It logged a warning, allowed the parked tool call anyway, wrote the new mode to the database, and flipped the badge in the dashboard. The next tool call prompted again. From the outside, a refused switch and a working switch looked identical.
 
-Finding that required reading the actual shipped binary, because the SDK's own documentation is wrong about at least one branch of it. The resulting decision record is blunt about the conclusion: the permissive mode is a _launch profile_, not a control you can request at runtime, and the always-ask list outranks every mode including that one. A boundary you can talk your way past at runtime was never a boundary.
+Finding that required reading the actual shipped binary, because the SDK's own documentation is wrong about at least one branch of it. The first decision record was blunt about the conclusion: the permissive mode is a _launch profile_, not a control you can request at runtime. The second one, a day later, deleted the mode. Once `auto` allowed everything except `rm` and `sudo`, skipping all prompts bought exactly those two, and it cost a pod restart every time it was switched on or off. The gate now lives in one place, the fleet's own permission callback, instead of a rule list the SDK re-interprets on every upgrade. A boundary you can talk your way past at runtime was never a boundary.
 
 ## The cluster gets its own agent
 
@@ -169,6 +169,6 @@ Three things.
 
 **Do not own what the thing you are managing can own itself.** The fleet managing git worktrees for an agent that knows git perfectly well was pure invented liability. Same for build recipes: instead of the fleet storing how to build each repository, the agent now reads the repository, where that information already lives and is maintained by whoever changes it.
 
-**Let a boundary be structural, not polite.** Every permission mechanism I built on trust eventually got talked past — usually by my own code, silently. The ones that hold are the ones where the bad state cannot be represented: no credentials in the pod, one component with cluster access, an always-ask list evaluated before any mode can override it.
+**Let a boundary be structural, not polite.** Every permission mechanism I built on trust eventually got talked past — usually by my own code, silently. The ones that hold are the ones where the bad state cannot be represented: no credentials in the pod, one component with cluster access, and a permission gate in the fleet's own code rather than in a rule list the SDK re-reads.
 
 The cluster is still three second-hand computers in my home. What changed is that it now does some of its own maintenance, and files pull requests for the rest. This post was written by an agent running on it, in a pod, on a branch, from a pull request I reviewed.
