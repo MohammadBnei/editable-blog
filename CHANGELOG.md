@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.44.12](https://github.com/MohammadBnei/editable-blog/compare/0.44.11...0.44.12) (2026-10-09)
+
+
+### Bug Fixes
+
+* **weekly-rundown:** gate what gets published from private repos ([#26](https://github.com/MohammadBnei/editable-blog/issues/26)) ([fd18055](https://github.com/MohammadBnei/editable-blog/commit/fd180559b7b0415cc9fd246bcb11299afccf83dd))
+
 ## [0.44.11](https://github.com/MohammadBnei/editable-blog/compare/0.44.10...0.44.11) (2026-10-07)
 
 ## [0.44.10](https://github.com/MohammadBnei/editable-blog/compare/0.44.9...0.44.10) (2026-10-03)
