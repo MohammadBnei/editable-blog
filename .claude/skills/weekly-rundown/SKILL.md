@@ -85,6 +85,28 @@ Notes:
 - A journal entry is a claim, not a fact. If it contradicts `gh`, `gh` wins for
   what shipped and the journal wins for why.
 
+#### The privacy gate
+
+Reading everything is fine. Publishing everything is not: this post is public,
+and some repos are not. Before an entry informs the draft, sort it by its
+`repo`:
+
+- **`hq`** — Mohammad's private repo, mostly personal. Read it, never publish
+  it. Nothing from `hq` is named, quoted, paraphrased or linked: not its
+  business decisions (clients, deals, pricing, money, hiring, strategy), not
+  personal matters, not the fact that a given decision was made there. At most
+  it may explain *why* something public happened — an `hq` entry saying a
+  feature was shelved can let you write "deprioritised" instead of guessing —
+  and only when the public reason stands on its own without it.
+- **Any other private repo** — same rule as `hq`. If you can't tell whether a
+  repo is public, check `gh repo view <owner>/<repo> --json visibility`; when in
+  doubt, treat it as private.
+- **Public repos** — usable as before; their entries are still claims, per the notes above.
+
+When an entry is in doubt — business, personal, about another person, or
+something Mohammad would not say on a public page — leave it out. A thinner
+post costs nothing; a leaked decision cannot be unpublished.
+
 ### 4. Read the state, don't just list titles
 
 Spawn one `Explore` subagent per repo with the PR/ADR list from step 2 and ask
@@ -135,6 +157,10 @@ the "what it cost" section — a rundown without it is an activity log, which is
 the exact thing the counters rule exists to prevent.
 
 ### 6. Ship it
+
+Before committing, re-read the draft once against the privacy gate in step 3:
+every sentence must stand on public sources alone. This commits straight to a
+public site, so the gate is the only review it gets.
 
 Commit straight to `main` — this is the one flow in this repo that does not
 open a PR:
