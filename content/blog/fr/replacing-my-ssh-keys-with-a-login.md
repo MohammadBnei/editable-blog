@@ -1,6 +1,6 @@
 ---
 title: Remplacer mes clés SSH par un login
-description: Un agent IA a traduit le texte depuis l'anglais. Chaque machine de mon homelab avait sa propre clé, à récupérer dans un gestionnaire de secrets avant de pouvoir y toucher. Mieux gérer ces clés n'aurait rien réglé. J'ai sorti l'identité du fichier de clé pour la mettre dans le login que j'avais déjà, et j'ai gardé les anciennes clés comme porte de secours.
+description: Un agent IA a traduit le texte depuis l'anglais. Chaque machine de mon homelab avait sa propre clé, à récupérer dans un gestionnaire de secrets avant de pouvoir y toucher. Mieux gérer ces clés n'aurait rien réglé. J'ai sorti l'identité du fichier de clé pour la mettre dans le login que j'avais déjà, et j'ai gardé les anciennes clés comme porte de secours. Puis j'ai donné un login à l'agent IA avec lequel je travaille.
 date: 2026-10-11
 ---
 
@@ -55,10 +55,28 @@ Au premier test depuis chez moi, mon laptop ne voyait aucune machine. Le serveur
 
 Aucune correction ne gardait le check honnête. Une seconde policy autorisant mon sous-réseau aurait laissé entrer n'importe qui sur n'importe quel réseau en `192.168.1.0/24`, l'un des réglages par défaut les plus courants des box. Le check géographique a donc disparu, et l'accès repose sur ce qui faisait déjà le vrai travail : un login par session, et l'appartenance au groupe des admins. C'est exactement le rôle du spike. Mieux vaut découvrir un contrôle aveugle sur trois machines de test que dans un train.
 
+## Ce que le déploiement a attrapé
+
+Les trois premières machines étaient un spike, et il a encore servi deux fois avant que quoi que ce soit d'autre ne rejoigne le mesh.
+
+La règle SSH que j'avais écrite n'avait pas de port, parce que le protocole SSH de NetBird semblait en impliquer un. Ce n'est pas le cas. Sur le worker, le firewall généré par NetBird disait `ip saddr <laptop> accept` : tous les ports TCP de la machine, ouverts à mon laptop via le mesh. Une ligne — `ports: ["22"]` — et la règle n'autorise plus que 22 et le 22022 vers lequel il est redirigé.
+
+L'autre était plus discret. Cilium, la couche réseau du cluster, détecte les interfaces tout seul, et il a aussi pris celle de NetBird. Son MTU est de 1280, donc Cilium a réduit son propre tunnel en conséquence — sur ce seul nœud. Les petits paquets passaient ; c'est exactement le genre d'écart qui fait bloquer les gros et ressemble à un bug applicatif des semaines plus tard. Fixer Cilium sur l'interface du LAN, avant qu'un autre nœud Kubernetes ne rejoigne le mesh, a remis le nœud au niveau des autres.
+
+## L'agent aussi doit se connecter
+
+Un login dans le navigateur, ça me va. Pour un agent, c'est rédhibitoire. Je fais une bonne partie de ce travail avec un assistant IA qui lance des commandes depuis mon laptop, et sa première tentative via le mesh s'est bloquée sur `Connection timed out during banner exchange` : le client NetBird attendait que quelqu'un valide une page de login.
+
+Les deux réponses évidentes sacrifient quelque chose. NetBird a des service users avec des clés d'API, mais son serveur SSH ne les accepte pas : il ne prend qu'un token à courte durée émis par son propre service de login, et son code exclut explicitement les service users de l'accès SSH. Désactiver l'authentification SSH sur les machines aurait marché pour l'agent, et supprimé au passage la vérification de mon identité.
+
+Ce qui a marché, c'est d'appliquer la même idée à l'agent : lui donner son propre login, pas une clé. C'est un service account dans authentik, avec un app password. Un petit script l'échange contre un token authentik, l'échange à son tour auprès du service de login de NetBird contre le token qu'attend le serveur SSH, et s'en sert comme mot de passe SSH. Ce token vaut dix minutes. L'agent joint maintenant n'importe quelle machine avec `node.sh pg01 <commande>`, sous le même nom que la machine porte partout ailleurs — j'ai passé une partie de ce déploiement à faire en sorte que chaque machine ait exactement un nom dans Proxmox, Kubernetes, Ansible, Pi-hole et NetBird.
+
+Un détail mérite d'être noté : la CLI de secrets termine sa sortie par un retour à la ligne, le script l'envoyait avec le mot de passe, et authentik répondait `invalid_grant` sans rien dans ses logs pour dire pourquoi. La comparaison de hash que j'avais utilisée pour vérifier le mot de passe stocké retirait ce retour à la ligne, donc elle « correspondait ». La correction tenait en un `tr -d '\n'`.
+
 ## Où on en est
 
-Trois machines sont enrôlées : le témoin etcd, un worker Kubernetes, et le build runner, un conteneur qui avait besoin que son hôte Proxmox lui passe `/dev/net/tun` avant que le client accepte de démarrer. L'enrôlement est lui-même un playbook — repo de paquets, version du client figée et protégée des mises à jour automatiques, `netbird up` avec une setup key lue depuis un fichier supprimé ensuite — parce que tout l'intérêt était d'arrêter de faire des choses à la main sur les machines.
+Quatorze machines sont sur le mesh : les trois hôtes Proxmox, les cinq nœuds Kubernetes, les deux serveurs Postgres et le témoin etcd, le build runner, la machine d'ops et le Pi-hole. L'enrôlement est un playbook, étape par étape, et les nœuds du control plane comme les membres Postgres sont passés un par un, le réplica avant le leader. Rien n'a bronché : le cluster est resté sain, Patroni n'a jamais changé de leader, Proxmox a gardé son quorum.
 
-`ssh root@k8s-worker-02.bnei.mesh` ouvre un onglet dans le navigateur, je me connecte, et je suis sur la machine. Pas de fichier de clé, rien à récupérer avant.
+`ssh root@pg01` m'ouvre un onglet de navigateur et me pose sur la machine. Pour l'agent, `node.sh pg01` fait la même chose sans navigateur.
 
-Pas encore fait, et pas revendiqué : Ansible via le mesh, et combien de logins navigateur un run de playbook coûte vraiment ; ce qui arrive aux sessions ouvertes quand le serveur NetBird redémarre ; le reste des machines, enrôlées par étapes, avec le leader Postgres et les machines de stockage en dernier ; et le cutover qui réduira enfin les anciennes clés au rôle de break-glass. Les clés sont toujours sur mon laptop. Pour la première fois, je n'en ai pas besoin pour travailler.
+Pas encore fait, et pas revendiqué : deux machines de stockage qui attendent une fenêtre de maintenance, un conteneur sans clé SSH pour démarrer, ce qui arrive aux sessions ouvertes quand le serveur NetBird redémarre, et le cutover qui réduira les anciennes clés au rôle de break-glass. Les clés sont toujours sur mon laptop. Ni l'agent ni moi n'en avons besoin pour travailler.

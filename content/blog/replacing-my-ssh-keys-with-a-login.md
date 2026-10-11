@@ -1,6 +1,6 @@
 ---
 title: Replacing my SSH keys with a login
-description: Every host in my homelab had its own key, fetched from a secrets manager before I could touch it. Managing those keys better would not have fixed that. I moved who-I-am off the key file and into the login I already had, and kept the old keys as the way back in.
+description: Every host in my homelab had its own key, fetched from a secrets manager before I could touch it. Managing those keys better would not have fixed that. I moved who-I-am off the key file and into the login I already had, and kept the old keys as the way back in. Then I gave the AI agent I work with a login of its own.
 date: 2026-10-11
 ---
 
@@ -55,10 +55,28 @@ The first time I tested from home, my laptop could not see a single host. The Ne
 
 There was no fix that kept the check honest. A second policy allowing my home subnet would have let in anyone on any network numbered `192.168.1.0/24`, one of the most common defaults a home router ships with. So the geo check is gone, and access rests on what was already doing the real work: a login per session, and membership of the admins group. That is the spike doing its job. It is cheaper to find a blind control on three test hosts than on a train.
 
+## What the rollout caught
+
+The first three hosts were a spike, and it earned its keep twice more before anything else joined.
+
+The SSH rule I wrote had no port on it, because NetBird's SSH protocol felt like it implied one. It doesn't. On the worker, the firewall NetBird rendered read `ip saddr <laptop> accept`: every TCP port on the host, open to my laptop over the mesh. One line — `ports: ["22"]` — and the rule now allows 22 and the 22022 it is redirected to, nothing else.
+
+The other was quieter. Cilium, the cluster's network layer, picks up network devices on its own, and it picked up NetBird's interface too. Its MTU is 1280, so Cilium shrank its own tunnel to match — on that one node. Small packets crossed fine; that is exactly the kind of mismatch that makes large ones hang and looks like an application bug weeks later. Pinning Cilium to the LAN interface, before any other Kubernetes node joined, put the node back in line with the rest.
+
+## The agent has to log in too
+
+A browser login is fine for me. It is fatal for an agent. I do a lot of this work with an AI assistant running commands from my laptop, and its first attempt over the mesh stalled at `Connection timed out during banner exchange`: NetBird's client was waiting for someone to click through a login page.
+
+The two tempting answers both give something up. NetBird has service users with API keys, but its SSH server does not accept them; it only takes a short-lived token from its own login service, and its code explicitly leaves service users out of SSH access. Turning SSH authentication off on the hosts would have worked for the agent and removed my identity check along with it.
+
+What worked was applying the same idea to the agent: give it a login of its own, not a key. It is a service account in authentik with an app password. A small script trades that for an authentik token, exchanges it at NetBird's login service for the token the SSH server wants, and uses it as the SSH password. That token is valid for ten minutes. The agent now reaches any host with `node.sh pg01 <command>`, by the same name the host has everywhere else — I spent part of this rollout making sure every machine has exactly one name across Proxmox, Kubernetes, Ansible, Pi-hole and NetBird.
+
+One detail is worth writing down: the secrets CLI ends its output with a newline, the script posted it as part of the password, and authentik answered `invalid_grant` with nothing in its logs to say why. The hash comparison I used to check the stored password stripped the newline, so it "matched". The fix was one `tr -d '\n'`.
+
 ## Where it stands
 
-Three hosts are enrolled: the etcd witness, one Kubernetes worker, and the build runner, a container that needed `/dev/net/tun` passed through from its Proxmox host before the client would start. Enrollment is itself a playbook — package repository, a pinned client version held against unattended upgrades, `netbird up` with a setup key read from a file and deleted after — because the point of all this was to stop doing things to hosts by hand.
+Fourteen machines are on the mesh: the three Proxmox hosts, all five Kubernetes nodes, both Postgres servers and the etcd witness, the build runner, the ops box and the Pi-hole. Enrollment is a playbook, stage by stage, and the control-plane nodes and the Postgres members went one at a time, replica before leader. Nothing noticed: the cluster stayed healthy, Patroni never changed leader, Proxmox kept quorum.
 
-`ssh root@k8s-worker-02.bnei.mesh` opens a browser tab, I log in, and I'm on the box. No key file, nothing fetched first.
+`ssh root@pg01` opens a browser tab for me and drops me on the box. For the agent, `node.sh pg01` does the same without the browser.
 
-Not done yet, and not claimed: Ansible over the mesh, and how many browser prompts a playbook run actually costs; what happens to open sessions when the NetBird server restarts; the rest of the hosts, enrolled in stages with the Postgres leader and the storage boxes last; and the cutover that finally narrows the old keys to break-glass. The keys are still on my laptop. For the first time, I don't need them to get to work.
+Not done yet, and not claimed: two storage machines that need a maintenance window, one container with no SSH key to bootstrap from, what happens to open sessions when the NetBird server restarts, and the cutover that narrows the old keys to break-glass. The keys are still on my laptop. Neither of us needs them to get to work.
