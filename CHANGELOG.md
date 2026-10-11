@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.44.14](https://github.com/MohammadBnei/editable-blog/compare/0.44.13...0.44.14) (2026-10-11)
+
 ## [0.44.13](https://github.com/MohammadBnei/editable-blog/compare/0.44.12...0.44.13) (2026-10-11)
 
 ## [0.44.12](https://github.com/MohammadBnei/editable-blog/compare/0.44.11...0.44.12) (2026-10-09)
