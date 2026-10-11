@@ -12,7 +12,7 @@ Tout le problème tient dans cette machine. Mon `~/.ssh` contient une clé par s
 
 La solution évidente, c'est de mieux gérer les clés : une seule clé partout, une autorité de certification à courte durée, un script qui va chercher la bonne. Chacune de ces options garde l'erreur de fond : _la clé est l'identité_. Celui qui a le fichier, c'est moi, sur cette machine, tant que le fichier existe.
 
-J'ai plutôt déplacé l'identité là où je la maintiens déjà. Chaque session SSH vers une machine commence maintenant par un login dans le navigateur, sur authentik, l'identity provider que le reste du cluster utilise déjà, et la machine décide quel utilisateur je peux devenir selon le groupe auquel j'appartiens. Il n'y a pas de nouveau secret à stocker, parce qu'il n'y a pas de clé.
+J'ai plutôt déplacé l'identité là où je la maintiens déjà. Chaque session SSH vers une machine commence maintenant par un login dans le navigateur, sur authentik, l'identity provider que le reste du cluster utilise déjà, et la machine décide quel utilisateur je peux devenir selon le groupe auquel j'appartiens. Pour moi, il n'y a pas de nouveau secret à stocker, parce qu'il n'y a pas de clé.
 
 ## La décision qu'il a d'abord fallu revoir
 
@@ -63,15 +63,47 @@ La règle SSH que j'avais écrite n'avait pas de port, parce que le protocole SS
 
 L'autre était plus discret. Cilium, la couche réseau du cluster, détecte les interfaces tout seul, et il a aussi pris celle de NetBird. Son MTU est de 1280, donc Cilium a réduit son propre tunnel en conséquence — sur ce seul nœud. Les petits paquets passaient ; c'est exactement le genre d'écart qui fait bloquer les gros et ressemble à un bug applicatif des semaines plus tard. Fixer Cilium sur l'interface du LAN, avant qu'un autre nœud Kubernetes ne rejoigne le mesh, a remis le nœud au niveau des autres.
 
+```mermaid
+flowchart LR
+  L["Laptop (platform-admins)"] -->|"tcp 22, redirigé vers 22022 — rien d'autre"| W
+  subgraph node ["k8s-worker-02"]
+    W["wt0 : NetBird, MTU 1280"]
+    E["eth0 : LAN, MTU 1500"]
+    C["Cilium : trafic des pods, WireGuard entre nœuds"]
+  end
+  E --- C
+  W -.->|"détecté d'office au début, exclu maintenant"| C
+```
+
+Le mesh sert à SSH et à rien d'autre, et les deux corrections sont cette phrase rendue concrète : un seul port en entrée, et aucun trafic du cluster sur l'interface du mesh.
+
 ## L'agent aussi doit se connecter
 
 Un login dans le navigateur, ça me va. Pour un agent, c'est rédhibitoire. Je fais une bonne partie de ce travail avec un assistant IA qui lance des commandes depuis mon laptop, et sa première tentative via le mesh s'est bloquée sur `Connection timed out during banner exchange` : le client NetBird attendait que quelqu'un valide une page de login.
 
 Les deux réponses évidentes sacrifient quelque chose. NetBird a des service users avec des clés d'API, mais son serveur SSH ne les accepte pas : il ne prend qu'un token à courte durée émis par son propre service de login, et son code exclut explicitement les service users de l'accès SSH. Désactiver l'authentification SSH sur les machines aurait marché pour l'agent, et supprimé au passage la vérification de mon identité.
 
-Ce qui a marché, c'est d'appliquer la même idée à l'agent : lui donner son propre login, pas une clé. C'est un service account dans authentik, avec un app password. Un petit script l'échange contre un token authentik, l'échange à son tour auprès du service de login de NetBird contre le token qu'attend le serveur SSH, et s'en sert comme mot de passe SSH. Ce token vaut dix minutes. L'agent joint maintenant n'importe quelle machine avec `node.sh pg01 <commande>`, sous le même nom que la machine porte partout ailleurs — j'ai passé une partie de ce déploiement à faire en sorte que chaque machine ait exactement un nom dans Proxmox, Kubernetes, Ansible, Pi-hole et NetBird.
+Ce qui a marché, c'est d'appliquer la même idée à l'agent : lui donner son propre login, pas une clé. C'est un service account dans authentik, avec un app password. Un petit script l'échange contre un token authentik, l'échange à son tour auprès du service de login de NetBird contre le token qu'attend le serveur SSH, et s'en sert comme mot de passe SSH. Ce token vaut dix minutes.
 
-Un détail mérite d'être noté : la CLI de secrets termine sa sortie par un retour à la ligne, le script l'envoyait avec le mot de passe, et authentik répondait `invalid_grant` sans rien dans ses logs pour dire pourquoi. La comparaison de hash que j'avais utilisée pour vérifier le mot de passe stocké retirait ce retour à la ligne, donc elle « correspondait ». La correction tenait en un `tr -d '\n'`.
+```mermaid
+sequenceDiagram
+  participant A as Agent sur un peer NetBird
+  participant K as authentik
+  participant D as Service de login NetBird (Dex)
+  participant H as Machine pg01
+  A->>K: client_credentials en tant que netbird-agent, avec son app password
+  K-->>A: id_token
+  A->>D: token exchange (RFC 8693)
+  D-->>A: JWT pour le user NetBird de l'agent, valable 10 minutes
+  A->>H: ssh root@pg01, le JWT comme mot de passe
+  H-->>A: shell, parce que agent-ssh peut devenir root ici
+```
+
+L'agent détient donc un secret, contrairement à moi. La différence avec une clé, c'est où il vit et comment il meurt : un seul identifiant, à un seul endroit, qu'authentik peut révoquer sans toucher une seule machine.
+
+L'agent joint maintenant n'importe quelle machine avec `node.sh pg01 <commande>`, sous le même nom que la machine porte partout ailleurs — j'ai passé une partie de ce déploiement à faire en sorte que chaque machine ait exactement un nom dans Proxmox, Kubernetes, Ansible, Pi-hole et NetBird.
+
+Une chose utile si vous faites la même chose : quand authentik refuse un app password, il répond `invalid_grant` et ne logue rien. Ici, la cause était un retour à la ligne que la CLI de secrets ajoute à sa sortie.
 
 ## Où on en est
 

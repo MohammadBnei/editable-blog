@@ -12,7 +12,7 @@ That is the whole problem in one host. My `~/.ssh` holds a key per box: one for 
 
 The obvious fix is to manage the keys better: one key everywhere, a short-lived certificate authority, a script that fetches the right one. Each of those keeps the actual mistake, which is that _the key is the identity_. Whoever holds the file is me, on that host, for as long as the file exists.
 
-What I did instead was move the identity somewhere I already maintain it. Every SSH session to a host now starts with a browser login against authentik, the identity provider the rest of my cluster already uses, and the host decides who I may become based on the group I'm in. There is no new secret to store, because there is no key.
+What I did instead was move the identity somewhere I already maintain it. Every SSH session to a host now starts with a browser login against authentik, the identity provider the rest of my cluster already uses, and the host decides who I may become based on the group I'm in. For me there is no new secret to store, because there is no key.
 
 ## The decision I had to reverse first
 
@@ -63,15 +63,47 @@ The SSH rule I wrote had no port on it, because NetBird's SSH protocol felt like
 
 The other was quieter. Cilium, the cluster's network layer, picks up network devices on its own, and it picked up NetBird's interface too. Its MTU is 1280, so Cilium shrank its own tunnel to match — on that one node. Small packets crossed fine; that is exactly the kind of mismatch that makes large ones hang and looks like an application bug weeks later. Pinning Cilium to the LAN interface, before any other Kubernetes node joined, put the node back in line with the rest.
 
+```mermaid
+flowchart LR
+  L["Laptop (platform-admins)"] -->|"tcp 22, redirected to 22022 — nothing else"| W
+  subgraph node ["k8s-worker-02"]
+    W["wt0: NetBird, MTU 1280"]
+    E["eth0: LAN, MTU 1500"]
+    C["Cilium: pod traffic, WireGuard between nodes"]
+  end
+  E --- C
+  W -.->|"auto-detected at first, now excluded"| C
+```
+
+The mesh is for SSH and nothing else, and both fixes are that sentence made concrete: one port in, and no cluster traffic on the mesh interface.
+
 ## The agent has to log in too
 
 A browser login is fine for me. It is fatal for an agent. I do a lot of this work with an AI assistant running commands from my laptop, and its first attempt over the mesh stalled at `Connection timed out during banner exchange`: NetBird's client was waiting for someone to click through a login page.
 
 The two tempting answers both give something up. NetBird has service users with API keys, but its SSH server does not accept them; it only takes a short-lived token from its own login service, and its code explicitly leaves service users out of SSH access. Turning SSH authentication off on the hosts would have worked for the agent and removed my identity check along with it.
 
-What worked was applying the same idea to the agent: give it a login of its own, not a key. It is a service account in authentik with an app password. A small script trades that for an authentik token, exchanges it at NetBird's login service for the token the SSH server wants, and uses it as the SSH password. That token is valid for ten minutes. The agent now reaches any host with `node.sh pg01 <command>`, by the same name the host has everywhere else — I spent part of this rollout making sure every machine has exactly one name across Proxmox, Kubernetes, Ansible, Pi-hole and NetBird.
+What worked was applying the same idea to the agent: give it a login of its own, not a key. It is a service account in authentik with an app password. A small script trades that for an authentik token, exchanges it at NetBird's login service for the token the SSH server wants, and uses it as the SSH password. That token is valid for ten minutes.
 
-One detail is worth writing down: the secrets CLI ends its output with a newline, the script posted it as part of the password, and authentik answered `invalid_grant` with nothing in its logs to say why. The hash comparison I used to check the stored password stripped the newline, so it "matched". The fix was one `tr -d '\n'`.
+```mermaid
+sequenceDiagram
+  participant A as Agent on a NetBird peer
+  participant K as authentik
+  participant D as NetBird login service (Dex)
+  participant H as Host pg01
+  A->>K: client_credentials as netbird-agent, with its app password
+  K-->>A: id_token
+  A->>D: token exchange (RFC 8693)
+  D-->>A: JWT for the agent's NetBird user, good for 10 minutes
+  A->>H: ssh root@pg01, JWT as the password
+  H-->>A: shell, because agent-ssh may become root here
+```
+
+So the agent does hold a secret, unlike me. The difference from a key is where it lives and how it dies: one credential, in one place, that authentik can revoke without touching a single host.
+
+The agent now reaches any host with `node.sh pg01 <command>`, by the same name the host has everywhere else — I spent part of this rollout making sure every machine has exactly one name across Proxmox, Kubernetes, Ansible, Pi-hole and NetBird.
+
+One thing worth knowing if you build the same: when authentik refuses an app password it answers `invalid_grant` and logs nothing. Here the cause was a trailing newline the secrets CLI adds to its output.
 
 ## Where it stands
 
