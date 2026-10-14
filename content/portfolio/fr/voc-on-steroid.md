@@ -1,6 +1,6 @@
 ---
 title: Voc On Steroid
-description: Une plateforme d'apprentissage du vocabulaire — un monolithe Go en Clean Architecture et CQRS, avec répétition espacée et défis quotidiens, hébergé sur mon propre cluster Kubernetes.
+description: Une plateforme d'apprentissage du vocabulaire — un monolithe Go en Clean Architecture et CQRS, avec répétition espacée et défis quotidiens, hébergé sur un cluster Kubernetes auto-hébergé.
 date: 2026-07-13
 stack: [Go, GraphQL, PostgreSQL, Redis, Kubernetes, OpenTelemetry]
 liveLink: 'https://www.voconsteroid.com'
@@ -43,5 +43,3 @@ plateforme plutôt que dans une pile dédiée.
 
 L'application tourne sur le cluster auto-hébergé décrit ailleurs dans ce
 portfolio, avec un flux GitOps : fusion, build, tag, et Argo CD réconcilie.
-Les déploiements sont passés d'un après-midi à moins de dix minutes, et d'un
-échec deux fois sur cinq à presque jamais.
