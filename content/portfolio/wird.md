@@ -34,5 +34,4 @@ so a correction reaches every phone without a release.
 
 The Qur’an, its morphology and translations are bundled. A reader can install,
 open and pray with no network and no account. The Go API and its Postgres run
-on my own cluster, deployed by Argo CD. Built in ten days, mostly from a phone,
-with agents doing the implementation behind a quality gate.
+on the self-hosted cluster, deployed by Argo CD.
