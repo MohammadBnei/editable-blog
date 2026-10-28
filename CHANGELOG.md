@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.44.20](https://github.com/MohammadBnei/editable-blog/compare/0.44.19...0.44.20) (2026-10-28)
+
+
+### Bug Fixes
+
+* **server:** 400 on malformed paths; CSP via kit.csp hashes; no inline script ([#30](https://github.com/MohammadBnei/editable-blog/issues/30)) ([b858c8e](https://github.com/MohammadBnei/editable-blog/commit/b858c8eaa61c208e5b2fd40c9f69c443e5116e3d))
+
 ## [0.44.19](https://github.com/MohammadBnei/editable-blog/compare/0.44.18...0.44.19) (2026-10-28)
 
 ## [0.44.18](https://github.com/MohammadBnei/editable-blog/compare/0.44.17...0.44.18) (2026-10-20)
