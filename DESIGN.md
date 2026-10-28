@@ -98,7 +98,7 @@ plain prose outside the cards, so it never reads as an answer. Regular
 posts (no `format` field) render their markdown body as prose, unchanged.
 `content/blog/reading-the-quran-without-speaking-arabic.md` uses all of
 it. The implementation is `compileQaTurns` in
-`src/lib/cms/content-processor.js` (which puts each `a` through the same
+`src/lib/cms/content-processor.ts` (which puts each `a` through the same
 markdown + mermaid pipeline as a body) and the `isInterview` branch in
 `src/lib/components/BlogPost.svelte` — not in a route file.
 

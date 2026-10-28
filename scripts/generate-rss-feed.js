@@ -297,10 +297,10 @@ async function generateRSSFeed() {
 
     console.log(`🔗 Using site URL: ${baseUrl}`);
 
-    // Import content processor (vendored copy, see src/lib/cms/content-processor.js).
+    // Import content processor (vendored copy, see src/lib/cms/content-processor.ts).
     // No try/catch: content always exists here, so a failed import is breakage and
     // must fail the build instead of silently dropping rss.xml.
-    const { getAllContent } = await import('../src/lib/cms/content-processor.js');
+    const { getAllContent } = await import('../src/lib/cms/content-processor');
 
     // Load all content
     const allContent = await getAllContent();

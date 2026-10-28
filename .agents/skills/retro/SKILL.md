@@ -167,7 +167,7 @@ For each post you decide to draft:
      when the piece genuinely reads better as flowing prose than as Q&A
      pairs.
      This choice is stylistic, not mechanical. `compileQaTurns` in
-     `src/lib/cms/content-processor.js` puts each `a:` field through the
+     `src/lib/cms/content-processor.ts` puts each `a:` field through the
      same pipeline as a post body (and `text:` turns too), so markdown and
      Mermaid both render inside an answer — put a diagram in the `a:` field
      it explains.

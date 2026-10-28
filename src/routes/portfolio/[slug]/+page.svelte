@@ -1,7 +1,8 @@
-<script>
+<script lang="ts">
+  import type { PageProps } from './$types';
   import Project from '$lib/components/Project.svelte';
 
-  let { data } = $props();
+  let { data }: PageProps = $props();
   let { project } = $derived(data);
 </script>
 

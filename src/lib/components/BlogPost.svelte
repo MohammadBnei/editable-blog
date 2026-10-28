@@ -1,7 +1,8 @@
-<script>
-  import { formatDate } from '$lib/posts.js';
+<script lang="ts">
+  import type { ContentEntry } from '$lib/cms/content-processor';
+  import { formatDate } from '$lib/posts';
 
-  let { post } = $props();
+  let { post }: { post: ContentEntry } = $props();
   let isInterview = $derived(post.metadata.format === 'interview');
 
   let hasMermaid = $derived(
@@ -25,9 +26,7 @@
     await mermaid.run({ querySelector: '.mermaid:not([data-processed])' });
     // :not([data-panzoom]) so a retry, which re-runs this whole function,
     // cannot attach a second pan-zoom instance to an SVG that already has one.
-    /** @type {NodeListOf<SVGSVGElement>} */ (
-      document.querySelectorAll('.mermaid > svg:not([data-panzoom])')
-    ).forEach(svg => {
+    document.querySelectorAll<SVGSVGElement>('.mermaid > svg:not([data-panzoom])').forEach(svg => {
       svg.dataset.panzoom = 'true';
       // mermaid sets an inline max-width matching the diagram's
       // natural size, which would otherwise keep the SVG (and so

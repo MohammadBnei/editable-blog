@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test';
-import { getAllContent } from './content-processor.js';
+import { getAllContent } from './content-processor';
 
 // Node's readdirSync sorts names and Bun's does not, so without the sort in scanDir the
 // order of same-date posts in the RSS feed would depend on the build's filesystem.

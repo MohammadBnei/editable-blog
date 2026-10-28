@@ -1,7 +1,8 @@
-import { getContentByUrl } from '$lib/cms/content-processor.js';
+import { getContentByUrl } from '$lib/cms/content-processor';
 import { error } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
 
-export const load = async () => {
+export const load: PageServerLoad = async () => {
   const page = await getContentByUrl('/pages/resume');
 
   if (!page) {

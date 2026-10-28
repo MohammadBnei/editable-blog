@@ -1,8 +1,9 @@
-<script>
-  import { formatDate } from '$lib/posts.js';
-  import { langPref } from '$lib/stores/lang.svelte.js';
+<script lang="ts">
+  import type { PageProps } from './$types';
+  import { formatDate } from '$lib/posts';
+  import { langPref } from '$lib/stores/lang.svelte';
 
-  let { data } = $props();
+  let { data }: PageProps = $props();
   let { projects, frProjects, intro, frIntro } = $derived(data);
 
   // Both lists arrive sorted newest-first from the load function, so the

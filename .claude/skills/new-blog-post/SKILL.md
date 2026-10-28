@@ -88,7 +88,7 @@ The idiom, when to reach for one, and how to verify it actually rendered are
 in `.claude/skills/blog-voice.md`. What is specific to a new post:
 
 Write a plain ```mermaid fence in the body.
-`transformMermaidBlocks` in `src/lib/cms/content-processor.js` rewrites it
+`transformMermaidBlocks` in `src/lib/cms/content-processor.ts` rewrites it
 to `<pre class="mermaid not-prose">`, and `BlogPost.svelte` lazy-loads
 mermaid + svg-pan-zoom, themed from `data-theme`. Any diagram type works,
 not just `flowchart` — `sequenceDiagram` is the right choice for an
@@ -99,7 +99,7 @@ introduction, rendered above the transcript; `text:` turns are narration
 between questions. A fence in the body or a `text:` turn renders, but a
 diagram usually belongs in the `a:` field it explains. Answers go
 through the same pipeline as a body (`compileQaTurns`,
-`src/lib/cms/content-processor.js`), so markdown and mermaid both work there.
+`src/lib/cms/content-processor.ts`), so markdown and mermaid both work there.
 
 The one-liner to check in the browser:
 

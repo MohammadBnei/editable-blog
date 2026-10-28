@@ -16,8 +16,74 @@ if (isBrowser) {
   throw new Error('Content processor cannot run on the client side!');
 }
 
+/** One interview turn: a question/answer, a narration `text`, or a `pause` marker. */
+export interface QaTurn {
+  q?: string;
+  a?: string;
+  text?: string;
+  pause?: string;
+  // Set by compileQaTurns: `a` or `text` compiled to HTML.
+  aHtml?: string;
+  textHtml?: string;
+}
+
+/** Frontmatter, plus the defaults scanContentDirectory fills in. */
+export interface ContentMetadata {
+  title: string;
+  description: string;
+  date: Date | string | null;
+  author: string | null;
+  format?: string;
+  qa?: QaTurn[];
+  source?: string;
+  download?: string;
+  status?: string;
+  stack?: string[];
+  writeup?: string;
+  liveLink?: string;
+  gitLink?: string;
+  started?: Date | string;
+  category?: string | string[];
+  thumbnail?: string;
+}
+
+export interface ContentEntry {
+  slug: string;
+  path: string;
+  url: string;
+  directory: string;
+  mainDirectory: string;
+  depth: number;
+  content: string;
+  metadata: ContentMetadata;
+  isMdx: boolean;
+}
+
+interface SiteConfig {
+  site?: { name?: string; description?: string; url?: string; author?: string };
+  contact?: {
+    email?: string;
+    privacyEmail?: string;
+    supportEmail?: string;
+    phone?: string;
+    address?: {
+      street?: string;
+      city?: string;
+      state?: string;
+      zipCode?: string;
+      country?: string;
+    };
+  };
+  social?: Record<string, string>;
+  legal?: {
+    privacyPolicyLastUpdated?: string;
+    termsLastUpdated?: string;
+    doNotSell?: { processingTime?: string };
+  };
+}
+
 // Try to load site config, but don't fail if not available
-let siteConfig = {};
+let siteConfig: SiteConfig = {};
 try {
   const configPath = path.resolve('site.config.json');
   if (fs.existsSync(configPath)) {
@@ -130,8 +196,8 @@ const transformMermaidBlocks = html => {
 // marker entries have no `a` and pass through untouched. A `text` entry is
 // the writer's own narration between questions: compiled the same way, but
 // rendered as prose outside the transcript cards.
-const compileQaTurns = async (qa, directory) => {
-  const turns = [];
+const compileQaTurns = async (qa: QaTurn[], directory: string): Promise<QaTurn[]> => {
+  const turns: QaTurn[] = [];
   for (const turn of qa) {
     if (turn.pause !== undefined) {
       turns.push(turn);
@@ -149,7 +215,7 @@ const compileQaTurns = async (qa, directory) => {
 // Scans all markdown files and folders in the content directory
 const scanContentDirectory = async () => {
   const contentPath = path.resolve('content');
-  const contentEntries = [];
+  const contentEntries: ContentEntry[] = [];
 
   if (!fs.existsSync(contentPath)) {
     console.warn('Content folder not found!');
@@ -181,7 +247,7 @@ const scanContentDirectory = async () => {
 
         // Process template variables (both in markdown content and metadata)
         const processedMarkdownContent = processTemplateVariables(markdownContent);
-        const processedMetadata = {};
+        const processedMetadata: Record<string, unknown> = {};
 
         // Process string values in metadata through template processing
         for (const [key, value] of Object.entries(data)) {
@@ -193,17 +259,16 @@ const scanContentDirectory = async () => {
         }
 
         // Add default values and process them through template processing
-        /** @type {Record<string, any>} */
         const finalMetadata = {
           title: processedMetadata.title || formatTitle(slug),
           description: processedMetadata.description || '',
           date: processedMetadata.date || null,
           author: processedMetadata.author || null,
           ...processedMetadata
-        };
+        } as ContentMetadata;
 
         // Fix directory - use full path
-        let directory = relativePath.replace(/\\/g, '/');
+        const directory = relativePath.replace(/\\/g, '/');
 
         // Process content: MDX files are rendered as Svelte components, MD files as HTML
         let html = '';
@@ -251,10 +316,10 @@ const formatTitle = slug => {
 };
 
 // To scan all content once and cache it
-let cachedContent = null;
+let cachedContent: ContentEntry[] | null = null;
 
 // Get all content (using cache)
-const getAllContent = async () => {
+const getAllContent = async (): Promise<ContentEntry[]> => {
   // Check for development mode to skip caching
   const isDev =
     process.env.NODE_ENV === 'development' ||
@@ -279,7 +344,7 @@ const getAllContent = async () => {
 };
 
 // Get content for a specific URL
-const getContentByUrl = async url => {
+const getContentByUrl = async (url: string): Promise<ContentEntry | undefined> => {
   const allContent = await getAllContent();
 
   // Remove trailing slash (/) from URL
