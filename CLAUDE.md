@@ -25,7 +25,7 @@ bun run release # release-it (bumps version, writes CHANGELOG.md)
 There is no database and no admin login in this repo. Tests exist only for
 code with logic worth breaking (`src/lib/posts.ts`,
 `src/lib/cms/content-processor.ts`, `server.js`, plus `pins.test.js` for exact
-dependency pins, and `src/ts-only.test.ts`, which keeps `src/` TypeScript only), and they run on Bun's built-in runner — no vitest, no
+dependency pins, and `src/ts-only.test.ts`, which fails on any `.js`/`.jsx`/`.mjs`/`.cjs` under `src/`), and they run on Bun's built-in runner — no vitest, no
 playwright, no test framework dependency. Components and routes are not tested.
 
 ## Commits and checks
@@ -103,8 +103,8 @@ or `src/routes/portfolio/[slug]/`), not inventing a new content-loading
 mechanism.
 
 **TypeScript**: everything under `src/` is TypeScript — `.ts` modules and
-`<script lang="ts">` in every `.svelte` file. No `.js`/`.mjs`/`.cjs` under
-`src/` (`src/ts-only.test.ts` fails on one: Vite resolves an extensionless
+`<script lang="ts">` in every `.svelte` file. No `.js`/`.jsx`/`.mjs`/`.cjs` under
+`src/`, dot-directories included (`src/ts-only.test.ts` fails on one: Vite resolves an extensionless
 import to `.js` first and Bun to `.ts` first, so a stray twin would split the
 site build from the RSS script) and no bare `<script>` (eslint's
 `svelte/block-lang`). Imports inside `src/` drop the extension. Routes type
