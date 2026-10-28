@@ -1,8 +1,9 @@
 # My Personal Editable Blog
 
 A fully static personal site and blog, built with SvelteKit and prerendered
-to plain HTML at build time. There's no database, no admin login, and no
-server process — publishing content means committing a markdown file.
+to plain HTML at build time. There's no database and no admin login; a small
+Bun file server (`server.js`) only serves the prebuilt files. Publishing
+content means committing a markdown file.
 
 Check out the blog at [blog.bnei.dev](https://blog.bnei.dev).
 
@@ -73,9 +74,11 @@ Frontmatter is plain YAML (via `gray-matter`); see existing files under
 ## Deployment
 
 - **Docker**: `Dockerfile` runs `bun run build` and serves the static
-  `build/` output with `bun x serve` — no Node/Bun server handles requests
-  at runtime.
-- **CI/CD**: GitHub Actions builds and pushes the Docker image on every
-  push, then bumps the image tag via Kustomize (`k8s/`).
-- **GitOps**: Argo CD watches the `k8s/` manifests and syncs the deployed
-  state to match git.
+  `build/` output with `server.js`, a zero-dependency Bun file server.
+- **CI/CD**: on a push to `main`, `.github/workflows/release.yml` runs the
+  checks, cuts a release with release-it, builds and pushes the image to the
+  in-cluster registry, then bumps `image.tag` in `helm/values.yaml`. A push
+  that only touches root `*.md`, `*.yml`/`*.yaml` or `package.json` cuts no
+  release (`paths-ignore`); content posts do.
+- **GitOps**: Argo CD renders `helm/values.yaml` through infra-bootstrap's
+  `common-app-chart` and syncs the deployed state to match git.
