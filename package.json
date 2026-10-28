@@ -10,7 +10,6 @@
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
     "release": "release-it",
-    "prepare": "husky install",
     "postbuild": "node scripts/generate-seo-files.js && node scripts/run-pagefind.js && node scripts/generate-rss-feed.js"
   },
   "devDependencies": {
@@ -69,11 +68,6 @@
         },
         "infile": "CHANGELOG.md"
       }
-    }
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run format"
     }
   },
   "packageManager": "bun@1.4.2"

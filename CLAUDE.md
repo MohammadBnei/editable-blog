@@ -1,6 +1,11 @@
-# CLAUDE.md
+# editable-blog
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Tier: static. An adapter-static SvelteKit site plus `server.js`, a zero-dependency Bun file server.
+Scope: static core plus TS (owner, 2026-10-28).
+
+Change loop (ukubi Code Standard, A4): full loop for security, auth, wire, data or schema changes and
+behaviour-unchanged claims; light loop (plan, local checks, review) for CI, docs, pins, static content
+and isolated fixes. See the shared `ukubi-standard` plugin (`change-loop`, `repo-rules`) and the standard; not copied here.
 
 ## Commands
 
@@ -10,15 +15,16 @@ bun run dev     # dev server (vite)
 bun run build   # prerenders the whole site to build/, then generates
                 # sitemap.xml/robots.txt/rss.xml (postbuild)
 bun run preview # serve build/ locally with server.js, same as production
-bun run test    # bun's built-in test runner over src/**/*.test.js
+bun run test    # bun's built-in test runner over every *.test.js
 bun run lint    # prettier --check + eslint
-bun run format  # prettier --write (also runs as husky pre-commit hook)
+bun run format  # prettier --write (no git hook runs it; lint checks it)
 bun run release # release-it (bumps version, writes CHANGELOG.md)
 ```
 
-There is no database and no admin login in this repo. Tests exist only for the
-handful of pure helpers that have logic worth breaking (currently
-`src/lib/posts.js`), and they run on Bun's built-in runner — no vitest, no
+There is no database and no admin login in this repo. Tests exist only for
+code with logic worth breaking (`src/lib/posts.js`,
+`src/lib/cms/content-processor.js`, `server.js`, plus `pins.test.js` for exact
+dependency pins), and they run on Bun's built-in runner — no vitest, no
 playwright, no test framework dependency. Components and routes are not tested.
 
 ## Commits and checks
@@ -107,7 +113,7 @@ switcher). Only blog posts are bilingual, via the `content/blog/fr/`
 directory convention above.
 
 **Health check**: `static/healthz` is a plain static file (not a SvelteKit
-route) — statue copies `static/` verbatim into `build/`, so it's served as
+route) — SvelteKit copies `static/` verbatim into `build/`, so it's served as
 a real `200 ok` response by whatever serves `build/`. k8s's liveness/readiness
 probes hit it directly.
 
@@ -128,11 +134,21 @@ intersect, so it would block hydration. No inline `<script>` in `src/app.html`: 
 bootstrap is `static/theme-init.js`. Don't add
 SPA/index.html fallback behavior for unrecognized paths: that previously
 broke `/healthz` when using `serve -s`, since it silently served
-`index.html` instead of the real health check file. GitHub Actions
-(`.github/workflows/docker.yml`,
-`release.yml`) → Kustomize image bump (`k8s/`) → Argo CD sync, unchanged
-from before this pivot; nothing content-related happens in CI beyond the
-Docker build.
+`index.html` instead of the real health check file.
+
+**Release and deploy**: a push to `main` runs `.github/workflows/release.yml`:
+`checks.yml` (lint, test, build, image build), then release-it makes the
+version commit, `CHANGELOG.md` entry and tag, then `build-push` runs
+`buildah` on the self-hosted `ukubi-build` runner and pushes to
+`registry.bnei.lan:5000/editable-blog` (registry password from Infisical
+over OIDC), then `deploy` sets `image.tag` in `helm/values.yaml` with `yq`
+and commits it to `main`. Argo CD renders `helm/values.yaml` from `main`
+through infra-bootstrap's `common-app-chart`; the Application comes from
+the generator in `gitops/bootstrap/apps.applicationset.yaml`, mirrored in
+`gitops/apps/registry.yaml`. A push whose every changed file is a root
+`*.md`, any `*.yml`/`*.yaml`, or `package.json` cuts no release
+(`paths-ignore`); content posts under `content/` do. The pod reads no
+secrets: there is no Infisical block in the values.
 
 **Everything from the previous Postgres/n8n/admin-editor architecture is
 gone**: no `pg`, no `src/hooks.server.ts`, no `/login`, no journal/

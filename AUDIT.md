@@ -1,5 +1,7 @@
 # Audit: dropping in-app editing for a git + markdown CMS
 
+> Historical: a pre-pivot record (the Postgres app was removed in 4206de4, 2026-07-13). Not current; see `CLAUDE.md`.
+
 ## Context
 
 The blog currently lets an admin edit content live in the browser (inline

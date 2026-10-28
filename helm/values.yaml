@@ -13,9 +13,8 @@ image:
   # 0.37.9, never 0.37.8, so flipping only the repository would pull a tag
   # that does not exist there.
   #
-  # Both docker.yml and local-registry.yml trigger on tag pushes, so every
-  # released tag lands in Docker Hub *and* here — which keeps docker.yml's
-  # values-bump job correct and makes reverting this one line sufficient.
+  # release.yml builds and pushes it on the ukubi-build runner, then its
+  # deploy job bumps image.tag below with yq.
   repository: registry.bnei.lan:5000/editable-blog
   tag: "0.44.18"
 service:
@@ -43,20 +42,6 @@ resources:
     memory: 128Mi
   limits:
     memory: 256Mi
-# Same Infisical project/creds the legacy k8s-cluster/secrets/editable-blog.yml
-# used (k8s-cluster repo, now superseded by this file) — same underlying
-# Infisical Postgres DB as the new cluster's platform-infisical-backend, so
-# no secret migration needed. The shared universal-auth-credentials machine
-# identity (namespace infisical) must be granted access to this project in
-# the Infisical UI first — separate grant from the main infra-bootstrap
-# project, same as pgweb's pgweb-p9-hy grant.
-infisical:
-  enabled: true
-  projectSlug: 'editable-blog-555c'
-  envSlug: staging
-  secretsPath: '/'
-  secretName: managed-editable-blog-secret
-  autoReload: true
 # bnei.dev bare domain also routed to the blog on the legacy cluster.
 # common-app-chart's built-in IngressRoute only takes one hostname, so the
 # second host is a raw extra manifest here rather than a chart change.
@@ -171,10 +156,7 @@ extraManifests:
       headers:
         accessControlAllowMethods:
           - GET
-          - POST
           - OPTIONS
-          - PUT
-          - DELETE
         customRequestHeaders:
           X-Forwarded-Proto: "https"
           # DO NOT ADD AN `X-Forwarded-Host` OVERRIDE HERE. There used to be

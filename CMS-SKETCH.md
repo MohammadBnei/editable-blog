@@ -1,5 +1,7 @@
 # Sketch: git + markdown content model
 
+> Historical: a pre-pivot record (the Postgres app was removed in 4206de4, 2026-07-13). Not current; see `CLAUDE.md`.
+
 Not a migration plan — a sketch of the target shape, for discussion. See
 `AUDIT.md` for what exists today and why each piece is easy/hard to move.
 
