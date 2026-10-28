@@ -75,8 +75,10 @@ Frontmatter is plain YAML (via `gray-matter`); see existing files under
 
 - **Docker**: `Dockerfile` runs `bun run build` and serves the static
   `build/` output with `server.js`, a zero-dependency Bun file server.
-- **CI/CD**: on every push to `main`, `.github/workflows/release.yml` runs
-  the checks, cuts a release with release-it, builds and pushes the image to
-  the in-cluster registry, then bumps `image.tag` in `helm/values.yaml`.
+- **CI/CD**: on a push to `main`, `.github/workflows/release.yml` runs the
+  checks, cuts a release with release-it, builds and pushes the image to the
+  in-cluster registry, then bumps `image.tag` in `helm/values.yaml`. A push
+  that only touches root `*.md`, `*.yml`/`*.yaml` or `package.json` cuts no
+  release (`paths-ignore`); content posts do.
 - **GitOps**: Argo CD renders `helm/values.yaml` through infra-bootstrap's
   `common-app-chart` and syncs the deployed state to match git.
