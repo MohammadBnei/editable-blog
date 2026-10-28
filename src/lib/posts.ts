@@ -55,5 +55,5 @@ export function filterAndSort<T extends Listable>(
           needle
         )
     )
-    .sort(SORTS[sort] ?? SORTS.newest);
+    .sort(Object.hasOwn(SORTS, sort) ? SORTS[sort] : SORTS.newest);
 }

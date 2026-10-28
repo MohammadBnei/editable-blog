@@ -60,7 +60,7 @@ editing UI. Publishing content means committing a markdown file.
 A file's route comes from its path: `content/<dir>/<slug>.md` → `/<dir>/<slug>`,
 frontmatter (YAML, via `gray-matter`) becomes `metadata`, and the markdown
 body is rendered to `content` HTML. `scripts/generate-rss-feed.js` imports
-the same vendored file directly by an extensionless relative path (it runs as a plain Bun
+the same vendored file directly by a relative path ending in `.ts` (it runs as a plain Bun
 script in `postbuild`, outside Vite, so SvelteKit's `$lib` alias doesn't
 apply there). `postbuild` runs every script with `bun`, never `node`, and a
 failed content-processor import fails the build instead of dropping `rss.xml`.
@@ -106,7 +106,7 @@ mechanism.
 `<script lang="ts">` in every `.svelte` file. No `.js`/`.jsx`/`.mjs`/`.cjs` under
 `src/`, dot-directories included (`src/ts-only.test.ts` fails on one: Vite resolves an extensionless
 import to `.js` first and Bun to `.ts` first, so a stray twin would split the
-site build from the RSS script) and no bare `<script>` (eslint's
+site build from the tests) and no bare `<script>` (eslint's
 `svelte/block-lang`). Imports inside `src/` drop the extension. Routes type
 `load`/`entries` and props through `./$types`. Root config files, `server.js`
 and `scripts/` stay JS, checked by `checkJs`. `strict` is off.

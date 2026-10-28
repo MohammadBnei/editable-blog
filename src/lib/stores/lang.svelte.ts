@@ -14,6 +14,6 @@ export const langPref = {
     localStorage.setItem('blog-lang', l);
   },
   hydrate() {
-    lang = (localStorage.getItem('blog-lang') || 'en') as Lang;
+    lang = localStorage.getItem('blog-lang') === 'fr' ? 'fr' : 'en';
   }
 };

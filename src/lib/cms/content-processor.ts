@@ -258,13 +258,13 @@ const scanContentDirectory = async () => {
           }
         }
 
-        // Add default values and process them through template processing
+        // Defaults go after the spread so an empty frontmatter key (YAML null) can't undo them.
         const finalMetadata = {
+          ...processedMetadata,
           title: processedMetadata.title || formatTitle(slug),
           description: processedMetadata.description || '',
           date: processedMetadata.date || null,
-          author: processedMetadata.author || null,
-          ...processedMetadata
+          author: processedMetadata.author || null
         } as ContentMetadata;
 
         // Fix directory - use full path

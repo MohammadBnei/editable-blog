@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 
 import fs from 'fs';
 import path from 'path';
@@ -300,7 +300,7 @@ async function generateRSSFeed() {
     // Import content processor (vendored copy, see src/lib/cms/content-processor.ts).
     // No try/catch: content always exists here, so a failed import is breakage and
     // must fail the build instead of silently dropping rss.xml.
-    const { getAllContent } = await import('../src/lib/cms/content-processor');
+    const { getAllContent } = await import('../src/lib/cms/content-processor.ts');
 
     // Load all content
     const allContent = await getAllContent();
