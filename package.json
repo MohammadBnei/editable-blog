@@ -10,7 +10,7 @@
     "lint": "prettier --check . && eslint .",
     "format": "prettier --write .",
     "release": "release-it",
-    "postbuild": "node scripts/generate-seo-files.js && node scripts/run-pagefind.js && node scripts/generate-rss-feed.js"
+    "postbuild": "bun scripts/generate-seo-files.js && bun scripts/run-pagefind.js && bun scripts/generate-rss-feed.js"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

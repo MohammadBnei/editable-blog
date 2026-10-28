@@ -58,9 +58,10 @@ editing UI. Publishing content means committing a markdown file.
 A file's route comes from its path: `content/<dir>/<slug>.md` → `/<dir>/<slug>`,
 frontmatter (YAML, via `gray-matter`) becomes `metadata`, and the markdown
 body is rendered to `content` HTML. `scripts/generate-rss-feed.js` imports
-the same vendored file directly by relative path (it runs as a plain Node
+the same vendored file directly by relative path (it runs as a plain Bun
 script in `postbuild`, outside Vite, so SvelteKit's `$lib` alias doesn't
-apply there).
+apply there). `postbuild` runs every script with `bun`, never `node`, and a
+failed content-processor import fails the build instead of dropping `rss.xml`.
 
 - `content/blog/<slug>.md` — English posts, listed at `/blog`
   (`src/routes/blog/+page.server.js` filters to `directory === 'blog'`).
