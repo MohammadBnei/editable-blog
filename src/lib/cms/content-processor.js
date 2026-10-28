@@ -158,7 +158,9 @@ const scanContentDirectory = async () => {
 
   // Recursively scan the content folder
   async function scanDir(dirPath, relativePath = '') {
-    const entries = fs.readdirSync(dirPath);
+    // Sorted: Node's readdirSync returns names sorted, Bun's returns raw directory order,
+    // which reorders same-date posts depending on the filesystem the build ran on.
+    const entries = fs.readdirSync(dirPath).sort();
 
     for (const entry of entries) {
       const fullPath = path.join(dirPath, entry);
