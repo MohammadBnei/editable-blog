@@ -1,0 +1,3 @@
+[install]
+# New `bun add` entries are written as exact versions (ukubi Code Standard: exact deps).
+exact = true

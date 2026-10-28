@@ -1,0 +1,23 @@
+name: trailers
+
+# Commit, title and body hygiene via MohammadBnei/ukubi-ci, pinned by sha.
+# `edited` is listed so a title or body fix re-runs it; the latest event wins.
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trailers-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  trailers:
+    uses: MohammadBnei/ukubi-ci/.github/workflows/trailers.yml@f7f0634e00f1dc037dd3302cb8445ae99bc57e17
+    with:
+      conventional: true
+      # Content commits are `content(<area>): ...`, this repo's own type.
+      allow-prefixes: content
+      agent-trailers: pair

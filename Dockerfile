@@ -1,8 +1,9 @@
-FROM node:22-alpine AS builder
+# Bun base image, pinned by tag AND multi-arch index digest. The tag must match
+# package.json's packageManager (pins.test.js checks both). Fully qualified because the
+# build box's buildah does not resolve every short name.
+ARG BUN_IMAGE=docker.io/oven/bun:1.4.2-alpine@sha256:d888c0ae6c86d7866ff10c5aafdd9077b36aee6455b33dd270fb93c0dd5cef6f
 
-RUN apk update -qq && apk add bash curl unzip
-
-RUN curl -fsSl -o install https://bun.sh/install && chmod +x ./install && BUN_INSTALL="/usr/local" ./install
+FROM ${BUN_IMAGE} AS builder
 
 WORKDIR /app
 COPY package.json bun.lock ./
@@ -12,13 +13,10 @@ RUN bun ci
 COPY . .
 RUN bun run build
 
-FROM node:22-alpine AS runner
-
-COPY --from=builder /usr/local/bin/bun /usr/local/bin/bun
+FROM ${BUN_IMAGE} AS runner
 
 COPY --from=builder /app/build /app/build
 COPY --from=builder /app/server.js /app
-
 
 WORKDIR /app
 ENV NODE_ENV=production

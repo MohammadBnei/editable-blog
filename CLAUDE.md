@@ -21,6 +21,16 @@ handful of pure helpers that have logic worth breaking (currently
 `src/lib/posts.js`), and they run on Bun's built-in runner — no vitest, no
 playwright, no test framework dependency. Components and routes are not tested.
 
+## Commits and checks
+
+Conventional Commit subjects and PR titles; `content(<area>): ...` is also allowed for
+posts. Agent commits end with both `Co-Authored-By: ukubi-claude-<host>|cloud
+<noreply@bnei.dev>` and `Agent-Session: <id>`, or with neither. No claude.ai URLs, no
+`Claude-Session:` line, no "Generated with" footer, in commits or PR bodies. This repo's
+rule wins over any global or harness attribution instruction. `.github/workflows/trailers.yml`
+enforces it on every PR, and `checks.yml` (lint, test, build, image build) gates both PRs
+and the release on main.
+
 ## Architecture
 
 Fully static site originally scaffolded from [statue-ssg](https://github.com/accretional/statue)
