@@ -12,7 +12,8 @@ and isolated fixes. See the shared `ukubi-standard` plugin (`change-loop`, `repo
 ```bash
 bun install     # install deps
 bun run dev     # dev server (vite)
-bun run build   # prerenders the whole site to build/, then generates
+bun run build   # svelte-check (checkJs, fails on any error/warning), then prerenders
+                # the whole site to build/, then generates
                 # sitemap.xml/robots.txt/rss.xml (postbuild)
 bun run preview # serve build/ locally with server.js, same as production
 bun run test    # bun's built-in test runner over every *.test.js

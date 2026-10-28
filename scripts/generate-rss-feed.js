@@ -80,7 +80,7 @@ function sortContentByDate(content, dateField) {
     const dateB = new Date(b.metadata[dateField]);
 
     // Newest first (descending)
-    return dateB - dateA;
+    return dateB.getTime() - dateA.getTime();
   });
 }
 

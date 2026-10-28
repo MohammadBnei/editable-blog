@@ -193,6 +193,7 @@ const scanContentDirectory = async () => {
         }
 
         // Add default values and process them through template processing
+        /** @type {Record<string, any>} */
         const finalMetadata = {
           title: processedMetadata.title || formatTitle(slug),
           description: processedMetadata.description || '',
