@@ -1,5 +1,7 @@
+import { Glob } from 'bun';
 import { describe, expect, it } from 'bun:test';
-import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, readFileSync } from 'node:fs';
 import { CSP, cacheControl, handle } from './server.js';
 
 describe('cacheControl', () => {
@@ -46,12 +48,32 @@ describe('CSP', () => {
     expect(CSP).not.toContain('script-src');
   });
 
-  it('kit hashes inline scripts into a per-page meta', async () => {
+  it('svelte.config asks kit for hash-mode CSP without unsafe-inline', async () => {
     const { csp } = (await import('./svelte.config.js')).default.kit;
     expect(csp.mode).toBe('hash');
     expect(csp.directives['script-src']).toContain('self');
     expect(JSON.stringify(csp.directives)).not.toContain('unsafe-inline');
   });
+
+  // ponytail: build-gated; runs after `bun run build`, skipped on a clean checkout.
+  it.skipIf(!existsSync('build'))(
+    'every built page hashes each inline script in its CSP meta',
+    () => {
+      const pages = [...new Glob('build/**/*.html').scanSync()];
+      expect(pages.length).toBeGreaterThan(0);
+      for (const page of pages) {
+        const html = readFileSync(page, 'utf8');
+        const metas =
+          html.match(/<meta http-equiv="content-security-policy" content="[^"]*"/gi) ?? [];
+        expect(metas.length, page).toBe(1);
+        for (const [, attrs, body] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+          if (/\bsrc=/i.test(attrs)) continue;
+          const hash = createHash('sha256').update(body).digest('base64');
+          expect(metas[0], page).toContain(`'sha256-${hash}'`);
+        }
+      }
+    }
+  );
 
   it('app.html has no inline script or inline event handler', () => {
     const html = readFileSync(new URL('./src/app.html', import.meta.url), 'utf8');
