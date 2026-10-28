@@ -39,6 +39,21 @@ const config = {
       fallback: '404.html'
     }),
 
+    // Per-page CSP <meta>. adapter-static prerenders every page with an inline
+    // hydration script, so a fixed `script-src 'self'` would break hydration;
+    // 'hash' makes kit hash each page's own script into its meta. 'nonce' is
+    // not an option: kit throws on nonce during prerender. frame-ancestors
+    // cannot live in a meta, so server.js sends it as a header (with no
+    // script-src, since header and meta policies intersect).
+    csp: {
+      mode: 'hash',
+      directives: {
+        'script-src': ['self'],
+        'object-src': ['none'],
+        'base-uri': ['self']
+      }
+    },
+
     // Custom alias defined to handle the content folder
     alias: {
       $content: path.resolve('./content'),
