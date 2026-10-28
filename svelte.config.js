@@ -22,6 +22,16 @@ const config = {
     })
   ],
   kit: {
+    // Extend kit's generated tsconfig include (paths are relative to .svelte-kit/)
+    // rather than overriding it in tsconfig.json, so kit's own entries
+    // (env.d.ts, new ones on a version bump) stay in. Adds the root *.js
+    // (server.js, configs, tests), scripts/ and the pre-paint static/ script.
+    typescript: {
+      config: cfg => {
+        cfg.include.push('../*.js', '../scripts/**/*.js', '../static/**/*.js');
+      }
+    },
+
     // Static site generator
     adapter: adapter({
       // Static site output folder

@@ -26,7 +26,7 @@
     // :not([data-panzoom]) so a retry, which re-runs this whole function,
     // cannot attach a second pan-zoom instance to an SVG that already has one.
     /** @type {NodeListOf<SVGSVGElement>} */ (
-      document.querySelectorAll('.mermaid svg:not([data-panzoom])')
+      document.querySelectorAll('.mermaid > svg:not([data-panzoom])')
     ).forEach(svg => {
       svg.dataset.panzoom = 'true';
       // mermaid sets an inline max-width matching the diagram's
