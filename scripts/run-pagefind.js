@@ -20,7 +20,7 @@ async function runPagefind() {
 
     if (searchEnabled) {
       console.log('Search is enabled. Running pagefind indexing...');
-      execSync('npx pagefind --site build', { stdio: 'inherit' });
+      execSync('bunx pagefind --site build', { stdio: 'inherit' });
       console.log('Pagefind indexing completed.');
     } else {
       console.log('Search is disabled. Skipping pagefind indexing.');

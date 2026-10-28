@@ -37,7 +37,7 @@ async function generateSEOFiles() {
     // https://blog.bnei.dev/linkedin/<slug> still listed. A comma-separated list is not
     // supported either — it silently excludes nothing. Repeated flags is the form that works.
     console.log('📄 Generating sitemap...');
-    execSync(`npx svelte-sitemap --domain ${siteUrl} -i "/linkedin*" -i "/linkedin/*"`, {
+    execSync(`bunx svelte-sitemap --domain ${siteUrl} -i "/linkedin*" -i "/linkedin/*"`, {
       stdio: 'inherit'
     });
 
