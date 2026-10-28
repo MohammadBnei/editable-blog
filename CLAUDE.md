@@ -117,7 +117,14 @@ zero-dependency Bun static file server (replaced the `serve` npm package —
 resolves a request to an exact file in `build/`, then `<path>.html` for
 clean route URLs, then `404.html`; logs one JSON line
 (`{level, message, time}`) via `Bun.serve`'s `error` hook only when a
-request actually throws, no per-request access logging). Don't add
+request actually throws, no per-request access logging; malformed paths
+— bad `%`, NUL, >1024 chars, traversal — get a 400, never a throw). CSP is
+split: SvelteKit `kit.csp` (`mode: 'hash'`) writes a per-page `<meta>` with
+`script-src 'self'` plus that page's hydration-script hash; `server.js` adds
+a `frame-ancestors 'none'` header (a meta can't carry it). Never put
+`script-src` in the header — header and meta intersect, so it would block
+hydration. No inline `<script>` in `src/app.html`: the pre-paint theme
+bootstrap is `static/theme-init.js`. Don't add
 SPA/index.html fallback behavior for unrecognized paths: that previously
 broke `/healthz` when using `serve -s`, since it silently served
 `index.html` instead of the real health check file. GitHub Actions
