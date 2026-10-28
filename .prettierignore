@@ -24,3 +24,9 @@ yarn.lock
 # silently. Verified against prettier 3 with the repo's own config; an explicit `|2`
 # indicator and embeddedLanguageFormatting=off both fail to prevent it.
 content
+
+# Machine-written, never hand-edited: release-it writes CHANGELOG.md, and the deploy job's
+# yq bump writes helm/values.yaml with a double-quoted tag that ukubi-ci's values-key
+# contract needs. Formatting them would fail every release on the lint gate.
+CHANGELOG.md
+helm/values.yaml

@@ -1,0 +1,29 @@
+name: checks
+
+# ponytail: PR checks are thin callers of MohammadBnei/ukubi-ci, pinned by sha
+# (ukubi-ci has no tag yet; bump the pin when one ships).
+# release.yml calls this same file (workflow_call), so main cannot tag, build or deploy
+# unless lint, tests, the real build and the image build pass.
+# The trailers check lives in trailers.yml so a title or body edit re-runs it
+# without re-running (or skipping, and so hiding) the bun and image checks.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  bun:
+    uses: MohammadBnei/ukubi-ci/.github/workflows/bun-checks.yml@f7f0634e00f1dc037dd3302cb8445ae99bc57e17
+    with:
+      # bun-checks has no lint input yet; lint rides the typecheck slot until it does.
+      typecheck-script: lint
+      test-script: test
+      build-script: build
+
+  image:
+    uses: MohammadBnei/ukubi-ci/.github/workflows/image-build.yml@f7f0634e00f1dc037dd3302cb8445ae99bc57e17
+    with:
+      image: editable-blog
