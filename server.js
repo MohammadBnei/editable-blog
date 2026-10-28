@@ -5,12 +5,8 @@ import { resolve, sep } from 'node:path';
 const BUILD_DIR = resolve(import.meta.dir, 'build');
 const NOT_FOUND_FILE = resolve(BUILD_DIR, '404.html');
 
-// The longest real path in build/ is under 100 chars; past ~1024 the OS
-// throws ENAMETOOLONG, which would surface as a 500 + error log.
-const MAX_PATH = 1024;
-
-// Malformed input (bad %-escape, NUL byte, absurd length, traversal) is the
-// client's fault: null here becomes a 400, not a thrown 500.
+// Malformed input (bad %-escape, NUL byte, traversal) is the client's fault:
+// null here becomes a 400, not a thrown 500.
 function resolveSafePath(pathname) {
   let decoded;
   try {
@@ -18,7 +14,7 @@ function resolveSafePath(pathname) {
   } catch {
     return null;
   }
-  if (decoded.includes('\0') || decoded.length > MAX_PATH) return null;
+  if (decoded.includes('\0')) return null;
   const relative = decoded.replace(/^\/+/, '') || 'index.html';
   const candidate = resolve(BUILD_DIR, relative);
   if (candidate !== BUILD_DIR && !candidate.startsWith(BUILD_DIR + sep)) {
@@ -41,28 +37,44 @@ export function cacheControl(pathname) {
 
 // Only what a <meta> CSP cannot carry. script-src lives in each page's
 // SvelteKit-generated meta (kit.csp, hashes of its hydration script). Never
-// add script-src here: header and meta policies intersect, so a header
-// `script-src 'self'` would block that hashed inline script.
+// add a fetch directive (script-src, default-src, any *-src) here: header and
+// meta policies intersect, so it would block that hashed inline script.
 export const CSP = "frame-ancestors 'none'";
 
 async function tryFile(path, pathname) {
-  const file = Bun.file(path);
+  let file;
+  try {
+    file = Bun.file(path);
+  } catch (err) {
+    // A path past the OS limit (PATH_MAX is 1024 on macOS, in bytes, with
+    // the build/ prefix) cannot name a file: a miss, not a 500.
+    if (err?.code === 'ENAMETOOLONG') return null;
+    throw err;
+  }
   return (await file.exists())
-    ? new Response(file, {
-        headers: { 'Cache-Control': cacheControl(pathname), 'Content-Security-Policy': CSP }
-      })
+    ? new Response(file, { headers: { 'Cache-Control': cacheControl(pathname) } })
     : null;
 }
 
+// Every response, whatever branch built it, carries the CSP header.
 export async function handle(req) {
-  const { pathname } = new URL(req.url);
-  const target = resolveSafePath(pathname);
-  if (!target) {
-    return new Response('Bad Request', {
-      status: 400,
-      headers: { 'Content-Security-Policy': CSP }
-    });
+  const res = await route(req);
+  res.headers.set('Content-Security-Policy', CSP);
+  return res;
+}
+
+async function route(req) {
+  const { pathname, search } = new URL(req.url);
+  // Pages use relative asset URLs (`../theme-init.js`), so `/blog/x/` served
+  // as blog/x.html would resolve them one directory too deep. Redirect to the
+  // canonical slashless URL. Leading slashes collapse to one, so `//evil.com/`
+  // cannot become a protocol-relative Location.
+  if (pathname.length > 1 && pathname.endsWith('/')) {
+    const location = '/' + pathname.replace(/^\/+|\/+$/g, '') + search;
+    return new Response(null, { status: 308, headers: { Location: location } });
   }
+  const target = resolveSafePath(pathname);
+  if (!target) return new Response('Bad Request', { status: 400 });
 
   let res = await tryFile(target, pathname);
   if (res) return res;
@@ -74,7 +86,7 @@ export async function handle(req) {
 
   return new Response(Bun.file(NOT_FOUND_FILE), {
     status: 404,
-    headers: { 'Cache-Control': 'no-cache', 'Content-Security-Policy': CSP }
+    headers: { 'Cache-Control': 'no-cache' }
   });
 }
 

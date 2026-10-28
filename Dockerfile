@@ -12,6 +12,8 @@ RUN bun ci
 # Copy source and build
 COPY . .
 RUN bun run build
+# The build-gated CSP test only runs where build/ exists: here, on every PR's image check.
+RUN bun test server.test.js
 
 FROM ${BUN_IMAGE} AS runner
 

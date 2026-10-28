@@ -24,10 +24,32 @@ describe('handle', () => {
   const get = path => handle(new Request(`http://localhost${path}`));
 
   it('answers malformed paths with 400, not a thrown 500', async () => {
-    // bad %-escape, truncated UTF-8 escape, NUL byte, longer than PATH_MAX
-    for (const path of ['/%zz', '/%E0%A4%A', '/%00', '/' + 'e'.repeat(5000)]) {
+    // bad %-escape, truncated UTF-8 escape, NUL byte
+    for (const path of ['/%zz', '/%E0%A4%A', '/%00']) {
       const res = await get(path);
       expect(res.status).toBe(400);
+      expect(res.headers.get('Content-Security-Policy')).toBe(CSP);
+    }
+  });
+
+  it('answers a path past the OS name limit with 404, not a thrown 500', async () => {
+    // 1200 bytes but 400 chars: a char-count cap would let it through to fs.
+    for (const path of ['/' + 'e'.repeat(5000), '/' + '%E2%82%AC'.repeat(400)]) {
+      const res = await get(path);
+      expect(res.status).toBe(404);
+      expect(res.headers.get('Content-Security-Policy')).toBe(CSP);
+    }
+  });
+
+  it('redirects a trailing slash to the slashless URL, never off-site', async () => {
+    for (const [path, location] of [
+      ['/blog/post/', '/blog/post'],
+      ['/blog/?q=1', '/blog?q=1'],
+      ['//evil.com/', '/evil.com']
+    ]) {
+      const res = await get(path);
+      expect(res.status).toBe(308);
+      expect(res.headers.get('Location')).toBe(location);
       expect(res.headers.get('Content-Security-Policy')).toBe(CSP);
     }
   });
@@ -40,12 +62,15 @@ describe('handle', () => {
   });
 });
 
+// A real src attribute, not data-src (\b would match between '-' and 's').
+const SRC_ATTR = /\ssrc\s*=/i;
+
 describe('CSP', () => {
-  it('header carries only frame-ancestors, never script-src', () => {
-    // Header and the per-page meta intersect: a header script-src would
-    // block the hashed SvelteKit hydration script.
+  it('header carries only frame-ancestors, never a fetch directive', () => {
+    // Header and the per-page meta intersect: a header script-src, or a
+    // default-src it falls back to, would block the hashed hydration script.
     expect(CSP).toContain("frame-ancestors 'none'");
-    expect(CSP).not.toContain('script-src');
+    expect(CSP).not.toMatch(/-src\b/);
   });
 
   it('svelte.config asks kit for hash-mode CSP without unsafe-inline', async () => {
@@ -55,11 +80,14 @@ describe('CSP', () => {
     expect(JSON.stringify(csp.directives)).not.toContain('unsafe-inline');
   });
 
-  // ponytail: build-gated; runs after `bun run build`, skipped on a clean checkout.
-  it.skipIf(!existsSync('build'))(
+  // ponytail: build-gated; skipped on a clean checkout. The Dockerfile runs it
+  // right after `bun run build`, so the image check on every PR exercises it.
+  it.skipIf(!existsSync(new URL('./build', import.meta.url)))(
     'every built page hashes each inline script in its CSP meta',
     () => {
-      const pages = [...new Glob('build/**/*.html').scanSync()];
+      const pages = [
+        ...new Glob('build/**/*.html').scanSync({ cwd: import.meta.dir, absolute: true })
+      ];
       expect(pages.length).toBeGreaterThan(0);
       for (const page of pages) {
         const html = readFileSync(page, 'utf8');
@@ -67,7 +95,7 @@ describe('CSP', () => {
           html.match(/<meta http-equiv="content-security-policy" content="[^"]*"/gi) ?? [];
         expect(metas.length, page).toBe(1);
         for (const [, attrs, body] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
-          if (/\bsrc=/i.test(attrs)) continue;
+          if (SRC_ATTR.test(attrs)) continue;
           const hash = createHash('sha256').update(body).digest('base64');
           expect(metas[0], page).toContain(`'sha256-${hash}'`);
         }
@@ -79,7 +107,7 @@ describe('CSP', () => {
     const html = readFileSync(new URL('./src/app.html', import.meta.url), 'utf8');
     const tags = html.match(/<script\b[^>]*>/gi) ?? [];
     expect(tags.length).toBeGreaterThan(0); // positive control: theme-init.js is there
-    for (const tag of tags) expect(tag).toMatch(/\bsrc=/i);
+    for (const tag of tags) expect(tag).toMatch(SRC_ATTR);
     expect(html).not.toMatch(/\son[a-z]+\s*=/i);
   });
 });
