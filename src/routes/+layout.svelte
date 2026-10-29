@@ -229,7 +229,7 @@
     </div>
   {/snippet}
 
-  <!-- data-pagefind-body scopes a future Pagefind index to page content, not chrome. -->
+  <!-- data-pagefind-body limits the Pagefind index to page content, excluding header and footer chrome. Pagefind skips any page with no element carrying it. -->
   <main
     class="mx-auto w-full max-w-[var(--content-w)] flex-1 px-4 py-12"
     data-pagefind-body=""
