@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { filterAndSort, formatDate, SORTS } from './posts.js';
+import { filterAndSort, formatDate, SORTS } from './posts';
 
 const post = (title, date, description = '') => ({
   url: `/blog/${title}`,

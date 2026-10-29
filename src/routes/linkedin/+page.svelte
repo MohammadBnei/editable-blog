@@ -1,7 +1,8 @@
-<script>
-  import { formatDate } from '$lib/posts.js';
+<script lang="ts">
+  import { formatDate } from '$lib/posts';
+  import type { PageProps } from './$types';
 
-  let { data } = $props();
+  let { data }: PageProps = $props();
   let { posts } = $derived(data);
 </script>
 

@@ -12,20 +12,20 @@ and isolated fixes. See the shared `ukubi-standard` plugin (`change-loop`, `repo
 ```bash
 bun install     # install deps
 bun run dev     # dev server (vite)
-bun run build   # svelte-check (checkJs, fails on any error/warning), then prerenders
+bun run build   # svelte-check (TS + checkJs, fails on any error/warning), then prerenders
                 # the whole site to build/, then generates
                 # sitemap.xml/robots.txt/rss.xml (postbuild)
 bun run preview # serve build/ locally with server.js, same as production
-bun run test    # bun's built-in test runner over every *.test.js
-bun run lint    # prettier --check + eslint
-bun run format  # prettier --write (no git hook runs it; lint checks it)
+bun run test    # bun's built-in test runner over every *.test.{js,ts}
+bun run lint    # biome ci (lint + format check + import order)
+bun run format  # biome format --write (no git hook runs it; lint checks it)
 bun run release # release-it (bumps version, writes CHANGELOG.md)
 ```
 
 There is no database and no admin login in this repo. Tests exist only for
-code with logic worth breaking (`src/lib/posts.js`,
-`src/lib/cms/content-processor.js`, `server.js`, plus `pins.test.js` for exact
-dependency pins), and they run on Bun's built-in runner — no vitest, no
+code with logic worth breaking (`src/lib/posts.ts`,
+`src/lib/cms/content-processor.ts`, `server.js`, plus `pins.test.js` for exact
+dependency pins, and `src/ts-only.test.ts`, which fails on any `.js`/`.jsx`/`.mjs`/`.cjs` under `src/`), and they run on Bun's built-in runner — no vitest, no
 playwright, no test framework dependency. Components and routes are not tested.
 
 ## Commits and checks
@@ -42,10 +42,12 @@ and the release on main.
 
 Fully static site originally scaffolded from [statue-ssg](https://github.com/accretional/statue)
 via `bunx statue init`, but statue-ssg is no longer a dependency at all —
-`src/lib/cms/content-processor.js` is a one-time vendored copy, trimmed to
+`src/lib/cms/content-processor.ts` is a one-time vendored copy, trimmed to
 the two functions this site actually uses (`getAllContent`,
-`getContentByUrl`), imported directly as `$lib/cms/content-processor.js`
-(no alias indirection). The vendored `src/lib/themes` CSS files were
+`getContentByUrl`), imported directly as `$lib/cms/content-processor`
+(no alias indirection). It also exports the typed content record
+(`ContentEntry`, `ContentMetadata`, `QaTurn`): a new frontmatter field a page
+reads goes into `ContentMetadata` first, or the typecheck fails. The vendored `src/lib/themes` CSS files were
 likewise replaced entirely by daisyUI theme tokens, see `DESIGN.md`.
 SvelteKit's `@sveltejs/adapter-static`
 prerenders every route at build time (`prerender: { crawl: true }` in
@@ -54,16 +56,17 @@ there is no server-side rendering at runtime, no database, and no admin
 editing UI. Publishing content means committing a markdown file.
 
 **Content model**: markdown files under `content/`, read at build time via
-`$lib/cms/content-processor.js` (`getAllContent`, `getContentByUrl`).
+`$lib/cms/content-processor` (`getAllContent`, `getContentByUrl`).
 A file's route comes from its path: `content/<dir>/<slug>.md` → `/<dir>/<slug>`,
 frontmatter (YAML, via `gray-matter`) becomes `metadata`, and the markdown
 body is rendered to `content` HTML. `scripts/generate-rss-feed.js` imports
-the same vendored file directly by relative path (it runs as a plain Node
+the same vendored file directly by a relative path ending in `.ts` (it runs as a plain Bun
 script in `postbuild`, outside Vite, so SvelteKit's `$lib` alias doesn't
-apply there).
+apply there). `postbuild` runs every script with `bun`, never `node`, and a
+failed content-processor import fails the build instead of dropping `rss.xml`.
 
 - `content/blog/<slug>.md` — English posts, listed at `/blog`
-  (`src/routes/blog/+page.server.js` filters to `directory === 'blog'`).
+  (`src/routes/blog/+page.server.ts` filters to `directory === 'blog'`).
 - `content/blog/fr/<slug>.md` — French posts, served at `/blog/fr/<slug>`
   via a dedicated `src/routes/blog/fr/[slug]/` route (SvelteKit's
   `[slug]` routing can't match multi-segment paths, so this isn't the same
@@ -92,20 +95,29 @@ apply there).
 - `content/notes/` — written but never served; no route reads it. The
   convention for anything that should not be published at all.
 
-Each content-backed route follows the same shape: `+page.server.js` calls
+Each content-backed route follows the same shape: `+page.server.ts` calls
 `getAllContent`/`getContentByUrl`/`entries()` from the content-processor,
 `+page.svelte` renders `{@html post.content}` inside a `prose` block. Adding
 a new content type means copying that pattern (see `src/routes/blog/[slug]/`
 or `src/routes/portfolio/[slug]/`), not inventing a new content-loading
 mechanism.
 
-**Listing posts**: `$lib/posts.js` holds the shared helpers — `formatDate`,
+**TypeScript**: everything under `src/` is TypeScript — `.ts` modules and
+`<script lang="ts">` in every `.svelte` file. No `.js`/`.jsx`/`.mjs`/`.cjs` under
+`src/`, dot-directories included (`src/ts-only.test.ts` fails on one: Vite resolves an extensionless
+import to `.js` first and Bun to `.ts` first, so a stray twin would split the
+site build from the tests) and no bare `<script>` (Biome has no
+`svelte/block-lang` equivalent, so nothing lints this now). Imports inside `src/` drop the extension. Routes type
+`load`/`entries` and props through `./$types`. Root config files, `server.js`
+and `scripts/` stay JS, checked by `checkJs`. `strict` is off.
+
+**Listing posts**: `$lib/posts.ts` holds the shared helpers — `formatDate`,
 the `SORTS` comparators, and `filterAndSort`. Reuse them instead of inlining
 another date sort. `formatDate` exists because `gray-matter`'s YAML loader
 turns an unquoted `date: 2025-09-29` into a real JS `Date`, which stringifies
 in a template as `Mon Sep 29 2025 00:00:00 GMT+0000 (…)` — never interpolate
 `metadata.date` directly. Because `adapter-static` prerenders everything and
-there is no server at runtime, the default sort happens in `+page.server.js`
+there is no server at runtime, the default sort happens in `+page.server.ts`
 (so the HTML is correct with JS disabled) while the sort control and search
 box on `/blog` are client-side `$derived` over the data already shipped.
 

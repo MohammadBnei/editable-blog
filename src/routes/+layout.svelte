@@ -1,18 +1,19 @@
-<script>
+<script lang="ts">
   import '../lib/index.css';
+  import { onMount } from 'svelte';
   import { afterNavigate, goto } from '$app/navigation';
   import { page } from '$app/state';
-  import { onMount } from 'svelte';
-  import { langPref } from '$lib/stores/lang.svelte.js';
+  import { type Lang, langPref } from '$lib/stores/lang.svelte';
+  import type { LayoutProps } from './$types';
 
-  let { children } = $props();
-  let menuEl = $state();
-  let settingsEl = $state();
-  let mobileSettingsEl = $state();
+  let { children }: LayoutProps = $props();
+  let menuEl = $state<HTMLElement>();
+  let settingsEl = $state<HTMLElement>();
+  let mobileSettingsEl = $state<HTMLElement>();
 
   let showLangNotice = $state(false);
   let requestedLang = $state('fr');
-  let langNoticeTimeout;
+  let langNoticeTimeout: ReturnType<typeof setTimeout>;
 
   onMount(() => {
     langPref.hydrate();
@@ -31,17 +32,17 @@
     mobileSettingsEl?.hidePopover();
   });
 
-  function setWidth(w) {
+  function setWidth(w: string) {
     document.documentElement.dataset.width = w;
     localStorage.setItem('content-width', w);
   }
 
-  function setTheme(t) {
+  function setTheme(t: string) {
     document.documentElement.dataset.theme = t;
     localStorage.setItem('theme', t);
   }
 
-  function setLang(l) {
+  function setLang(l: Lang) {
     langPref.value = l;
 
     if (isPostPage && l !== currentLang) {

@@ -1,12 +1,13 @@
-import { getContentByUrl, getAllContent } from '$lib/cms/content-processor.js';
 import { error } from '@sveltejs/kit';
+import { getAllContent, getContentByUrl } from '$lib/cms/content-processor';
+import type { EntryGenerator, PageServerLoad } from './$types';
 
-export const entries = async () => {
+export const entries: EntryGenerator = async () => {
   const posts = await getAllContent();
   return posts.filter(item => item.directory === 'blog/weekly').map(post => ({ slug: post.slug }));
 };
 
-export const load = async ({ params }) => {
+export const load: PageServerLoad = async ({ params }) => {
   const post = await getContentByUrl(`/blog/weekly/${params.slug}`);
 
   if (!post) {

@@ -1,5 +1,7 @@
-<script>
-  let { data } = $props();
+<script lang="ts">
+  import type { PageProps } from './$types';
+
+  let { data }: PageProps = $props();
   let { post } = $derived(data);
 
   // LinkedIn's hard limit on a post body.
@@ -8,7 +10,7 @@
   // LinkedIn varies it by viewport, and a precise-looking number here would be a lie.
   const FOLD_CHARS = 210;
 
-  let body = $state(null);
+  let body = $state<HTMLElement | null>(null);
   let text = $state('');
   let copied = $state(false);
   let copyError = $state(false);

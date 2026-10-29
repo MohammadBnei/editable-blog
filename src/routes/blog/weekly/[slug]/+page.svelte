@@ -1,7 +1,8 @@
-<script>
+<script lang="ts">
   import BlogPost from '$lib/components/BlogPost.svelte';
+  import type { PageProps } from './$types';
 
-  let { data } = $props();
+  let { data }: PageProps = $props();
   let { post } = $derived(data);
 </script>
 

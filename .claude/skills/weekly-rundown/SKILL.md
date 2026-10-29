@@ -13,7 +13,7 @@ description: >
 
 A short, honest report on what Mohammad actually did in the last seven days.
 It is published at `/blog/weekly`, separate from the long-form articles at
-`/blog` (`src/routes/blog/+page.server.js` filters on `directory === 'blog'`
+`/blog` (`src/routes/blog/+page.server.ts` filters on `directory === 'blog'`
 exactly, so a rundown never appears in the article list).
 
 This is a conscience, not a changelog. A week where little shipped is a real

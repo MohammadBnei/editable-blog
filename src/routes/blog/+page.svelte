@@ -1,8 +1,9 @@
-<script>
-  import { filterAndSort, formatDate } from '$lib/posts.js';
-  import { langPref } from '$lib/stores/lang.svelte.js';
+<script lang="ts">
+  import { filterAndSort, formatDate } from '$lib/posts';
+  import { langPref } from '$lib/stores/lang.svelte';
+  import type { PageProps } from './$types';
 
-  let { data } = $props();
+  let { data }: PageProps = $props();
   let { posts, frPosts } = $derived(data);
   let query = $state('');
   let sort = $state('newest');

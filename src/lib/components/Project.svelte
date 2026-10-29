@@ -1,7 +1,9 @@
-<script>
-  import { formatDate } from '$lib/posts.js';
+<script lang="ts">
+  import type { ContentEntry } from '$lib/cms/content-processor';
+  import { formatDate } from '$lib/posts';
+  import type { Lang } from '$lib/stores/lang.svelte';
 
-  let { project, lang = 'en' } = $props();
+  let { project, lang = 'en' }: { project: ContentEntry; lang?: Lang } = $props();
 
   // The only translated UI strings in the portfolio. Everything else on the
   // page comes from the markdown file, which already exists per language.
