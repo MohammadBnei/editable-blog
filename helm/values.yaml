@@ -9,7 +9,8 @@ image:
   # this plain-HTTP `.lan` host (Let's Encrypt cannot issue for `.lan`, so
   # there is no ingress and no certificate).
   #
-  # The tag is the 12-char sha of the release commit (older ones are semver).
+  # The tag is the 12-char sha of the built commit: the release commit, or
+  # an untagged one when main moved past (older tags are semver).
   # release.yml builds and pushes it on the ukubi-build runner, then its
   # deploy job bumps image.tag below with yq in a chore(deploy) commit.
   repository: registry.bnei.lan:5000/editable-blog

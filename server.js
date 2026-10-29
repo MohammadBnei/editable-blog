@@ -5,7 +5,8 @@ import { resolve, sep } from 'node:path';
 const BUILD_DIR = resolve(import.meta.dir, 'build');
 const NOT_FOUND_FILE = resolve(BUILD_DIR, '404.html');
 // Baked into the image by the Dockerfile's VERSION build-arg; dev anywhere else.
-const VERSION = process.env.VERSION || 'dev';
+// Read per call, so a test can set it without a fresh process.
+const version = () => process.env.VERSION || 'dev';
 
 // Malformed input (bad %-escape, NUL byte, traversal) is the client's fault:
 // null here becomes a 400, not a thrown 500.
@@ -69,7 +70,7 @@ async function route(req) {
   const { pathname, search } = new URL(req.url);
   // Not /version.json: build/_app/version.json is SvelteKit's build timestamp.
   if (pathname === '/version') {
-    return new Response(`${VERSION}\n`, {
+    return new Response(`${version()}\n`, {
       headers: { 'Cache-Control': 'no-cache', 'Content-Type': 'text/plain; charset=utf-8' }
     });
   }
@@ -117,5 +118,5 @@ if (import.meta.main) {
     }
   });
 
-  console.log(`serving ${BUILD_DIR} on :3000, version ${VERSION}`);
+  console.log(`serving ${BUILD_DIR} on :3000, version ${version()}`);
 }

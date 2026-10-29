@@ -93,15 +93,35 @@ jobs:
     steps:
       # The release commit, not the commit that started this run. The tag is empty on a dry
       # run or when nothing was released; then this is the triggering commit. Checking out
-      # `main` would race the next push.
+      # `main` would race the next push. Full history: the step below reads the last tag.
       - name: Checkout the released tag
         uses: actions/checkout@v5
         with:
           ref: ${{ needs.release.outputs.tag }}
+          fetch-depth: 0
 
+      # Untagged with only bot commits since the last release (a dispatch with nothing to
+      # release): rebuild that release under its own sha rather than push a new sha tag of
+      # the same content, which would count toward Zot's last-3 and evict a real release.
       - name: Compute the image tag
         id: tag
-        run: echo "value=$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
+        env:
+          VERSION: ${{ needs.release.outputs.version }}
+          RELEASE_TAG: ${{ needs.release.outputs.tag }}
+        run: |
+          set -euo pipefail
+          # An empty or misnamed output would ship version "" silently. This repo has
+          # releases, so the last one is always a version.
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
+            || { echo "::error::bad VERSION '$VERSION' from release; rerun: gh workflow run release.yml --ref main"; exit 1; }
+          # ponytail: copy of ukubi-ci release.yml's bot-commit regex; keep them in step.
+          bots='^(chore\((release|deploy)\)|chore: update helm image tag)'
+          if [ -z "$RELEASE_TAG" ] && ! git log --format=%s "$VERSION..HEAD" | grep -vE "$bots" >/dev/null; then
+            RELEASE_TAG=$VERSION
+            git checkout -q "$RELEASE_TAG"
+          fi
+          echo "value=$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
 
       # Not baked into the runner image: one apt-get was not worth a build pipeline and its
       # own chicken-and-egg. EPHEMERAL=false keeps the runner alive between jobs, so this is
@@ -155,17 +175,13 @@ jobs:
         env:
           TAG: ${{ steps.tag.outputs.value }}
           VERSION: ${{ needs.release.outputs.version }}
-          RELEASE_TAG: ${{ needs.release.outputs.tag }}
+          RELEASE_TAG: ${{ steps.tag.outputs.release_tag }}
         run: |
           set -euo pipefail
-          # An empty or misnamed output would ship version "" silently. Empty is valid only
-          # untagged: no release exists yet and main moved on.
-          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ || ( -z "$VERSION" && -z "$RELEASE_TAG" ) ]] \
-            || { echo "::error::bad VERSION '$VERSION' from release; rerun: gh workflow run release.yml --ref main"; exit 1; }
-          # No release tag: this commit is not a release. VERSION is then the last release
-          # (main moved on mid-release, or nothing releasable), so X.Y.Z+<sha>, or 0.0.0+<sha>
-          # before the first. (Only main gets here: see the job's if.)
-          [ -n "$RELEASE_TAG" ] || VERSION="${VERSION:-0.0.0}+$TAG"
+          # No release tag: this commit is not a release (main moved on mid-release). VERSION
+          # is then the last release, so X.Y.Z+<sha>. VERSION is checked in the step above.
+          # (Only main gets here: see the job's if.)
+          [ -n "$RELEASE_TAG" ] || VERSION="$VERSION+$TAG"
           echo "building $IMAGE_NAME:$TAG as version $VERSION"
           start=$(date +%s)
           # chroot isolation only. The storage driver is deliberately NOT named here: it is

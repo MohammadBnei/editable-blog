@@ -155,7 +155,8 @@ broke `/healthz` when using `serve -s`, since it silently served
 The bump comes from the squash-merge commit subject (the PR title): `feat` or a
 breaking change minor (while 0.x), anything else patch. Then
 `build-push` runs `buildah` on the self-hosted `ukubi-build` runner, tags the
-image with the release commit's 12-char sha, passes the version as the
+image with the built commit's 12-char sha (the release commit, unless main
+moved past it), passes the version as the
 `VERSION` build-arg (`X.Y.Z+<sha>` when the commit is untagged) and pushes to
 `registry.bnei.lan:5000/editable-blog` (registry password from Infisical
 over OIDC), then `deploy` sets `image.tag` in `helm/values.yaml` with `yq`
