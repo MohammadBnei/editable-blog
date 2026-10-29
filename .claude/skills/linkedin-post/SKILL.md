@@ -1,17 +1,16 @@
 ---
 name: linkedin-post
 description: >
-  Write the LinkedIn version of an existing blog post as a markdown file under
-  content/linkedin/, ready to paste. Trigger: "linkedin post for X", "write
-  the LinkedIn version", "/linkedin-post".
+  Write the LinkedIn version of an existing blog post as a markdown file in
+  hq (~/Code/ukubi/hq/linkedin/), ready to paste. Trigger: "linkedin post
+  for X", "write the LinkedIn version", "/linkedin-post".
 ---
 
 # LinkedIn Post
 
 A short version of a post that already exists, written to be pasted into
-LinkedIn's composer. It lives at `content/linkedin/<slug>.md`, where `<slug>`
-matches the blog post it derives from, and it is served at `/linkedin/<slug>`
-behind the shared admin credential.
+LinkedIn's composer. It lives at `~/Code/ukubi/hq/linkedin/<slug>.md`, where
+`<slug>` matches the blog post it derives from. It is private and never served.
 
 **Read `.claude/skills/blog-voice.md` first.** The hard rules there apply
 without exception — plain, first-person, no hype, no emoji, no "exciting", no
@@ -43,8 +42,7 @@ LinkedIn is not a blog. Three differences drive everything:
    engagement-bait question, no "what do you think?", no hashtag pile.
 
 Hard limit is 3000 characters, but the useful target is 1200-1800 — long
-enough to make one argument properly, short enough to read in the feed. The
-page at `/linkedin/<slug>` shows the live count and where the fold falls.
+enough to make one argument properly, short enough to read in the feed.
 
 ## Steps
 
@@ -54,62 +52,41 @@ page at `/linkedin/<slug>` shows the live count and where the fold falls.
    drafting. If the post has a stated angle already (its `description`), the
    LinkedIn version usually sharpens the same one rather than choosing a
    different one.
-3. Write `content/linkedin/<slug>.md`:
+3. Write `~/Code/ukubi/hq/linkedin/<slug>.md`:
 
    ```
    ---
    title: <the hook — usually close to the first line of the post itself>
    description: <one line to yourself: which angle this took and what it cut>
    date: <YYYY-MM-DD>
-   source: /blog/<slug>
+   source: https://blog.bnei.dev/blog/<slug>
    ---
 
    <body>
    ```
 
-   `description` is a note to the author, not a teaser — it is shown on the
-   `/linkedin` index so a later reader can see at a glance which angle each
-   draft took.
+   `description` is a note to the author, not a teaser, so a later reader can
+   see at a glance which angle each draft took.
 
-4. Write the body as plain prose with blank lines between paragraphs. Short
-   paragraphs, often one sentence — LinkedIn renders a wall of text as a wall
-   of text. No markdown headings, no bullets unless the content is genuinely a
-   list, no code fences: the composer strips all of it, and what gets pasted is
-   the rendered text.
-5. Do not touch anything else. The route reads every file under
-   `content/linkedin/` already.
+4. Write the body as paste-ready plain text: the owner pastes the raw file, so
+   what is in the file is what LinkedIn shows. Short paragraphs, often one
+   sentence, one blank line between them. No markdown of any kind: no
+   headings, no emphasis (`_x_` or `*x*` shows as literal underscores or
+   asterisks), no inline links, no code fences, no bullets unless the content
+   is genuinely a list.
+5. Do not touch anything else.
 
 ## Before you hand it over
 
-Check the rendered length at `/linkedin/<slug>` rather than counting
-characters in the markdown — the copy button and the counter both read the
-*rendered* text, which is what actually goes in the composer.
+Count the characters of everything after the frontmatter (for example
+`awk 'f>=2; /^---$/{f++}' <file> | wc -m`). It must be under 3000,
+and you say the count when you hand it over. Because the body is plain text,
+that count is what the composer sees.
 
 Then read the first 210 characters alone and ask whether you would tap "see
 more". If not, the hook is buried and the fix is at the top, not the bottom.
 
-## Where these live, and why it matters
+## Where these live
 
-`content/linkedin/` is excluded from the RSS feed (`site.config.json`), the
-sitemap and robots.txt (`scripts/generate-seo-files.js`), and the search index
-(the conditional `data-pagefind-body` on `<main>` in
-`src/routes/+layout.svelte`), and the `/linkedin` prefix is gated by
-authentik's shared `default/authentik-forwardauth` Traefik middleware
-(`helm/values.yaml`).
-
-The search-index one is worth understanding before you trust it. The obvious
-mechanism, `data-pagefind-ignore` on the page, does **not** work: it strips the
-element's content but Pagefind still indexes the page and falls back to the
-`<title>`, so every draft's URL and headline stayed in a public asset. What
-works is `data-pagefind-body`, because once any page carries it Pagefind skips
-every page that does not. If you add another private section, copy that, and
-then run `pagefind --site build` and read the fragments rather than assuming.
-
-Four separate mechanisms, because each covers a different way out of the build
-and none of them covers another — auth on the route does nothing about a
-search index that is itself a public asset. If you add another derived content
-type that should not be public, all four need the same treatment.
-
-The pages are still prerendered into the image, so the gate protects the URL,
-not the bytes. Nothing here should be anything worse than embarrassing if it
-leaked.
+Private, in hq under `linkedin/`, outside `projects/` and `reviews/`, so hq's
+app never serves them.
