@@ -1,6 +1,6 @@
 import fs from 'fs';
-import path from 'path';
 import matter from 'gray-matter';
+import path from 'path';
 
 // Get all tag routes for prerendering
 export function getTagRoutes() {

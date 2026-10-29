@@ -1,5 +1,5 @@
-import { getContentByUrl } from '$lib/cms/content-processor';
 import { error } from '@sveltejs/kit';
+import { getContentByUrl } from '$lib/cms/content-processor';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {

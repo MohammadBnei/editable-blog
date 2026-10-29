@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { PageProps } from './$types';
   import { formatDate } from '$lib/posts';
+  import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
   let { rundowns } = $derived(data);

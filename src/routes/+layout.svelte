@@ -1,9 +1,9 @@
 <script lang="ts">
   import '../lib/index.css';
+  import { onMount } from 'svelte';
   import { afterNavigate, goto } from '$app/navigation';
   import { page } from '$app/state';
-  import { onMount } from 'svelte';
-  import { langPref, type Lang } from '$lib/stores/lang.svelte';
+  import { type Lang, langPref } from '$lib/stores/lang.svelte';
   import type { LayoutProps } from './$types';
 
   let { children }: LayoutProps = $props();

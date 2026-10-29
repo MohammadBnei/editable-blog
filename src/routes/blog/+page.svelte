@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { PageProps } from './$types';
   import { filterAndSort, formatDate } from '$lib/posts';
   import { langPref } from '$lib/stores/lang.svelte';
+  import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
   let { posts, frPosts } = $derived(data);

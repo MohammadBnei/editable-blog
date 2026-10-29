@@ -1,7 +1,7 @@
-import { Glob } from 'bun';
 import { describe, expect, it } from 'bun:test';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
+import { Glob } from 'bun';
 import { CSP, cacheControl, handle } from './server.js';
 
 describe('cacheControl', () => {

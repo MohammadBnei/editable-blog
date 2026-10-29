@@ -3,9 +3,9 @@
 
 // Node.js modules
 import fs from 'fs';
-import path from 'path';
-import { compile } from 'mdsvex';
 import matter from 'gray-matter';
+import { compile } from 'mdsvex';
+import path from 'path';
 import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
 

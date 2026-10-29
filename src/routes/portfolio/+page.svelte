@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { PageProps } from './$types';
   import { formatDate } from '$lib/posts';
   import { langPref } from '$lib/stores/lang.svelte';
+  import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
   let { projects, frProjects, intro, frIntro } = $derived(data);

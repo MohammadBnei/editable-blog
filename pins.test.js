@@ -1,6 +1,6 @@
 // Drift guard for the exact pins (ukubi Code Standard: exact Bun, exact deps).
 // CI reads the Bun version from packageManager; nothing else ties the Dockerfile to it.
-import { test, expect } from 'bun:test';
+import { expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { PageProps } from './$types';
   import BlogPost from '$lib/components/BlogPost.svelte';
+  import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
   let { post } = $derived(data);

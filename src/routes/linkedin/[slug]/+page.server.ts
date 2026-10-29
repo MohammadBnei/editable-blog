@@ -1,5 +1,5 @@
-import { getContentByUrl, getAllContent } from '$lib/cms/content-processor';
 import { error } from '@sveltejs/kit';
+import { getAllContent, getContentByUrl } from '$lib/cms/content-processor';
 import type { EntryGenerator, PageServerLoad } from './$types';
 
 export const entries: EntryGenerator = async () => {
