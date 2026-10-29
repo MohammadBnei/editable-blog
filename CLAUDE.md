@@ -19,7 +19,6 @@ bun run preview # serve build/ locally with server.js, same as production
 bun run test    # bun's built-in test runner over every *.test.{js,ts}
 bun run lint    # biome ci (lint + format check + import order)
 bun run format  # biome format --write (no git hook runs it; lint checks it)
-bun run release # release-it (bumps version, writes CHANGELOG.md)
 ```
 
 There is no database and no admin login in this repo. Tests exist only for
@@ -150,12 +149,23 @@ broke `/healthz` when using `serve -s`, since it silently served
 `index.html` instead of the real health check file.
 
 **Release and deploy**: a push to `main` runs `.github/workflows/release.yml`:
-`checks.yml` (lint, test, build, image build), then release-it makes the
-version commit, `CHANGELOG.md` entry and tag, then `build-push` runs
-`buildah` on the self-hosted `ukubi-build` runner and pushes to
+`checks.yml` (lint, test, build, image build), then ukubi-ci's `release.yml`
+(git-cliff over the Conventional Commits since the last tag) commits
+`chore(release): X.Y.Z` with its `CHANGELOG.md` section and tags it.
+The bump comes from the squash-merge commit subject (the PR title): `feat` or a
+breaking change minor (while 0.x), anything else patch. Then
+`build-push` runs `buildah` on the self-hosted `ukubi-build` runner, tags the
+image with the built commit's 12-char sha (the release commit, unless main
+moved past it), passes the version as the
+`VERSION` build-arg (`X.Y.Z+<sha>` when the commit is untagged) and pushes to
 `registry.bnei.lan:5000/editable-blog` (registry password from Infisical
 over OIDC), then `deploy` sets `image.tag` in `helm/values.yaml` with `yq`
-and commits it to `main`. Argo CD renders `helm/values.yaml` from `main`
+and commits `chore(deploy): bump editable-blog image to <sha>` to `main`.
+The running version is on the start log line and at `GET /version` (plain
+text, `dev` outside the image). There is no version in `package.json`; the
+last tag is the version. If main moved past the gated commit with only
+`paths-ignore`'d files, the release waits for the next push: release now with
+`gh workflow run release.yml --ref main`. Argo CD renders `helm/values.yaml` from `main`
 through infra-bootstrap's `common-app-chart`; the Application comes from
 the generator in `gitops/bootstrap/apps.applicationset.yaml`, mirrored in
 `gitops/apps/registry.yaml`. A push whose every changed file is a root

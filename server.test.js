@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test';
+import { afterEach, describe, expect, it } from 'bun:test';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { Glob } from 'bun';
@@ -59,6 +59,31 @@ describe('handle', () => {
     const res = await get('/caf%C3%A9');
     expect(res.status).toBe(404);
     expect(res.headers.get('Content-Security-Policy')).toBe(CSP);
+  });
+});
+
+describe('version', () => {
+  const saved = process.env.VERSION;
+  afterEach(() => {
+    if (saved === undefined) delete process.env.VERSION;
+    else process.env.VERSION = saved;
+  });
+  const get = () => handle(new Request('http://localhost/version'));
+
+  it('serves the baked-in version at /version, uncached, with the CSP header', async () => {
+    process.env.VERSION = '9.9.9-test';
+    const res = await get();
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe('9.9.9-test\n');
+    expect(res.headers.get('cache-control')).toBe('no-cache');
+    expect(res.headers.get('content-security-policy')).toBe(CSP);
+  });
+
+  it('says dev when VERSION is unset', async () => {
+    delete process.env.VERSION; // must not inherit a developer's or CI's VERSION
+    const res = await get();
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe('dev\n');
   });
 });
 

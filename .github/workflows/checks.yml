@@ -27,3 +27,5 @@ jobs:
     uses: MohammadBnei/ukubi-ci/.github/workflows/image-build.yml@e784a69d5fe0b258b1b6899f89d42ee87eb89d5c # v0.2.1
     with:
       image: editable-blog
+      # A real value, as release.yml passes one, so the PR image builds the way the release does.
+      build-args: VERSION=0.0.0-pr

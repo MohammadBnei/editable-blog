@@ -22,4 +22,9 @@ COPY --from=builder /app/server.js /app
 
 WORKDIR /app
 ENV NODE_ENV=production
+# The release version, passed by release.yml's build (X.Y.Z, or X.Y.Z+<sha> untagged);
+# dev when built without it. Last, so with a layer cache only this tail varies by version.
+ARG VERSION
+LABEL org.opencontainers.image.version=${VERSION:-dev}
+ENV VERSION=${VERSION:-dev}
 CMD ["bun", "server.js"]
