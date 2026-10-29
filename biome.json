@@ -1,6 +1,10 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
-  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
   "files": {
     "includes": [
       "**",
@@ -16,31 +20,75 @@
       "!bun.lock"
     ]
   },
-  "formatter": { "indentStyle": "space", "indentWidth": 2, "lineWidth": 100 },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
   "javascript": {
-    "formatter": { "quoteStyle": "single", "trailingCommas": "none", "arrowParentheses": "asNeeded" }
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "none",
+      "arrowParentheses": "asNeeded"
+    }
   },
   "css": {
-    "parser": { "tailwindDirectives": true },
-    "formatter": { "quoteStyle": "double" }
+    "parser": {
+      "tailwindDirectives": true
+    },
+    "formatter": {
+      "quoteStyle": "double"
+    }
   },
-  "html": { "formatter": { "indentScriptAndStyle": true } },
+  "html": {
+    "formatter": {
+      "indentScriptAndStyle": true
+    }
+  },
   "linter": {
-    "rules": { "suspicious": { "noExplicitAny": "error" } }
+    "rules": {
+      "suspicious": {
+        "noExplicitAny": "error"
+      }
+    }
   },
   "overrides": [
     {
       "includes": ["server.js"],
-      "javascript": { "globals": ["Bun"] }
+      "javascript": {
+        "globals": ["Bun"]
+      }
     },
     {
       "includes": ["**/*.svelte"],
       "linter": {
         "rules": {
-          "correctness": { "noUnusedVariables": "off", "noUnusedImports": "off" },
-          "style": { "useConst": "off", "useImportType": "off" }
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedImports": "off"
+          },
+          "style": {
+            "useConst": "off",
+            "useImportType": "off"
+          }
         }
       }
     }
-  ]
+  ],
+  "markdown": {
+    "formatter": {
+      "enabled": false
+    },
+    "linter": {
+      "enabled": false
+    }
+  },
+  "yaml": {
+    "formatter": {
+      "enabled": false
+    },
+    "linter": {
+      "enabled": false
+    }
+  }
 }
