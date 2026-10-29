@@ -1,6 +1,7 @@
 name: trailers
 
-# Commit, title and body hygiene via MohammadBnei/ukubi-ci, pinned by sha.
+# Commit, title and body hygiene via MohammadBnei/ukubi-ci, pinned by sha
+# (the sha of a ukubi-ci tag; bump it with checks.yml when a newer tag ships).
 # `edited` is listed so a title or body fix re-runs it; the latest event wins.
 on:
   pull_request:
