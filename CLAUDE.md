@@ -151,8 +151,9 @@ broke `/healthz` when using `serve -s`, since it silently served
 **Release and deploy**: a push to `main` runs `.github/workflows/release.yml`:
 `checks.yml` (lint, test, build, image build), then ukubi-ci's `release.yml`
 (git-cliff over the Conventional Commits since the last tag) commits
-`chore(release): X.Y.Z` with its `CHANGELOG.md` section and tags it, so the PR
-title's type picks the bump (`feat` minor, anything else patch). Then
+`chore(release): X.Y.Z` with its `CHANGELOG.md` section and tags it.
+The bump comes from the squash-merge commit subject (the PR title): `feat` or a
+breaking change minor (while 0.x), anything else patch. Then
 `build-push` runs `buildah` on the self-hosted `ukubi-build` runner, tags the
 image with the release commit's 12-char sha, passes the version as the
 `VERSION` build-arg (`X.Y.Z+<sha>` when the commit is untagged) and pushes to

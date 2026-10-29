@@ -32,3 +32,13 @@ test('every Dockerfile stage is built FROM ${BUN_IMAGE}', () => {
   expect(froms.length).toBeGreaterThan(0);
   expect(froms.filter(l => !/^FROM \$\{BUN_IMAGE\}( AS \w+)?$/.test(l))).toEqual([]);
 });
+
+test('the runner stage carries VERSION as an OCI label and env', () => {
+  const runner = dockerfile.split(/^FROM \$\{BUN_IMAGE\} AS runner$/m)[1] ?? '';
+  for (const line of [
+    'ARG VERSION',
+    'LABEL org.opencontainers.image.version=${VERSION:-dev}',
+    'ENV VERSION=${VERSION:-dev}'
+  ])
+    expect(runner.split('\n')).toContain(line);
+});
