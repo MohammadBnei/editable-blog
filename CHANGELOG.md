@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.45.2 - 2026-10-29
+
+### Other
+
+- Remove private notes and LinkedIn drafts; drop the /linkedin route (#37)
+
 ## 0.45.1 - 2026-10-29
 
 ### Other
