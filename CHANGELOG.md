@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.45.0 - 2026-10-29
+
+### Features
+
+- **server:** Show the running version; release via ukubi-ci (git-cliff) (#35)
+
+### Other
+
+- Pin ukubi-ci callers to the v0.2.1 tag sha (#34)
+
 ## [0.44.22](https://github.com/MohammadBnei/editable-blog/compare/0.44.21...0.44.22) (2026-10-29)
 
 ## [0.44.21](https://github.com/MohammadBnei/editable-blog/compare/0.44.20...0.44.21) (2026-10-28)
