@@ -37,8 +37,10 @@ the raw transcript and any blog drafts in that same language.
    invoked from):
    `~/Code/ukubi/hq/notes/retros/<slug>.md`
    Create the directory if missing.
-4. **New vs. resume**: if that file already exists, go to §5 (Resuming)
-   instead of §1. Otherwise continue to §1.
+4. **New vs. resume**: if that file is missing but a pre-hq transcript
+   exists at `~/Code/ukubi/editable-website/content/notes/retros/<slug>.md`,
+   move it to the hq path first. Then, if the file exists, go to §5
+   (Resuming) instead of §1. Otherwise continue to §1.
 
 ## 1. Big picture pass (black box / white box)
 
