@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.45.1 - 2026-10-29
+
+### Other
+
+- **skills:** Retro skill writes transcripts to hq (#36)
+
 ## 0.45.0 - 2026-10-29
 
 ### Features
