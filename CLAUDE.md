@@ -17,8 +17,8 @@ bun run build   # svelte-check (TS + checkJs, fails on any error/warning), then 
                 # sitemap.xml/robots.txt/rss.xml (postbuild)
 bun run preview # serve build/ locally with server.js, same as production
 bun run test    # bun's built-in test runner over every *.test.{js,ts}
-bun run lint    # prettier --check + eslint
-bun run format  # prettier --write (no git hook runs it; lint checks it)
+bun run lint    # biome ci (lint + format check + import order)
+bun run format  # biome format --write (no git hook runs it; lint checks it)
 bun run release # release-it (bumps version, writes CHANGELOG.md)
 ```
 
@@ -106,8 +106,8 @@ mechanism.
 `<script lang="ts">` in every `.svelte` file. No `.js`/`.jsx`/`.mjs`/`.cjs` under
 `src/`, dot-directories included (`src/ts-only.test.ts` fails on one: Vite resolves an extensionless
 import to `.js` first and Bun to `.ts` first, so a stray twin would split the
-site build from the tests) and no bare `<script>` (eslint's
-`svelte/block-lang`). Imports inside `src/` drop the extension. Routes type
+site build from the tests) and no bare `<script>` (Biome has no
+`svelte/block-lang` equivalent, so nothing lints this now). Imports inside `src/` drop the extension. Routes type
 `load`/`entries` and props through `./$types`. Root config files, `server.js`
 and `scripts/` stay JS, checked by `checkJs`. `strict` is off.
 
