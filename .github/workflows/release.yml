@@ -1,12 +1,16 @@
-# One run, one release: push to main -> release (version + changelog) -> image build
-# -> values bump. This used to be three workflows chained by tag pushes, which is why it
-# needed a PAT: release-it's tag had to TRIGGER the image build, and a tag pushed with the
-# built-in GITHUB_TOKEN deliberately does not trigger workflows. Sequential jobs need no
-# trigger, so the PAT is gone and nothing in this repo holds one.
+# One run, one release: push to main -> checks -> release (ukubi-ci release.yml: git-cliff
+# version, CHANGELOG.md section, tag) -> image build (tagged with the release commit's
+# 12-char sha, the version passed as a build-arg) -> values bump. Sequential jobs need no
+# tag-push trigger, so no PAT: nothing in this repo holds one.
 #
-# That same GITHUB_TOKEN property is now load-bearing in the other direction: neither the
-# release commit nor the values bump retriggers this pipeline, so there is no loop. The
-# paths-ignore below is belt and braces on top of it.
+# The GITHUB_TOKEN never triggers workflows, so neither the `chore(release)` commit nor the
+# `chore(deploy)` values bump retriggers this pipeline: no loop. paths-ignore below is belt
+# and braces on top of it.
+#
+# A release can wait: ukubi-ci release only tags the commit whose checks gated the run, and
+# skips (green, "moved past" notice, tag output empty) when main gained a non-bot commit
+# meanwhile. If that newer commit only touched paths-ignore'd files, no run releases it; the
+# image is built as <last>+<sha>. Release the tip now with `gh workflow run release.yml --ref main`.
 name: Release, build and deploy
 
 on:
@@ -29,13 +33,9 @@ on:
 # tip, so it carries the cancelled runs' commits with it — one tag covering the lot, rather
 # than a queue of one-commit releases each rebuilding an image the next one obsoletes.
 #
-# Without a group at all, two runs compute the same version from the same latest tag, and
-# the loser's push is rejected non-fast-forward after it has already bumped package.json and
-# made a local tag — that release is simply lost.
-#
-# Cancelling is only safe because the push is atomic: see git.pushArgs in package.json.
-# Everything before the push is local to the runner and dies with it; the push itself is the
-# one window where a kill could split branch from tag.
+# Cancelling is only safe because the release push is atomic (branch and tag in one
+# `git push --atomic`, inside ukubi-ci release.yml). Everything before it is local to the
+# runner and dies with it.
 concurrency:
   group: release
   cancel-in-progress: true
@@ -63,52 +63,24 @@ jobs:
     permissions:
       contents: read
 
+  # git-cliff via ukubi-ci: the next semver from Conventional Commits since the last tag,
+  # a CHANGELOG.md section, then one atomic push of `chore(release): X.Y.Z` plus its
+  # annotated tag. A dry run off main; outputs version, tag (empty when nothing was
+  # released) and released.
   release:
     needs: checks
-    runs-on: ubuntu-latest
-    # contents: write so release-it can push the version commit and the tag with the
-    # built-in token. Declaring any permissions block zeroes the rest, which is fine here.
     permissions:
       contents: write
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version-file: package.json
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: git config
-        run: |
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
-      - name: Run release-it
-        run: git update-index --refresh && git diff-index --quiet HEAD || git reset --hard && bun run release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Read from the file rather than jaywcjlove/github-action-package: that action
-      # resolves from github.com at job time, and the build job below runs on a box whose
-      # sudoers grants buildah and nothing else. jq is already there.
-      - name: Read the released version
-        id: version
-        run: |
-          set -euo pipefail
-          v=$(jq -er .version package.json)
-          [ -n "$v" ] || { echo "no version in package.json"; exit 1; }
-          echo "version=$v" >> "$GITHUB_OUTPUT"
+    uses: MohammadBnei/ukubi-ci/.github/workflows/release.yml@e784a69d5fe0b258b1b6899f89d42ee87eb89d5c # v0.2.1
 
   build-push:
     needs: release
+    # Only main builds and pushes. A dispatch from a branch is a release dry run; its image
+    # would still count toward Zot's last-3-tags retention and could evict the deployed one.
+    # The PR image check already builds every branch.
+    if: github.ref == 'refs/heads/main'
+    outputs:
+      tag: ${{ steps.tag.outputs.value }}
     # NOT `ukubi` — that label belongs to the runner holding a ServiceAccount token with
     # `create jobs` in vos/vos-dev. This one has no cluster access at all, which is exactly
     # why builds belong on it (ADR-0034).
@@ -119,14 +91,17 @@ jobs:
       contents: read
       id-token: write
     steps:
-      # The tag release-it just made, not the commit that started this run: the version in
-      # package.json at that SHA is the one being built. Checking out `main` would race the
-      # next push.
+      # The release commit, not the commit that started this run. The tag is empty on a dry
+      # run or when nothing was released; then this is the triggering commit. Checking out
+      # `main` would race the next push.
       - name: Checkout the released tag
         uses: actions/checkout@v5
         with:
-          ref: ${{ needs.release.outputs.version }}
-          fetch-depth: 0
+          ref: ${{ needs.release.outputs.tag }}
+
+      - name: Compute the image tag
+        id: tag
+        run: echo "value=$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
 
       # Not baked into the runner image: one apt-get was not worth a build pipeline and its
       # own chicken-and-egg. EPHEMERAL=false keeps the runner alive between jobs, so this is
@@ -178,9 +153,20 @@ jobs:
       - name: Build and push
         id: build
         env:
+          TAG: ${{ steps.tag.outputs.value }}
           VERSION: ${{ needs.release.outputs.version }}
+          RELEASE_TAG: ${{ needs.release.outputs.tag }}
         run: |
           set -euo pipefail
+          # An empty or misnamed output would ship version "" silently. Empty is valid only
+          # untagged: no release exists yet and main moved on.
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ || ( -z "$VERSION" && -z "$RELEASE_TAG" ) ]] \
+            || { echo "::error::bad VERSION '$VERSION' from release; rerun: gh workflow run release.yml --ref main"; exit 1; }
+          # No release tag: this commit is not a release. VERSION is then the last release
+          # (main moved on mid-release, or nothing releasable), so X.Y.Z+<sha>, or 0.0.0+<sha>
+          # before the first. (Only main gets here: see the job's if.)
+          [ -n "$RELEASE_TAG" ] || VERSION="${VERSION:-0.0.0}+$TAG"
+          echo "building $IMAGE_NAME:$TAG as version $VERSION"
           start=$(date +%s)
           # chroot isolation only. The storage driver is deliberately NOT named here: it is
           # pinned to overlay on the build box itself, so this build, the cleanup below and
@@ -188,13 +174,11 @@ jobs:
           sudo buildah bud \
             --isolation chroot \
             --format docker \
-            -t "$REGISTRY/$IMAGE_NAME:$VERSION" \
-            -t "$REGISTRY/$IMAGE_NAME:latest" \
+            --build-arg "VERSION=$VERSION" \
+            -t "$REGISTRY/$IMAGE_NAME:$TAG" \
             .
           build_end=$(date +%s)
-          for tag in "$VERSION" latest; do
-            sudo buildah push --tls-verify=false "$REGISTRY/$IMAGE_NAME:$tag"
-          done
+          sudo buildah push --tls-verify=false "$REGISTRY/$IMAGE_NAME:$TAG"
           end=$(date +%s)
           echo "build_seconds=$((build_end - start))" >> "$GITHUB_OUTPUT"
           echo "push_seconds=$((end - build_end))"    >> "$GITHUB_OUTPUT"
@@ -216,19 +200,16 @@ jobs:
             echo "| total | ${{ steps.build.outputs.total_seconds }} |"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Only this build's tags. NEVER `buildah rmi --all` — the box is shared with the other
+      # Only this build's tag. NEVER `buildah rmi --all` — the box is shared with the other
       # build repos and the base-image cache is the whole reason they live together.
       - name: Clean up this build's images
         if: always()
         env:
-          VERSION: ${{ needs.release.outputs.version }}
-        run: |
-          for tag in "$VERSION" latest; do
-            sudo buildah rmi "$REGISTRY/$IMAGE_NAME:$tag" 2>/dev/null || true
-          done
+          TAG: ${{ steps.tag.outputs.value }}
+        run: sudo buildah rmi "$REGISTRY/$IMAGE_NAME:$TAG" 2>/dev/null || true
 
   deploy:
-    needs: [release, build-push]
+    needs: build-push
     runs-on: ubuntu-latest
     # contents: write to push the values bump. This commit is what ArgoCD actually reads;
     # the image existing in the registry is not a deployment.
@@ -242,16 +223,26 @@ jobs:
           fetch-depth: 0
 
       - name: Update helm values image tag
-        run: yq -i '.image.tag = "${{ needs.release.outputs.version }}"' helm/values.yaml
+        env:
+          TAG: ${{ needs.build-push.outputs.tag }}
+        run: |
+          set -euo pipefail
+          [ -n "$TAG" ] || { echo "::error::empty image tag"; exit 1; }
+          yq -i '.image.tag = strenv(TAG)' helm/values.yaml
+          # A no-op bump is the silent failure: green deploy, old image in the cluster.
+          [ "$(yq '.image.tag' helm/values.yaml)" = "$TAG" ] \
+            || { echo "::error::tag bump did not land in helm/values.yaml"; exit 1; }
 
       - name: Commit and push
+        env:
+          TAG: ${{ needs.build-push.outputs.tag }}
         run: |
           set -euo pipefail
           git config user.name "${GITHUB_ACTOR}"
           git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
           git add helm/values.yaml
           git diff --cached --quiet && { echo "tag unchanged"; exit 0; }
-          git commit -m "chore: update helm image tag to ${{ needs.release.outputs.version }}"
+          git commit -m "chore(deploy): bump editable-blog image to ${TAG}"
           # A content commit can land between the checkout above and this push; rebase
           # rather than fail the release after the image is already in the registry.
           git pull --rebase --autostash origin main

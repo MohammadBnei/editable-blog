@@ -27,3 +27,5 @@ jobs:
     uses: MohammadBnei/ukubi-ci/.github/workflows/image-build.yml@e784a69d5fe0b258b1b6899f89d42ee87eb89d5c # v0.2.1
     with:
       image: editable-blog
+      # A real value, so buildah parses the runner stage's ARG/LABEL/ENV VERSION on every PR.
+      build-args: VERSION=0.0.0-pr

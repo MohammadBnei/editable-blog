@@ -62,6 +62,36 @@ describe('handle', () => {
   });
 });
 
+describe('version', () => {
+  // VERSION is read once at import, so each case imports server.js in a fresh process.
+  const fetchVersion = async version => {
+    const env = { ...process.env };
+    delete env.VERSION; // the unset case must not inherit a developer's or CI's VERSION
+    if (version !== undefined) env.VERSION = version;
+    const script = `const { handle } = await import(${JSON.stringify(new URL('./server.js', import.meta.url).href)});
+      const res = await handle(new Request('http://localhost/version'));
+      console.log(JSON.stringify({ status: res.status, body: await res.text(), headers: Object.fromEntries(res.headers) }));`;
+    const proc = Bun.spawn([process.execPath, '-e', script], { env, stdout: 'pipe' });
+    const out = await new Response(proc.stdout).text();
+    expect(await proc.exited).toBe(0);
+    return JSON.parse(out);
+  };
+
+  it('serves the baked-in version at /version, uncached, with the CSP header', async () => {
+    const res = await fetchVersion('9.9.9-test');
+    expect(res.status).toBe(200);
+    expect(res.body).toBe('9.9.9-test\n');
+    expect(res.headers['cache-control']).toBe('no-cache');
+    expect(res.headers['content-security-policy']).toBe(CSP);
+  });
+
+  it('says dev when VERSION is unset', async () => {
+    const res = await fetchVersion(undefined);
+    expect(res.status).toBe(200);
+    expect(res.body).toBe('dev\n');
+  });
+});
+
 // A real src attribute, not data-src (\b would match between '-' and 's').
 const SRC_ATTR = /\ssrc\s*=/i;
 

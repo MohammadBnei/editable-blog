@@ -1,6 +1,5 @@
 {
   "name": "editable-blog",
-  "version": "0.44.22",
   "private": true,
   "scripts": {
     "dev": "vite dev",
@@ -9,7 +8,6 @@
     "test": "bun test",
     "lint": "biome ci .",
     "format": "biome format --write .",
-    "release": "release-it",
     "postbuild": "bun scripts/generate-seo-files.js && bun scripts/run-pagefind.js && bun scripts/generate-rss-feed.js"
   },
   "devDependencies": {
@@ -31,41 +29,15 @@
   },
   "type": "module",
   "dependencies": {
-    "@release-it/conventional-changelog": "11.0.1",
     "@tailwindcss/postcss": "4.3.2",
     "@tailwindcss/typography": "0.5.20",
     "gray-matter": "4.0.3",
     "mdsvex": "0.12.7",
     "mermaid": "11.16.0",
     "rehype-slug": "6.0.0",
-    "release-it": "20.2.1",
     "remark-gfm": "4.0.1",
     "svg-pan-zoom": "3.6.2",
     "tailwindcss": "4.3.2"
-  },
-  "release-it": {
-    "$schema": "https://unpkg.com/release-it@19/schema/release-it.json",
-    "git": {
-      "commitMessage": "chore: release v${version}",
-      "pushArgs": [
-        "--follow-tags",
-        "--atomic"
-      ]
-    },
-    "github": {
-      "release": false
-    },
-    "npm": {
-      "publish": false
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": {
-          "name": "angular"
-        },
-        "infile": "CHANGELOG.md"
-      }
-    }
   },
   "packageManager": "bun@1.4.2"
 }

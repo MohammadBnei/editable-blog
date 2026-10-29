@@ -4,6 +4,8 @@ import { resolve, sep } from 'node:path';
 
 const BUILD_DIR = resolve(import.meta.dir, 'build');
 const NOT_FOUND_FILE = resolve(BUILD_DIR, '404.html');
+// Baked into the image by the Dockerfile's VERSION build-arg; dev anywhere else.
+const VERSION = process.env.VERSION || 'dev';
 
 // Malformed input (bad %-escape, NUL byte, traversal) is the client's fault:
 // null here becomes a 400, not a thrown 500.
@@ -65,6 +67,12 @@ export async function handle(req) {
 
 async function route(req) {
   const { pathname, search } = new URL(req.url);
+  // Not /version.json: build/_app/version.json is SvelteKit's build timestamp.
+  if (pathname === '/version') {
+    return new Response(`${VERSION}\n`, {
+      headers: { 'Cache-Control': 'no-cache', 'Content-Type': 'text/plain; charset=utf-8' }
+    });
+  }
   // Pages use relative asset URLs (`../theme-init.js`), so `/blog/x/` served
   // as blog/x.html would resolve them one directory too deep. Redirect to the
   // canonical slashless URL. Leading slashes collapse to one, so `//evil.com/`
@@ -109,5 +117,5 @@ if (import.meta.main) {
     }
   });
 
-  console.log(`serving ${BUILD_DIR} on :3000`);
+  console.log(`serving ${BUILD_DIR} on :3000, version ${VERSION}`);
 }
