@@ -14,7 +14,7 @@ image:
   # release.yml builds and pushes it on the ukubi-build runner, then its
   # deploy job bumps image.tag below with yq in a chore(deploy) commit.
   repository: registry.bnei.lan:5000/editable-blog
-  tag: "0.44.18"
+  tag: "c736ff190f9f"
 service:
   port: 3000
 ingress:
