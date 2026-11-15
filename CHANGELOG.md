@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.45.4 - 2026-11-15
+
+### Other
+
+- **weekly:** Rundown for the week of 2026-11-15
+
 ## 0.45.3 - 2026-11-12
 
 ### Other
