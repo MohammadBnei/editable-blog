@@ -16,15 +16,15 @@ permissions:
 
 jobs:
   bun:
-    uses: MohammadBnei/ukubi-ci/.github/workflows/bun-checks.yml@e784a69d5fe0b258b1b6899f89d42ee87eb89d5c # v0.2.1
+    uses: MohammadBnei/ukubi-ci/.github/workflows/bun-checks.yml@8782d42e1d4e5cd0b8af9d1a14c9d5414976a4c9 # v0.7.0
     with:
-      # bun-checks has no lint input yet; lint rides the typecheck slot until it does.
-      typecheck-script: lint
+      typecheck-script: ''
+      lint-script: lint
       test-script: test
       build-script: build
 
   image:
-    uses: MohammadBnei/ukubi-ci/.github/workflows/image-build.yml@e784a69d5fe0b258b1b6899f89d42ee87eb89d5c # v0.2.1
+    uses: MohammadBnei/ukubi-ci/.github/workflows/image-build.yml@8782d42e1d4e5cd0b8af9d1a14c9d5414976a4c9 # v0.7.0
     with:
       image: editable-blog
       # A real value, as release.yml passes one, so the PR image builds the way the release does.
