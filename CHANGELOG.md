@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.45.5 - 2026-11-18
+
+### Other
+
+- **blog:** The agent that reported its own fence
+
 ## 0.45.4 - 2026-11-15
 
 ### Other
