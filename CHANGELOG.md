@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.45.6 - 2026-11-18
+
+### Other
+
+- **blog:** Building a long-lived ops agent with threads
+
 ## 0.45.5 - 2026-11-18
 
 ### Other
