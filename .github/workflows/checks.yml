@@ -2,30 +2,33 @@ name: checks
 
 # ponytail: PR checks are thin callers of MohammadBnei/ukubi-ci, pinned by sha
 # (the sha of a ukubi-ci tag; bump it when a newer tag ships).
-# release.yml calls this same file (workflow_call), so main cannot tag, build or deploy
-# unless lint, tests, the real build and the image build pass.
+# main only takes reviewed merges, so these gate what reaches main; release.yml
+# does not re-run them.
 # The trailers check lives in trailers.yml so a title or body edit re-runs it
 # without re-running (or skipping, and so hiding) the bun and image checks.
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-  workflow_call:
 
 permissions:
   contents: read
 
+concurrency:
+  group: checks-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   bun:
-    uses: MohammadBnei/ukubi-ci/.github/workflows/bun-checks.yml@e784a69d5fe0b258b1b6899f89d42ee87eb89d5c # v0.2.1
+    uses: MohammadBnei/ukubi-ci/.github/workflows/bun-checks.yml@9af316b5d779b2d5ef3f55b9f11e20b8bf3f6ce8 # v0.11.1
     with:
-      # bun-checks has no lint input yet; lint rides the typecheck slot until it does.
-      typecheck-script: lint
+      typecheck-script: '' # svelte-check runs inside the build script
+      lint-script: lint
       test-script: test
       build-script: build
 
   image:
-    uses: MohammadBnei/ukubi-ci/.github/workflows/image-build.yml@e784a69d5fe0b258b1b6899f89d42ee87eb89d5c # v0.2.1
+    uses: MohammadBnei/ukubi-ci/.github/workflows/image-build.yml@9af316b5d779b2d5ef3f55b9f11e20b8bf3f6ce8 # v0.11.1
     with:
       image: editable-blog
-      # A real value, as release.yml passes one, so the PR image builds the way the release does.
+      # A real value, as the release build passes one, so the PR image builds the way the release does.
       build-args: VERSION=0.0.0-pr

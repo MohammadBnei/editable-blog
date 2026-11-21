@@ -75,13 +75,13 @@ Frontmatter is plain YAML (via `gray-matter`); see existing files under
 
 - **Docker**: `Dockerfile` runs `bun run build` and serves the static
   `build/` output with `server.js`, a zero-dependency Bun file server.
-- **CI/CD**: on a push to `main`, `.github/workflows/release.yml` runs the
-  checks, cuts a release with ukubi-ci's git-cliff `release.yml` (tag plus a
-  `CHANGELOG.md` section), builds the image tagged with the commit sha and the
-  version as a build-arg, pushes it to the in-cluster registry, then bumps
-  `image.tag` in `helm/values.yaml`. The running version is at `GET /version`
-  and on the start log line. To release a tip the paths filter skipped:
-  `gh workflow run release.yml --ref main`. A push
+- **CI/CD** (Forgejo Actions): on a push to `main`, `.github/workflows/release.yml`
+  cuts a release with ukubi-ci's git-cliff `release.yml` (an annotated tag on
+  that commit; nothing committed to main), builds the image tagged with the
+  commit sha and the version as a build-arg, pushes it to the in-cluster
+  registry, then pins it in `helm/image.yaml` on the `deploy` branch. The
+  running version is at `GET /version` and on the start log line. To release a
+  tip the paths filter skipped, dispatch `release.yml` on main. A push
   that only touches root `*.md`, `*.yml`/`*.yaml` or `package.json` cuts no
   release (`paths-ignore`); content posts do.
 - **GitOps**: Argo CD renders `helm/values.yaml` through infra-bootstrap's

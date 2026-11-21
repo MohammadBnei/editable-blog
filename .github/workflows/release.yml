@@ -1,16 +1,13 @@
-# One run, one release: push to main -> checks -> release (ukubi-ci release.yml: git-cliff
-# version, CHANGELOG.md section, tag) -> image build (tagged with the release commit's
-# 12-char sha, the version passed as a build-arg) -> values bump. Sequential jobs need no
-# tag-push trigger, so no PAT: nothing in this repo holds one.
+# Push to main -> ukubi-ci release.yml (git-cliff: an annotated X.Y.Z tag on the
+# triggering commit, notes in its message; nothing is committed to main) -> ukubi-ci
+# image.yml: buildah on the ukubi-build runner, tagged with the built commit's 12-char
+# sha and the version as a build arg, pushed to the in-cluster registry, then the pin
+# <sha>@<digest> committed to helm/image.yaml on the `deploy` branch (Argo CD layers it
+# over helm/values.yaml). image.yml logs in to Infisical itself (Forgejo OIDC).
 #
-# The GITHUB_TOKEN never triggers workflows, so neither the `chore(release)` commit nor the
-# `chore(deploy)` values bump retriggers this pipeline: no loop. paths-ignore below is belt
-# and braces on top of it.
-#
-# A release can wait: ukubi-ci release only tags the commit whose checks gated the run, and
-# skips (green, "moved past" notice, tag output empty) when main gained a non-bot commit
-# meanwhile. If that newer commit only touched paths-ignore'd files, no run releases it; the
-# image is built as <last>+<sha>. Release the tip now with `gh workflow run release.yml --ref main`.
+# The PR checks gate main (it only takes reviewed merges), so they are not re-run here.
+# A commit that only touched paths-ignore'd files is released with the next push; to
+# release or rebuild the tip now, dispatch this workflow on main.
 name: Release, build and deploy
 
 on:
@@ -29,237 +26,37 @@ on:
     tags-ignore:
       - '*'
 
-# Concurrent releases: keep the newest, cancel the rest. The survivor releases from main's
-# tip, so it carries the cancelled runs' commits with it — one tag covering the lot, rather
-# than a queue of one-commit releases each rebuilding an image the next one obsoletes.
-#
-# Cancelling is only safe because the release push is atomic (branch and tag in one
-# `git push --atomic`, inside ukubi-ci release.yml). Everything before it is local to the
-# runner and dies with it.
+# Forgejo honours only workflow-level concurrency (the job-level groups inside
+# ukubi-ci's image.yml are ignored there): main runs queue, so a build whose release
+# tag is already pushed is never cancelled.
 concurrency:
-  group: release
-  cancel-in-progress: true
-
-env:
-  REGISTRY: registry.bnei.lan:5000
-  IMAGE_NAME: editable-blog
-  # Plaintext on purpose. A username is not a secret, and holding it as one cost agent-fleet
-  # a release: the secret was never set on that repo, so buildah got `--username ""` and the
-  # build failed with "Must provide --username with --password-stdin".
-  REGISTRY_USER: ci
-  # The registry password comes from the shared platform-commons project over OIDC rather
-  # than a repo secret (infra-bootstrap ADR-0049): one place to rotate it for every build
-  # repo. The identity binds a repository allowlist plus event_name push/workflow_dispatch.
-  INFISICAL_DOMAIN: https://infisical.bnei.dev
-  INFISICAL_PROJECT_SLUG: platform-commons-76pb
-  INFISICAL_ENV: dev
-  INFISICAL_IDENTITY_ID: 19807471-d73a-48d4-9e58-1dc34255ef77
+  group: app-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # The PR checks (lint, bun test, the real build, the image build) on main's own commit.
-  # Nothing below runs unless they pass: no tag, no image, no values bump.
-  checks:
-    uses: ./.github/workflows/checks.yml
-    permissions:
-      contents: read
-
-  # git-cliff via ukubi-ci: the next semver from Conventional Commits since the last tag,
-  # a CHANGELOG.md section, then one atomic push of `chore(release): X.Y.Z` plus its
-  # annotated tag. A dry run off main; outputs version, tag (empty when nothing was
-  # released) and released.
   release:
-    needs: checks
     permissions:
-      contents: write
-    uses: MohammadBnei/ukubi-ci/.github/workflows/release.yml@e784a69d5fe0b258b1b6899f89d42ee87eb89d5c # v0.2.1
+      contents: write # release.yml pushes the release tag
+    uses: MohammadBnei/ukubi-ci/.github/workflows/release.yml@9af316b5d779b2d5ef3f55b9f11e20b8bf3f6ce8 # v0.11.1
 
-  build-push:
+  # Build, push and deploy live in image.yml. A dispatch from a branch builds without
+  # deploying (push-default-branch-only), so it cannot evict the rollback image from
+  # Zot's last-3-tags retention.
+  image:
     needs: release
-    # Only main builds and pushes. A dispatch from a branch is a release dry run; its image
-    # would still count toward Zot's last-3-tags retention and could evict the deployed one.
-    # The PR image check already builds every branch.
-    if: github.ref == 'refs/heads/main'
-    outputs:
-      tag: ${{ steps.tag.outputs.value }}
-    # NOT `ukubi` — that label belongs to the runner holding a ServiceAccount token with
-    # `create jobs` in vos/vos-dev. This one has no cluster access at all, which is exactly
-    # why builds belong on it (ADR-0034).
-    runs-on: [self-hosted, ukubi-build]
-    # id-token mints the OIDC token Infisical authenticates. Declaring any permissions block
-    # resets every other scope to none, so contents: read is restated — checkout needs it.
+    uses: MohammadBnei/ukubi-ci/.github/workflows/image.yml@9af316b5d779b2d5ef3f55b9f11e20b8bf3f6ce8 # v0.11.1
+    with:
+      runs-on: '["ukubi-build"]'
+      image: editable-blog
+      # The pin file on the deploy branch (ukubi-ci 0.11), not main's values.
+      values-file: helm/image.yaml
+      # The release commit; empty on a dry run or when nothing was released.
+      ref: ${{ needs.release.outputs.tag }}
+      version-arg: true
+      version: ${{ needs.release.outputs.version }}
+      push-default-branch-only: true
+      # The release tag is pushed before the build: never cancel a running build.
+      cancel-in-progress: false
     permissions:
-      contents: read
-      id-token: write
-    steps:
-      # The release commit, not the commit that started this run. The tag is empty on a dry
-      # run or when nothing was released; then this is the triggering commit. Checking out
-      # `main` would race the next push. Full history: the step below reads the last tag.
-      - name: Checkout the released tag
-        uses: actions/checkout@v5
-        with:
-          ref: ${{ needs.release.outputs.tag }}
-          fetch-depth: 0
-
-      # Untagged with only bot commits since the last release (a dispatch with nothing to
-      # release): rebuild that release under its own sha rather than push a new sha tag of
-      # the same content, which would count toward Zot's last-3 and evict a real release.
-      - name: Compute the image tag
-        id: tag
-        env:
-          VERSION: ${{ needs.release.outputs.version }}
-          RELEASE_TAG: ${{ needs.release.outputs.tag }}
-        run: |
-          set -euo pipefail
-          # An empty or misnamed output would ship version "" silently. This repo has
-          # releases, so the last one is always a version.
-          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
-            || { echo "::error::bad VERSION '$VERSION' from release; rerun: gh workflow run release.yml --ref main"; exit 1; }
-          # ponytail: copy of ukubi-ci release.yml's bot-commit regex; keep them in step.
-          bots='^(chore\((release|deploy)\)|chore: update helm image tag)'
-          if [ -z "$RELEASE_TAG" ] && ! git log --format=%s "$VERSION..HEAD" | grep -vE "$bots" >/dev/null; then
-            RELEASE_TAG=$VERSION
-            git checkout -q "$RELEASE_TAG"
-          fi
-          echo "value=$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
-          echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
-
-      # Not baked into the runner image: one apt-get was not worth a build pipeline and its
-      # own chicken-and-egg. EPHEMERAL=false keeps the runner alive between jobs, so this is
-      # a no-op after the first run. Note `sudo apt-get` only works for this — the sudoers
-      # entry on that box grants buildah and nothing else.
-      - name: Ensure buildah
-        run: command -v buildah || (sudo apt-get update -qq && sudo apt-get install -y -qq buildah)
-
-      # Only REGISTRY_PASSWORD, not the whole environment. The identity can read all of
-      # platform-commons, so this is hygiene rather than a boundary — but it keeps the other
-      # shared values out of the build environment.
-      - name: Read the registry password from Infisical
-        uses: Infisical/secrets-action@v1.0.12
-        with:
-          method: oidc
-          identity-id: ${{ env.INFISICAL_IDENTITY_ID }}
-          oidc-audience: infisical.bnei.dev
-          domain: ${{ env.INFISICAL_DOMAIN }}
-          project-slug: ${{ env.INFISICAL_PROJECT_SLUG }}
-          env-slug: ${{ env.INFISICAL_ENV }}
-          secret-path: /
-          secret-name: REGISTRY_PASSWORD
-          export-type: env
-
-      # GitHub only auto-masks `secrets.*`, and this action's README does not document
-      # masking. An unmasked Infisical value leaked a token in cleartext in this estate once.
-      - name: Mask the fetched password
-        run: echo "::add-mask::$REGISTRY_PASSWORD"
-
-      # --tls-verify=false: the registry is plain HTTP, because Let's Encrypt cannot issue
-      # for `.lan`. Anonymous *reads* are open (that is how the nodes pull without
-      # credentials); pushing requires this login.
-      #
-      # Every buildah call goes through sudo, and they must all agree: rootless buildah in
-      # this unprivileged LXC only gets a single UID mapping (newuidmap is not permitted), so
-      # any image chowning to a second UID dies with "insufficient UIDs or GIDs available in
-      # user namespace". Real root is why the builder is an LXC at all. Mixing them would
-      # also split the auth file — login writes under /run/containers/<uid>/auth.json, so a
-      # rootless login is invisible to a rootful push.
-      - name: Registry login
-        run: |
-          set -euo pipefail
-          [ -n "${REGISTRY_PASSWORD:-}" ] || { echo "Infisical returned no REGISTRY_PASSWORD"; exit 1; }
-          printf '%s' "$REGISTRY_PASSWORD" | sudo buildah login \
-            --tls-verify=false \
-            --username "$REGISTRY_USER" \
-            --password-stdin "$REGISTRY"
-
-      - name: Build and push
-        id: build
-        env:
-          TAG: ${{ steps.tag.outputs.value }}
-          VERSION: ${{ needs.release.outputs.version }}
-          RELEASE_TAG: ${{ steps.tag.outputs.release_tag }}
-        run: |
-          set -euo pipefail
-          # No release tag: this commit is not a release (main moved on mid-release). VERSION
-          # is then the last release, so X.Y.Z+<sha>. VERSION is checked in the step above.
-          # (Only main gets here: see the job's if.)
-          [ -n "$RELEASE_TAG" ] || VERSION="$VERSION+$TAG"
-          echo "building $IMAGE_NAME:$TAG as version $VERSION"
-          start=$(date +%s)
-          # chroot isolation only. The storage driver is deliberately NOT named here: it is
-          # pinned to overlay on the build box itself, so this build, the cleanup below and
-          # the weekly prune timer cannot end up on different stores.
-          sudo buildah bud \
-            --isolation chroot \
-            --format docker \
-            --build-arg "VERSION=$VERSION" \
-            -t "$REGISTRY/$IMAGE_NAME:$TAG" \
-            .
-          build_end=$(date +%s)
-          sudo buildah push --tls-verify=false "$REGISTRY/$IMAGE_NAME:$TAG"
-          end=$(date +%s)
-          echo "build_seconds=$((build_end - start))" >> "$GITHUB_OUTPUT"
-          echo "push_seconds=$((end - build_end))"    >> "$GITHUB_OUTPUT"
-          echo "total_seconds=$((end - start))"       >> "$GITHUB_OUTPUT"
-
-      # ADR-0034's verification V10 asks for a number, not an impression. The Docker Hub
-      # workflow this used to be compared against is gone, so this is now an absolute
-      # measurement rather than a comparison — still worth having, since a regression in it
-      # is the first sign the build box is unwell.
-      - name: Timing summary
-        run: |
-          {
-            echo "### Local registry build"
-            echo
-            echo "| phase | seconds |"
-            echo "| --- | --- |"
-            echo "| build | ${{ steps.build.outputs.build_seconds }} |"
-            echo "| push | ${{ steps.build.outputs.push_seconds }} |"
-            echo "| total | ${{ steps.build.outputs.total_seconds }} |"
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      # Only this build's tag. NEVER `buildah rmi --all` — the box is shared with the other
-      # build repos and the base-image cache is the whole reason they live together.
-      - name: Clean up this build's images
-        if: always()
-        env:
-          TAG: ${{ steps.tag.outputs.value }}
-        run: sudo buildah rmi "$REGISTRY/$IMAGE_NAME:$TAG" 2>/dev/null || true
-
-  deploy:
-    needs: build-push
-    runs-on: ubuntu-latest
-    # contents: write to push the values bump. This commit is what ArgoCD actually reads;
-    # the image existing in the registry is not a deployment.
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout main
-        uses: actions/checkout@v5
-        with:
-          ref: main
-          fetch-depth: 0
-
-      - name: Update helm values image tag
-        env:
-          TAG: ${{ needs.build-push.outputs.tag }}
-        run: |
-          set -euo pipefail
-          [ -n "$TAG" ] || { echo "::error::empty image tag"; exit 1; }
-          yq -i '.image.tag = strenv(TAG)' helm/values.yaml
-          # A no-op bump is the silent failure: green deploy, old image in the cluster.
-          [ "$(yq '.image.tag' helm/values.yaml)" = "$TAG" ] \
-            || { echo "::error::tag bump did not land in helm/values.yaml"; exit 1; }
-
-      - name: Commit and push
-        env:
-          TAG: ${{ needs.build-push.outputs.tag }}
-        run: |
-          set -euo pipefail
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git add helm/values.yaml
-          git diff --cached --quiet && { echo "tag unchanged"; exit 0; }
-          git commit -m "chore(deploy): bump editable-blog image to ${TAG}"
-          # A content commit can land between the checkout above and this push; rebase
-          # rather than fail the release after the image is already in the registry.
-          git pull --rebase --autostash origin main
-          git push
+      contents: write # the deploy job pushes the bump to the deploy branch
+      id-token: write # the Infisical OIDC login

@@ -11,8 +11,9 @@ image:
   #
   # The tag is the 12-char sha of the built commit: the release commit, or
   # an untagged one when main moved past (older tags are semver).
-  # release.yml builds and pushes it on the ukubi-build runner, then its
-  # deploy job bumps image.tag below with yq in a chore(deploy) commit.
+  # release.yml (ukubi-ci image.yml) builds and pushes it on the ukubi-build
+  # runner, then pins it in helm/image.yaml on the deploy branch, which Argo CD
+  # layers over this file. The tag below is the last pin made on main.
   repository: registry.bnei.lan:5000/editable-blog
   tag: "983056588b0f"
 service:
