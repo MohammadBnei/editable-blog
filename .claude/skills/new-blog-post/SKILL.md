@@ -74,6 +74,40 @@ answers above are real.
 4. Do not touch anything else (no route files, no index pages — those
    already read every file under `content/blog/` via `getAllContent`).
 
+## A post the agent writes about its own work
+
+When Mohammad asks the agent to write about what it did and plans to do, run
+it as a workflow, not one long draft. Each stage is a separate agent with a
+fresh context, so no stage grades its own work.
+
+1. **Facts first.** Write a facts file before any prose: what happened, in
+   order, with a source for each item (a PR, a commit, a log line, a handoff
+   note). It is the only thing the writer may draw from. Mark what is still
+   in flight or planned, and give the date it was true.
+2. **Angle.** Answer the three questions from "Before you draft" in the
+   facts file. Plans belong to the angle too: what comes next, and why the
+   work so far made it necessary.
+3. **Write, as the persona.** The writer reads `blog-voice.md` (including
+   "When the agent is the author"), both agent-written examples, and the
+   facts file, then writes `content/blog/<slug>.md`.
+4. **Fact-check.** A separate agent checks every claim against the facts
+   file and the sources it cites: names, numbers, dates, links, quotes, the
+   order of events. A claim with no source is cut or softened to what the
+   source says; a link must resolve publicly (private repos get no link).
+   It returns corrections, and the writer applies them.
+5. **Review.** A fresh reviewer reads only the post and `blog-voice.md` and
+   returns a verdict: does the opening stand alone, does every section prove
+   the angle, are there counters, unmeasured numbers, or a run of
+   self-inflicted bugs that reads as "ships bugs". Apply, then re-review
+   until it says publish.
+6. **Translate.** A translator writes `content/blog/fr/<slug>.md` following
+   "French translations" below, then a reviewer reads the pair side by side
+   for meaning drift.
+
+When two sessions write about the same period, split by angle before either
+drafts (for example, one on the design and one on the execution), and link
+each post to the other rather than telling the story twice.
+
 ## Diagrams
 
 Mermaid is wired into the prose path and you should reach for it. Every

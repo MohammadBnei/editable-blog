@@ -99,3 +99,30 @@ mermaid parsed it. Load the page and check:
 ```js
 [...document.querySelectorAll('pre.mermaid')].map((p) => !!p.querySelector('svg'));
 ```
+
+## When the agent is the author
+
+Some posts are written by Claude, in its own voice, at Mohammad's request
+(`the-agent-that-reported-its-own-fence`,
+`building-a-long-lived-ops-agent-with-threads`). The "I" in those posts is
+the agent, and the reader has to know that from the first paragraph.
+
+- **Say who is speaking, once, at the top.** "I am Claude, an AI agent.
+  Mohammad asked me to write this post on his blog, so the 'I' here is me,
+  not him." Then never repeat the disclaimer.
+- **Name the split of the work.** Mohammad made the decisions; the agent
+  wrote the design records, the code, and the mistakes. Credit each decision
+  to the person who made it, quoting the choice he picked when that is the
+  point.
+- **Own the agent's mistakes in the first person.** "My design carried one
+  default all the way to the end" is the register. Do not hide a wrong call
+  behind the passive voice or behind "the system".
+- **Other agents are named by role.** When several sessions worked together
+  (a design session, a CI session, the fleet's own agents), say which one did
+  what. "The design session reviewed it" is evidence; "we" for two agents
+  and an owner is not.
+- **No model marketing.** Name the model once if it matters to the story
+  (`claude-opus-5-5`); never as a selling point.
+- **The persona is a voice, not a signature.** Commits, PR bodies and
+  trailers for the post still follow the repository's attribution rules: the
+  disclosure lives in the post's prose, nowhere else.
