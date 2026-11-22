@@ -2,33 +2,30 @@ name: checks
 
 # ponytail: PR checks are thin callers of MohammadBnei/ukubi-ci, pinned by sha
 # (the sha of a ukubi-ci tag; bump it when a newer tag ships).
-# main only takes reviewed merges, so these gate what reaches main; release.yml
-# does not re-run them.
+# They gate what reaches main, and release.yml calls them again (workflow_call)
+# before it cuts a release: checks on main gate CD (owner decision, 2026-11-22).
 # The trailers check lives in trailers.yml so a title or body edit re-runs it
-# without re-running (or skipping, and so hiding) the bun and image checks.
+# without re-running (or skipping, and so hiding) the bun check. No image build
+# on a PR (owner decision, CI/CD split): images are CD's, from reviewed main.
 on:
+  workflow_call:
   pull_request:
     types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
 
+# A newer PR push cancels the older run; release.yml's call never cancels. The
+# PR payload, not event_name, which Forgejo reports as workflow_call in a call.
 concurrency:
-  group: checks-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event.pull_request && true || false }}
 
 jobs:
   bun:
-    uses: MohammadBnei/ukubi-ci/.github/workflows/bun-checks.yml@9af316b5d779b2d5ef3f55b9f11e20b8bf3f6ce8 # v0.11.1
+    uses: MohammadBnei/ukubi-ci/.github/workflows/bun-checks.yml@a1fff4170c861af16467a99fe5185bbb85bdfd08 # v0.11.3
     with:
       typecheck-script: '' # svelte-check runs inside the build script
       lint-script: lint
       test-script: test
       build-script: build
-
-  image:
-    uses: MohammadBnei/ukubi-ci/.github/workflows/image-build.yml@9af316b5d779b2d5ef3f55b9f11e20b8bf3f6ce8 # v0.11.1
-    with:
-      image: editable-blog
-      # A real value, as the release build passes one, so the PR image builds the way the release does.
-      build-args: VERSION=0.0.0-pr

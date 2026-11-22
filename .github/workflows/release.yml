@@ -5,7 +5,8 @@
 # <sha>@<digest> committed to helm/image.yaml on the `deploy` branch (Argo CD layers it
 # over helm/values.yaml). image.yml logs in to Infisical itself (Forgejo OIDC).
 #
-# The PR checks gate main (it only takes reviewed merges), so they are not re-run here.
+# checks.yml re-runs first (the `checks` job): a red check on main cuts no release and
+# builds no image (owner decision, 2026-11-22).
 # A commit that only touched paths-ignore'd files is released with the next push; to
 # release or rebuild the tip now, dispatch this workflow on main.
 name: Release, build and deploy
@@ -34,17 +35,25 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  # No if: on this uses: job. Forgejo evaluates it inside the called workflow, where
+  # event_name is workflow_call.
+  checks:
+    uses: ./.github/workflows/checks.yml
+    permissions:
+      contents: read
+
   release:
+    needs: checks
     permissions:
       contents: write # release.yml pushes the release tag
-    uses: MohammadBnei/ukubi-ci/.github/workflows/release.yml@9af316b5d779b2d5ef3f55b9f11e20b8bf3f6ce8 # v0.11.1
+    uses: MohammadBnei/ukubi-ci/.github/workflows/release.yml@a1fff4170c861af16467a99fe5185bbb85bdfd08 # v0.11.3
 
   # Build, push and deploy live in image.yml. A dispatch from a branch builds without
   # deploying (push-default-branch-only), so it cannot evict the rollback image from
   # Zot's last-3-tags retention.
   image:
     needs: release
-    uses: MohammadBnei/ukubi-ci/.github/workflows/image.yml@9af316b5d779b2d5ef3f55b9f11e20b8bf3f6ce8 # v0.11.1
+    uses: MohammadBnei/ukubi-ci/.github/workflows/image.yml@a1fff4170c861af16467a99fe5185bbb85bdfd08 # v0.11.3
     with:
       runs-on: '["ukubi-build"]'
       image: editable-blog
