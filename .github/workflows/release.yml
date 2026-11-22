@@ -46,14 +46,14 @@ jobs:
     needs: checks
     permissions:
       contents: write # release.yml pushes the release tag
-    uses: MohammadBnei/ukubi-ci/.github/workflows/release.yml@a1fff4170c861af16467a99fe5185bbb85bdfd08 # v0.11.3
+    uses: MohammadBnei/ukubi-ci/.github/workflows/release.yml@d683f2091575188024f7e1200e619977d9db19ae # ukubi-ci PR 28 head; re-pin to the release
 
   # Build, push and deploy live in image.yml. A dispatch from a branch builds without
   # deploying (push-default-branch-only), so it cannot evict the rollback image from
   # Zot's last-3-tags retention.
   image:
     needs: release
-    uses: MohammadBnei/ukubi-ci/.github/workflows/image.yml@a1fff4170c861af16467a99fe5185bbb85bdfd08 # v0.11.3
+    uses: MohammadBnei/ukubi-ci/.github/workflows/image.yml@d683f2091575188024f7e1200e619977d9db19ae # ukubi-ci PR 28 head; re-pin to the release
     with:
       runs-on: '["ukubi-build"]'
       image: editable-blog
