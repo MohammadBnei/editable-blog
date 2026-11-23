@@ -228,15 +228,15 @@
 
 * add retro interview skill and enhance blog post rendering with interview format ([d07469a](https://github.com/MohammadBnei/editable-blog/commit/d07469a01e47b101ec092353d3036b1538dd1969))
 
-## [0.34.1](/compare/0.34.0...0.34.1) (2026-03-04)
+## [0.34.1](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.34.0...0.34.1) (2026-03-04)
 
-# [0.34.0](/compare/0.33.0...0.34.0) (2026-03-04)
+# [0.34.0](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.33.0...0.34.0) (2026-03-04)
 
 ### Features
 
 - add form counterparts for journal remote commands c8801d4
 
-# [0.33.0](/compare/0.32.0...0.33.0) (2026-03-04)
+# [0.33.0](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.32.0...0.33.0) (2026-03-04)
 
 ### Bug Fixes
 
@@ -248,7 +248,7 @@
 - implement @vercel/mcp-adapter for MCP endpoint handler 381923b
 - implement MCP server handler using h3 in server hooks 7a7e0b8
 
-# [0.32.0](/compare/0.31.6...0.32.0) (2026-03-04)
+# [0.32.0](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.31.6...0.32.0) (2026-03-04)
 
 ### Bug Fixes
 
@@ -280,23 +280,23 @@
 - make journal items clickable to view details 142da67
 - move journal entry form to separate page 80b8567
 
-## [0.31.6](/compare/0.31.5...0.31.6) (2025-12-19)
+## [0.31.6](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.31.5...0.31.6) (2025-12-19)
 
-## [0.31.5](/compare/0.31.4...0.31.5) (2025-12-19)
+## [0.31.5](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.31.4...0.31.5) (2025-12-19)
 
-## [0.31.4](/compare/0.31.3...0.31.4) (2025-12-19)
+## [0.31.4](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.31.3...0.31.4) (2025-12-19)
 
-## [0.31.3](/compare/0.31.2...0.31.3) (2025-12-19)
+## [0.31.3](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.31.2...0.31.3) (2025-12-19)
 
-## [0.31.2](/compare/0.31.1...0.31.2) (2025-12-18)
+## [0.31.2](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.31.1...0.31.2) (2025-12-18)
 
-## [0.31.1](/compare/0.31.0...0.31.1) (2025-12-18)
+## [0.31.1](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.31.0...0.31.1) (2025-12-18)
 
 ### Bug Fixes
 
 - **import json:** toggle edition upon importing new json file ffd983d
 
-# [0.31.0](/compare/0.30.3...0.31.0) (2025-12-18)
+# [0.31.0](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.30.3...0.31.0) (2025-12-18)
 
 ### Features
 
@@ -308,23 +308,23 @@
 - Separate brand link from navigation links 19875ae
 - update landing page hero section with new headline and CTA cad16f8
 
-## [0.30.3](/compare/0.30.2...0.30.3) (2025-12-03)
+## [0.30.3](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.30.2...0.30.3) (2025-12-03)
 
-## [0.30.2](/compare/0.30.1...0.30.2) (2025-12-03)
+## [0.30.2](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.30.1...0.30.2) (2025-12-03)
 
 ### Bug Fixes
 
 - **richText:** allowing mailto links 28d4cf4
 
-## [0.30.1](/compare/0.30.0...0.30.1) (2025-11-26)
+## [0.30.1](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.30.0...0.30.1) (2025-11-26)
 
-# [0.30.0](/compare/0.29.0...0.30.0) (2025-11-26)
+# [0.30.0](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.29.0...0.30.0) (2025-11-26)
 
 ### Features
 
 - Apply card system to blog article teasers da9fec2
 
-# [0.29.0](/compare/0.28.10...0.29.0) (2025-11-26)
+# [0.29.0](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.28.10...0.29.0) (2025-11-26)
 
 ### Bug Fixes
 
@@ -338,27 +338,27 @@
 - add upload success modal with asset URL and copy functionality 54b57d2
 - re-add upload function with supported file types and Safari compatibility 62f7a22
 
-## [0.28.10](/compare/0.28.9...0.28.10) (2025-11-26)
+## [0.28.10](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.28.9...0.28.10) (2025-11-26)
 
-## [0.28.9](/compare/0.28.8...0.28.9) (2025-11-25)
+## [0.28.9](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.28.8...0.28.9) (2025-11-25)
 
-## [0.28.8](/compare/0.28.7...0.28.8) (2025-11-25)
+## [0.28.8](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.28.7...0.28.8) (2025-11-25)
 
-## [0.28.7](/compare/0.28.6...0.28.7) (2025-11-25)
+## [0.28.7](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.28.6...0.28.7) (2025-11-25)
 
-## [0.28.6](/compare/0.28.5...0.28.6) (2025-11-25)
+## [0.28.6](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.28.5...0.28.6) (2025-11-25)
 
-## [0.28.5](/compare/0.28.4...0.28.5) (2025-11-25)
+## [0.28.5](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.28.4...0.28.5) (2025-11-25)
 
-## [0.28.4](/compare/0.28.3...0.28.4) (2025-11-25)
+## [0.28.4](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.28.3...0.28.4) (2025-11-25)
 
-## [0.28.3](/compare/0.28.2...0.28.3) (2025-11-25)
+## [0.28.3](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.28.2...0.28.3) (2025-11-25)
 
-## [0.28.2](/compare/0.28.1...0.28.2) (2025-11-25)
+## [0.28.2](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.28.1...0.28.2) (2025-11-25)
 
-## [0.28.1](/compare/0.28.0...0.28.1) (2025-11-25)
+## [0.28.1](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.28.0...0.28.1) (2025-11-25)
 
-# [0.28.0](/compare/0.27.0...0.28.0) (2025-11-25)
+# [0.28.0](https://git.bnei.dev/MohammadBnei/editable-blog/compare/0.27.0...0.28.0) (2025-11-25)
 
 ### Bug Fixes
 
