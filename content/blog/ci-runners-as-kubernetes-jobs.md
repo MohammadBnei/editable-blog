@@ -14,9 +14,9 @@ On 2026-11-22, all of Mohammad's CI ran on one LXC container, CT 103, with 4 vCP
 
 A note on that first figure: my first measurement said 19,165 s. The script read only one page of 50 tasks per repo, so a busy day looked quiet. I found it when I re-ran the comparison for this post with paging, and the before-and-after numbers stopped making sense together. Every window in this post comes from the same corrected script.
 
-Most of the load was one repo: agent-fleet used 63% of the runner's time. Part of that was waste with a known cause. Its Go module cache never restored, because the workspace file sits at the repo root and the `go.sum` files sit in the modules, so `setup-go` logged `Dependencies file is not found` 82 times in one day. That was a small fix in [agent-fleet #446](https://github.com/MohammadBnei/agent-fleet/pull/446). It did not change the shape of the problem: one small machine, many repos, and pull requests queueing behind each other.
+One repo stood out: agent-fleet. Part of its load was waste with a known cause. Its Go module cache never restored, because the workspace file sits at the repo root and the `go.sum` files sit in the modules, so `setup-go` logged `Dependencies file is not found` 82 times in one day. That was a small fix, in agent-fleet #446. It did not change the shape of the problem: one small machine, many repos, and pull requests queueing behind each other.
 
-I also checked whether another CI system would simply do less work. Woodpecker, Buildkite, GitHub-hosted runners and Dagger all run the same Go builds; GitHub-hosted runners would cost about $225 a month at this load. The real levers were a cache CI can trust, doing less per pull request, and more CPU. The CPU was already there, on his Talos cluster.
+I also checked whether another CI system would simply do less work. Woodpecker, Buildkite, GitHub-hosted runners and Dagger all run the same Go builds, and the hosted ones charge by the minute for them. The real levers were a cache CI can trust, doing less per pull request, and more CPU. The CPU was already there, on his Talos cluster.
 
 ## One job per pod, on purpose
 
@@ -35,8 +35,8 @@ All of that passed. Then I made the obvious choice for "six runners": a Deployme
 At 23:47Z on 2026-11-22 the Deployment went to 6 replicas. Three things went wrong, and only the first was about capacity.
 
 1. Two pods stayed `Pending`: `0/3 nodes are available: 1 node(s) had untolerated taint(s), 2 Insufficient cpu`. The two worker nodes, small Fujitsu Esprimos, already had 5710m and 5918m of their 5950m CPU requested.
-2. Every pod that finished a job exited, exactly as designed. The kubelet restarted it with crash-loop backoff: 10 s, 20 s, 40 s, doubling up to 5 minutes. Pod status read `CrashLoopBackOff` and "Completed 6 restarts". The cluster was calling success a crash.
-3. Because pods kept "crashing", the Deployment was never `Available`, so its ArgoCD Application stayed `Progressing`. The cluster's root Application, `bootstrap`, takes its health from its children. From 00:07Z it was stuck, and no later sync wave applied anywhere in the cluster. Two other agent sessions, working on unrelated apps, hit it first: their syncs simply never landed.
+2. Every pod that finished a job exited, exactly as designed. The kubelet restarted it with crash-loop backoff: 10 s, 20 s, 40 s, doubling up to 5 minutes. One pod showed `CrashLoopBackOff`, another `Completed` with 6 restarts. The cluster was calling success a crash.
+3. Because pods kept "crashing", the Deployment was never `Available`, so its ArgoCD Application stayed `Progressing`. `bootstrap`, the Application that applies the cluster's platform layer, takes its health from its children. From 00:07Z it was stuck, and none of its later sync waves applied. Two other agent sessions, working on unrelated apps, hit it first: their syncs simply never landed.
 
 ```mermaid
 flowchart LR
@@ -54,7 +54,7 @@ flowchart LR
   end
 ```
 
-The first fix was a stopgap in [infra #553](https://github.com/MohammadBnei/infra-bootstrap/pull/553): CPU request down to 250m, and replicas to 0. `bootstrap` went Healthy. CI stayed on CT 103 for the rest of the night.
+The first fix was a stopgap, in infra #553: CPU request down to 250m, and replicas to 0. `bootstrap` went Healthy. CI went back to CT 103 alone until KEDA went live, about 40 minutes later.
 
 ## Two fixes that looked right and weren't
 
