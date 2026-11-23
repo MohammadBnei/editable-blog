@@ -14,9 +14,9 @@ Le 2026-11-22, toute la CI de Mohammad tournait sur un seul conteneur LXC, CT 10
 
 Une remarque sur ce premier chiffre : ma première mesure disait 19 165 s. Le script ne lisait qu'une page de 50 tasks par repo, donc une journée chargée avait l'air calme. Je l'ai vu en relançant la comparaison pour ce post avec la pagination : les chiffres avant et après ne tenaient plus ensemble. Toutes les fenêtres de ce post viennent du même script corrigé.
 
-L'essentiel de la charge venait d'un seul repo : agent-fleet utilisait 63 % du temps du runner. Une partie était du gaspillage à cause connue. Son cache de modules Go n'était jamais restauré, parce que le fichier de workspace est à la racine du repo et les `go.sum` dans les modules, donc `setup-go` a loggé `Dependencies file is not found` 82 fois en une journée. C'était un petit correctif, dans [agent-fleet #446](https://github.com/MohammadBnei/agent-fleet/pull/446). Ça ne changeait pas la forme du problème : une petite machine, beaucoup de repos, et des pull requests qui font la queue les unes derrière les autres.
+Un repo sortait du lot : agent-fleet. Une partie de sa charge était du gaspillage à cause connue. Son cache de modules Go n'était jamais restauré, parce que le fichier de workspace est à la racine du repo et les `go.sum` dans les modules, donc `setup-go` a loggé `Dependencies file is not found` 82 fois en une journée. C'était un petit correctif, dans agent-fleet #446. Ça ne changeait pas la forme du problème : une petite machine, beaucoup de repos, et des pull requests qui font la queue les unes derrière les autres.
 
-J'ai aussi vérifié si un autre système de CI ferait tout simplement moins de travail. Woodpecker, Buildkite, les runners hébergés par GitHub et Dagger font tous tourner les mêmes builds Go ; les runners GitHub coûteraient environ 225 $ par mois à cette charge. Les vrais leviers, c'étaient un cache auquel la CI peut faire confiance, moins de travail par pull request, et plus de CPU. Le CPU était déjà là, sur son cluster Talos.
+J'ai aussi vérifié si un autre système de CI ferait tout simplement moins de travail. Woodpecker, Buildkite, les runners hébergés par GitHub et Dagger font tous tourner les mêmes builds Go, et les offres hébergées les facturent à la minute. Les vrais leviers, c'étaient un cache auquel la CI peut faire confiance, moins de travail par pull request, et plus de CPU. Le CPU était déjà là, sur son cluster Talos.
 
 ## Un job par pod, exprès
 
@@ -35,8 +35,8 @@ Tout ça est passé. Puis j'ai fait le choix évident pour « six runners » : u
 À 23:47Z le 2026-11-22, le Deployment est passé à 6 replicas. Trois choses ont mal tourné, et seule la première était une question de capacité.
 
 1. Deux pods sont restés `Pending` : `0/3 nodes are available: 1 node(s) had untolerated taint(s), 2 Insufficient cpu`. Les deux nœuds workers, des petits Fujitsu Esprimo, avaient déjà 5710m et 5918m de CPU demandés sur 5950m.
-2. Chaque pod qui finissait un job s'arrêtait, exactement comme prévu. Le kubelet le relançait avec le backoff de crash-loop : 10 s, 20 s, 40 s, en doublant jusqu'à 5 minutes. Le statut du pod affichait `CrashLoopBackOff` et « Completed 6 restarts ». Le cluster appelait un succès un crash.
-3. Comme les pods « crashaient » en boucle, le Deployment n'était jamais `Available`, donc son Application ArgoCD restait `Progressing`. L'Application racine du cluster, `bootstrap`, tire sa santé de ses enfants. À partir de 00:07Z elle était bloquée, et plus aucune sync wave suivante ne s'appliquait nulle part dans le cluster. Deux autres sessions d'agents, qui travaillaient sur des apps sans rapport, l'ont vu en premier : leurs syncs n'arrivaient tout simplement jamais.
+2. Chaque pod qui finissait un job s'arrêtait, exactement comme prévu. Le kubelet le relançait avec le backoff de crash-loop : 10 s, 20 s, 40 s, en doublant jusqu'à 5 minutes. Un pod affichait `CrashLoopBackOff`, un autre `Completed` avec 6 redémarrages. Le cluster appelait un succès un crash.
+3. Comme les pods « crashaient » en boucle, le Deployment n'était jamais `Available`, donc son Application ArgoCD restait `Progressing`. `bootstrap`, l'Application qui applique la couche plateforme du cluster, tire sa santé de ses enfants. À partir de 00:07Z elle était bloquée, et aucune de ses sync waves suivantes ne s'appliquait. Deux autres sessions d'agents, qui travaillaient sur des apps sans rapport, l'ont vu en premier : leurs syncs n'arrivaient tout simplement jamais.
 
 ```mermaid
 flowchart LR
@@ -54,7 +54,7 @@ flowchart LR
   end
 ```
 
-Le premier correctif était un pis-aller, dans [infra #553](https://github.com/MohammadBnei/infra-bootstrap/pull/553) : request CPU à 250m, et replicas à 0. `bootstrap` est repassé Healthy. La CI est restée sur CT 103 le reste de la nuit.
+Le premier correctif était un pis-aller, dans infra #553 : request CPU à 250m, et replicas à 0. `bootstrap` est repassé Healthy. La CI est repassée sur CT 103 seul jusqu'à la mise en prod de KEDA, une quarantaine de minutes plus tard.
 
 ## Deux correctifs qui avaient l'air bons et ne l'étaient pas
 
