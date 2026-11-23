@@ -3,7 +3,7 @@ name: weekly-rundown
 description: >
   Write the weekly rundown of Mohammad's work across his repos — merged PRs,
   new ADRs, what stalled — as a markdown file under content/blog/weekly/,
-  from GitHub CLI data, the session journal, and agent-read repo state.
+  from Forgejo API data, the session journal, and agent-read repo state.
   Trigger: "weekly rundown",
   "write this week's rundown", "/weekly-rundown", or the scheduled
   editable-blog proposal that says to run this skill.
@@ -32,27 +32,33 @@ result and should be written as one. Never pad it.
 Seven days back from today, `YYYY-MM-DD`. Every query below uses that date;
 state it in the post so a reader knows what the rundown covers.
 
-### 2. Pull the facts with `gh`
+### 2. Pull the facts from the Forgejo API
+
+Forgejo (git.bnei.dev) is the primary forge and GitHub only a push mirror, so
+read Forgejo, never `gh`. Cloudflare blocks scripted calls to `git.bnei.dev`,
+so on the Mac use the workspace helper
+`~/Code/ukubi/tools/fj.sh GET <path>`, run inside the infisical wrapper from the
+workspace CLAUDE.md; `<path>` is relative to `/api/v1`. Page with
+`&page=N&limit=50` until a page comes back empty.
 
 Per repo:
 
 ```bash
-gh pr list --repo <repo> --state merged --search "merged:>=<since>" \
-  --json number,title,mergedAt,url
-gh pr list --repo <repo> --state open --json number,title,createdAt,isDraft,url
-gh issue list --repo <repo> --state open --search "created:>=<since>" \
-  --json number,title,createdAt,url
-gh api "repos/<repo>/commits?since=<since>T00:00:00Z&path=docs/adr" \
-  --jq '.[] | "\(.sha[0:7]) \(.commit.message | split("\n")[0])"'
+fj() { ~/Code/ukubi/tools/fj.sh GET "$1" | sed '$d'; }   # drop the trailing HTTP line
+fj "/repos/<repo>/pulls?state=closed&sort=recentupdate&limit=50" \
+  | jq '.[] | select(.merged and .merged_at >= "<since>") | {number,title,merged_at,html_url}'
+fj "/repos/<repo>/pulls?state=open&limit=50"
+fj "/repos/<repo>/issues?type=issues&state=open&since=<since>T00:00:00Z&limit=50"
+fj "/repos/<repo>/commits?since=<since>T00:00:00Z&path=docs/adr&limit=50" \
+  | jq -r '.[] | "\(.sha[0:7]) \(.commit.message | split("\n")[0])"'
 ```
 
-`gh` is on the always-ask permission list, so these prompt. That is expected:
-a human opened the proposal that started this session, so a human is there to
-answer.
+Where `fj.sh` is not available (a fleet pod), write "not read (no Forgejo
+access)" instead of reporting `gh` counts from the mirror.
 
 ### 3. Read the journal for the window
 
-`gh` only sees what became a PR or an issue. The knowledge journal is where
+Forgejo only shows what became a PR or an issue. The knowledge journal is where
 sessions record gotchas, dead ends and deliberately-not-fixed things — the
 material for "what stalled" that exists nowhere else, across every repo in the
 fleet, not only the three above.
@@ -82,7 +88,7 @@ Notes:
   rundown itself, no query is the point.
 - `repo` takes the **bare** name (`agent-fleet`, not `MohammadBnei/agent-fleet`,
   which matches nothing). You rarely want it here.
-- A journal entry is a claim, not a fact. If it contradicts `gh`, `gh` wins for
+- A journal entry is a claim, not a fact. If it contradicts the forge, the forge wins for
   what shipped and the journal wins for why.
 
 #### The privacy gate
@@ -99,7 +105,7 @@ and some repos are not. Before an entry informs the draft, sort it by its
   feature was shelved can let you write "deprioritised" instead of guessing —
   and only when the public reason stands on its own without it.
 - **Any other private repo** — same rule as `hq`. If you can't tell whether a
-  repo is public, check `gh repo view <owner>/<repo> --json visibility`; when in
+  repo is public, check `fj.sh GET /repos/<owner>/<repo>` and read `private`; when in
   doubt, treat it as private.
 - **Public repos** — usable as before; their entries are still claims, per the notes above.
 
@@ -169,8 +175,7 @@ open a PR:
 git add content/blog/weekly/<date>.md && git commit && git push origin main
 ```
 
-Commit message: `content(weekly): rundown for the week of <date>`, plus the
-repo's `Co-Authored-By` trailer.
+Commit message: `content(weekly): rundown for the week of <date>`, with no trailer.
 
 Then check the release actually ran — `.github/workflows/release.yml` ignores
 root-level `*.md` only, so a commit under `content/` does cut a release and
@@ -181,7 +186,7 @@ the session instead of assuming the post is live.
 
 - Do not touch anything outside `content/blog/weekly/` — the routes and the
   index already read every file in that directory via `getAllContent`.
-- Do not invent activity. If `gh` returns nothing for a repo, the rundown says
+- Do not invent activity. If the forge returns nothing for a repo, the rundown says
   that repo was quiet.
 - Do not open a PR for the rundown, and do not push anything else to `main`
   while you are there.

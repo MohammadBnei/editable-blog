@@ -1,11 +1,7 @@
 # editable-blog
 
-Tier: static. An adapter-static SvelteKit site plus `server.js`, a zero-dependency Bun file server.
+An adapter-static SvelteKit site plus `server.js`, a zero-dependency Bun file server.
 Scope: static core plus TS (owner, 2026-10-28).
-
-Change loop (ukubi Code Standard, A4): full loop for security, auth, wire, data or schema changes and
-behaviour-unchanged claims; light loop (plan, local checks, review) for CI, docs, pins, static content
-and isolated fixes. See the shared `ukubi-standard` plugin (`change-loop`, `repo-rules`) and the standard; not copied here.
 
 ## Commands
 
@@ -27,15 +23,12 @@ code with logic worth breaking (`src/lib/posts.ts`,
 dependency pins, and `src/ts-only.test.ts`, which fails on any `.js`/`.jsx`/`.mjs`/`.cjs` under `src/`), and they run on Bun's built-in runner — no vitest, no
 playwright, no test framework dependency. Components and routes are not tested.
 
-## Commits and checks
+## CI
 
-Conventional Commit subjects and PR titles; `content(<area>): ...` is also allowed for
-posts. Agent commits end with both `Co-Authored-By: ukubi-agent <noreply@bnei.dev>`
-(or `ukubi-agent-<host>`, a host naming no vendor or model) and `Agent-Session: <id>`, or with neither. No claude.ai URLs, no
-`Claude-Session:` line, no "Generated with" footer, in commits or PR bodies. This repo's
-rule wins over any global or harness attribution instruction. `.github/workflows/trailers.yml`
-enforces it on every PR, and `checks.yml` (lint, test, build) gates every PR; main only takes
-reviewed merges, and `release.yml` re-runs `checks.yml` before it cuts a release. CI runs on Forgejo Actions.
+`.github/workflows/trailers.yml` enforces commit and PR hygiene on every PR (Conventional Commit
+subjects and PR titles; `content(<area>): ...` is also allowed for posts), and `checks.yml` (lint,
+test, build) gates every PR; main only takes reviewed merges, and `release.yml` re-runs `checks.yml`
+before it cuts a release. CI runs on Forgejo Actions (the workflow files stay in `.github/workflows/`).
 
 ## Architecture
 
@@ -136,8 +129,9 @@ broke `/healthz` when using `serve -s`, since it silently served
 ukubi-ci's `release.yml` (git-cliff over the Conventional Commits since the last
 tag) pushes an annotated `X.Y.Z` tag on that commit (notes in the tag message;
 nothing is committed to main, `CHANGELOG.md` is history only).
-The bump comes from the squash-merge commit subject (the PR title): `feat` or a
-breaking change minor (while 0.x), anything else patch. Then ukubi-ci's
+The bump comes from the Conventional subjects of the commits since the last
+tag (a Forgejo rebase merge keeps each commit): `feat` or a breaking change
+minor (while 0.x), anything else patch. Then ukubi-ci's
 `image.yml` builds with `buildah` on the `ukubi-build` runner, tags the image
 with the built commit's 12-char sha, passes the version as the `VERSION`
 build-arg, pushes to `registry.bnei.lan:5000/editable-blog` (registry password
